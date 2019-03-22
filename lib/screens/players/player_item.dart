@@ -1,0 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:myscout/utils/Config.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+class PlayerItem extends StatelessWidget {
+  PlayerItem({this.document});
+  final DocumentSnapshot document;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left:5.0,right:5.0),
+      child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+       child: CachedNetworkImage(
+
+          fit: BoxFit.cover,
+          imageUrl: document[Config.url],
+          placeholder: (context,url) => SpinKitWave(
+            itemBuilder: (_, int index) {
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).accentColor,
+                ),
+              );
+            },
+          ),
+
+
+          errorWidget: (context,url,error) =>Icon(Icons.error),
+        ),
+
+      ),
+    );
+  }
+}
