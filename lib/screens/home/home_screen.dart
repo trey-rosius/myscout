@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myscout/post/create_post.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
-import 'package:myscout/screens/home/networks.dart';
+import 'package:myscout/screens/home/networks_screen.dart';
 import 'package:myscout/screens/home/placeholder.dart';
 import 'package:myscout/screens/players/players_screen.dart';
+import 'package:myscout/screens/profile/create_profile.dart';
+import 'package:myscout/screens/profile/edit_profile.dart';
+import 'package:myscout/screens/profile/profile_screen.dart';
 class HomeScreen extends StatefulWidget {
+  HomeScreen({this.userId});
+  final String userId;
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -16,10 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final List<Widget> _children = [
     PlaceholderWidget(Colors.white),
-    CupertinoSegmentedControlDemo(),
+    PlaceholderWidget(Colors.white),
+    CreatePost(),
     PlaceholderWidget(Colors.green),
-    PlaceholderWidget(Colors.green),
-    PlaceholderWidget(Colors.green)
+    ProfileScreen()
   ];
 
   final List<Widget> _segmentChildren = [
@@ -63,6 +69,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         title: _currentIndex==0 ? Text("Home") : _currentIndex==1 ? Text("Network") :_currentIndex ==2 ? Text("Post") :
             _currentIndex ==3 ? Text("Notifications") : Text("Profile"),
+        actions: <Widget>[
+          InkWell(
+            onTap: (){
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => EditProfile(userId:widget.userId),
+                  ));
+            },
+            child: _currentIndex ==4 ?
+                Image.asset('assets/images/edit.png') : Container(),
+          )
+        ],
         bottom: _currentIndex == 1 ? PreferredSize(
             child: Row(
               children: [

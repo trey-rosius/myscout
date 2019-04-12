@@ -28,14 +28,16 @@ dependencies:
   firebase_auth: ^0.8.0+1
   firebase_core: '^0.3.0'
   path_provider: ^0.5.0
-
+  firebase_storage: ^2.1.0+1
 
   shared_preferences: ^0.4.3
 
 
   google_sign_in: ^4.0.1+1
 
-  image_picker: ^0.5.0+3
+  image_picker: ^0.5.3
+  video_player: ^0.10.0+4
+  path_drawing: ^0.4.0
   cached_network_image: ^0.7.0
   firebase_database: ^2.0.1
   firebase_messaging: ^3.0.1
@@ -75,7 +77,7 @@ flutter:
     - assets/images/player3.png
     - assets/images/coach1.png
     - assets/images/coach2.png
-  #  - images/a_dot_ham.jpeg
+    - assets/images/edit.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

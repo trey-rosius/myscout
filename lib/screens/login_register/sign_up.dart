@@ -48,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     prefs.setString(Config.userId, _uid);
   }
   UserData newUser = new UserData();
-  Validations _validations = new Validations();
+
   String userKey;
   String name;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;

@@ -9,14 +9,14 @@ const Color _kKeyUmbraOpacity = Color(0x33000000); // alpha = 0.2
 const Color _kKeyPenumbraOpacity = Color(0x24000000); // alpha = 0.14
 const Color _kAmbientShadowOpacity = Color(0x1F000000); // alpha = 0.12
 
-class CupertinoSegmentedControlDemo extends StatefulWidget {
+class NetworkScreen extends StatefulWidget {
   static const String routeName = 'cupertino/segmented_control';
 
   @override
-  _CupertinoSegmentedControlDemoState createState() => _CupertinoSegmentedControlDemoState();
+  _NetworkScreenState createState() => _NetworkScreenState();
 }
 
-class _CupertinoSegmentedControlDemoState extends State<CupertinoSegmentedControlDemo> {
+class _NetworkScreenState extends State<NetworkScreen> {
   final Map<int, Widget> children = const <int, Widget>{
     0: Text('Midnight'),
     1: Text('Viridian'),

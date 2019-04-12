@@ -33,6 +33,19 @@ class Config{
   static final String coaches = "coaches";
 
 
+  static final String posts = "posts";
+  static final String postId = "postId";
+  static final String postText = "postText";
+  static final String isVideoPost = "isVideoPost";
+  static final String postVideoUrl = "postVideoUrl";
+  static final String postVideoThumbUrl = "postVideoUrl";
+  static final String postImageUrl = "postImageUrl";
+  static final String postAdminId = "postAdminId";
+  static final String userPosts = "userPosts";
+
+
+
+
 
 
   static final String email = "email";

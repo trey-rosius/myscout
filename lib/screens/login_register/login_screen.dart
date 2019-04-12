@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/login_register/sign_up.dart';
 import 'package:myscout/screens/profile/create_profile.dart';
 import 'package:myscout/utils/Config.dart';
@@ -72,11 +73,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
               setState(() {
                 loading = false;
+
+
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
                       builder: (context) => CreateProfile(userId:user.uid),
                     ));
+
+            /*
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) =>  CreateCard(),
+                    ));
+                    */
               });
 
 

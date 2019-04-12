@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
+import 'package:myscout/screens/gallery/photo_screen.dart';
 
 import 'package:myscout/screens/players/players_screen.dart';
 class GalleryScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
 
   final List<Widget> _segmentChildren = [
-    PlayerScreen(),
+    PhotoScreen(),
     CoachScreen()
   ];
 
