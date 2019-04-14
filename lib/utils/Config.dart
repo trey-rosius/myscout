@@ -42,6 +42,23 @@ class Config{
   static final String postImageUrl = "postImageUrl";
   static final String postAdminId = "postAdminId";
   static final String userPosts = "userPosts";
+  static final String likedPosts = "likedPosts";
+  static final String likes = "likes";
+
+
+  static final String comments = "comments";
+  static final String commentId = "commentId";
+  static final String commentText = "commentText";
+  static final String commentAdminId = "commentAdminId";
+
+
+  static final String notifications = "notifications";
+  static final String notificationId = "notificationId";
+  static final String notificationText = "notificationText";
+  static final String senderId = "senderId";
+  static final String receiverId = "receiverId";
+
+
 
 
 

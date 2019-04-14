@@ -1,0 +1,170 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:myscout/comments/comments_item.dart';
+import 'package:myscout/post/post_item.dart';
+import 'package:myscout/utils/Config.dart';
+import 'package:myscout/utils/error_screen.dart';
+import 'package:myscout/utils/loading_screen.dart';
+
+class CommentsScreen extends StatelessWidget {
+  CommentsScreen({this.userId,this.postId,this.postAdminId});
+  final String userId;
+  final String postId;
+  final String postAdminId;
+
+  final TextEditingController textEditingController = new TextEditingController();
+  Widget buildInput(BuildContext context) {
+    return  Container(
+
+        decoration: BoxDecoration(
+            color:Colors.white,
+          borderRadius: BorderRadius.circular(10.0)
+        ),
+        padding: EdgeInsets.all(10.0),
+
+        child: Row(
+          children: <Widget>[
+
+            // Edit text
+            Flexible(
+              child: Container(
+               margin: EdgeInsets.symmetric(horizontal: 8),
+                constraints: BoxConstraints(
+                  maxHeight: 300.0,
+                ),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    reverse: true,
+                    child: TextField(
+                      maxLines: null,
+                     
+
+                      style: TextStyle(color: Colors.black, fontSize: 15.0),
+                      controller: textEditingController,
+                      decoration: InputDecoration.collapsed(
+                        hintText: 'Comment...',
+                        hintStyle: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Button send message
+            Material(
+              child: new Container(
+                margin: new EdgeInsets.symmetric(horizontal: 8.0),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).accentColor,
+                    shape: BoxShape.circle),
+                child: Center(
+                  child: new IconButton(
+                    icon: new Icon(Icons.send),
+                    onPressed: (){
+                      if(textEditingController.text.toString().length >0){
+                        Map map = Map<String,dynamic>();
+                        map[Config.commentText] = textEditingController.text;
+                        map[Config.commentAdminId] = userId;
+                        map[Config.postId] = postId;
+                        map[Config.createdOn] = FieldValue.serverTimestamp();
+                        
+                        Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments).add(map)
+                            .then((DocumentReference docRef){
+                          Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments)
+                              .document(docRef.documentID).updateData({
+                            Config.commentId: docRef.documentID
+                          });
+
+                          textEditingController.text = "";
+                        });
+                        if(postAdminId != userId)
+                        {
+                          Firestore.instance
+                              .collection(Config.notifications)
+
+                              .add({Config.senderId: userId, Config.receiverId:postAdminId,
+                            Config.notificationText:" commented on your post",
+                            Config.createdOn:FieldValue.serverTimestamp()}).then((DocumentReference docRef){
+                            Firestore.instance
+                                .collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID});
+                          });
+                        }
+                        else
+                        {
+                         print("this post belongs to you");
+                        }
+                      }
+
+                    },
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+
+            ),
+          ],
+        ),
+
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar:
+      AppBar(
+        centerTitle: true,
+        elevation: 0.0,
+
+        title:Text("Comments",style: TextStyle(fontSize: 20.0),),
+
+      ),
+      body:
+
+          Container(
+      color: Theme.of(context).primaryColor,
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  child:  StreamBuilder(
+                      stream: Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments).snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return LoadingScreen();
+
+                        } else if (snapshot.hasData) {
+                          return  ListView.builder(
+
+                              itemCount: snapshot.data.documents.length,
+                              itemBuilder: (_, int index)
+                              {
+                                final DocumentSnapshot document = snapshot.data.documents[
+                                index];
+                                return CommentsItem(document: document);
+                              });
+
+
+
+                        } else {
+                          return  ErrorScreen(error: snapshot.error.toString(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+
+                Container(
+                  color: Theme.of(context).primaryColor,
+                   margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+                    child: buildInput(context))
+
+              ],
+            ),
+          ),
+
+    );
+  }
+}

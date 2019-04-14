@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/post/create_post.dart';
+import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
 import 'package:myscout/screens/home/networks_screen.dart';
@@ -145,9 +146,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text("AWARDS",style: TextStyle(color: Colors.white)),
               ),
               Divider(color: Colors.white,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("SOCIAL FEED",style: TextStyle(color: Colors.white)),
+              InkWell(
+                onTap: (){
+
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) =>  PostScreen(),
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("SOCIAL FEED",style: TextStyle(color: Colors.white)),
+                ),
               ),
               Divider(color: Colors.white,),
               Padding(

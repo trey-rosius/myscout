@@ -300,11 +300,20 @@ class _CreateProfileState extends State<CreateProfile> {
           }
         });
   }
+  bool isLargeScreen = false;
 
   @override
   Widget build(BuildContext context) {
    
     Size size = MediaQuery.of(context).size;
+    if(size.width < 412)
+      {
+        isLargeScreen = false;
+      }
+      else
+        {
+          isLargeScreen = true;
+        }
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -320,7 +329,7 @@ class _CreateProfileState extends State<CreateProfile> {
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 100.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: isLargeScreen ? 200 :100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

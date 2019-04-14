@@ -284,7 +284,7 @@ class _EditProfileState extends State<EditProfile> {
               onTap: () {
                 _onImageButtonPressed(ImageSource.gallery, 1);
               },
-              child: Container(
+              child: profilePic == null ? Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10.0),
                 child: CircleAvatar(
@@ -296,16 +296,41 @@ class _EditProfileState extends State<EditProfile> {
                     size: 70.0,
                   ),
                 ),
-              ),
+              ) : ClipRRect(
+                borderRadius:
+                new BorderRadius.circular(100),
+                child:
+
+                CachedNetworkImage(
+                  width: 120.0,
+                  height: 120.0,
+                  fit: BoxFit.cover,
+                  imageUrl: profilePic,
+                  placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+                  errorWidget: (context, url, ex) =>
+                  new Icon(Icons.error),
+                ),
+              )
             );
           }
         });
   }
+  bool isLargeScreen = false;
 
   @override
   Widget build(BuildContext context) {
 
     Size size = MediaQuery.of(context).size;
+    if(size.width < 412)
+    {
+      isLargeScreen = false;
+    }
+    else
+    {
+      isLargeScreen = true;
+    }
+
     return Scaffold(
        appBar: AppBar(
          elevation: 0.0,
@@ -320,13 +345,13 @@ class _EditProfileState extends State<EditProfile> {
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: size.height / 5.0,
+            height: isLargeScreen ?size.height / 8 :size.height / 5.0,
             alignment: Alignment.center,
 
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 50.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: isLargeScreen ?30.0 : 50.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

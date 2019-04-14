@@ -28,6 +28,9 @@ PODS:
   - Firebase/Messaging (5.17.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (= 3.3.1)
+  - Firebase/Storage (5.17.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (= 3.1.0)
   - firebase_auth (0.0.1):
     - Firebase/Auth
     - Firebase/Core
@@ -41,6 +44,9 @@ PODS:
   - firebase_messaging (0.0.1):
     - Firebase/Core
     - Firebase/Messaging
+    - Flutter
+  - firebase_storage (0.0.1):
+    - Firebase/Storage
     - Flutter
   - FirebaseAnalytics (5.6.0):
     - FirebaseCore (~> 5.3)
@@ -90,6 +96,10 @@ PODS:
     - GoogleUtilities/Environment (~> 5.2)
     - GoogleUtilities/Reachability (~> 5.2)
     - Protobuf (~> 3.1)
+  - FirebaseStorage (3.1.0):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 5.2)
+    - GTMSessionFetcher/Core (~> 1.1)
   - Flutter (1.0.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
@@ -166,6 +176,8 @@ PODS:
   - sqflite (0.0.1):
     - Flutter
     - FMDB (~> 2.7.2)
+  - video_player (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -173,12 +185,14 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_database (from `.symlinks/plugins/firebase_database/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
+  - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `.symlinks/flutter/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - video_player (from `.symlinks/plugins/video_player/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -193,6 +207,7 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseInstanceID
     - FirebaseMessaging
+    - FirebaseStorage
     - FMDB
     - GoogleAppMeasurement
     - GoogleSignIn
@@ -216,6 +231,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_database/ios"
   firebase_messaging:
     :path: ".symlinks/plugins/firebase_messaging/ios"
+  firebase_storage:
+    :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: ".symlinks/flutter/ios"
   google_sign_in:
@@ -228,6 +245,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
+  video_player:
+    :path: ".symlinks/plugins/video_player/ios"
 
 SPEC CHECKSUMS:
   BoringSSL-GRPC: 2a230d9cd93e7ce39916044f645cebb31f37dde6
@@ -237,6 +256,7 @@ SPEC CHECKSUMS:
   firebase_core: c96aa8b2fcf7f5167d32f22034f502f9304952b8
   firebase_database: 431f77dc97eaba31168762025bc31c8a9a68e68b
   firebase_messaging: a5f5d4a9491b660f33a1f94bd0596558f820bad1
+  firebase_storage: 4991d126595463648bd10b5f75bca54bea4ee924
   FirebaseAnalytics: 75e4bbc6417d190cc98ec1f17c41a4fad4c2c976
   FirebaseAnalyticsInterop: efbe45c8385ec626e29f9525e5ebd38520dfb6c1
   FirebaseAuth: 0f61e1329237da5682c49c9abd135e8f9d07a151
@@ -246,6 +266,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: e95af4fe30552092d6e72a8f97ea475d93891b75
   FirebaseInstanceID: 4522aad88f69297622062c0e9ffccdee3dd9b151
   FirebaseMessaging: 08289db05bdc71d91fe70916de95bb0c3c86ca9b
+  FirebaseStorage: 29075f874c2b3cf61e5221a62c4ceefc809e5412
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   google_sign_in: cbeb57b96679823d14df6b2240b629b983a42d79
@@ -263,6 +284,7 @@ SPEC CHECKSUMS:
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
   sqflite: d1612813fa7db7c667bed9f1d1b508deffc56999
+  video_player: 906796a841943c8d370ac7c13b18039aa9b56498
 
 PODFILE CHECKSUM: aff02bfeed411c636180d6812254b2daeea14d09
 

@@ -39,13 +39,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
-
+bool isLargeScreen = false;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery
         .of(context)
         .size;
+    if(size.width < 412)
+    {
+      isLargeScreen = false;
+    }
+    else
+    {
+      isLargeScreen = true;
+    }
     return Scaffold(
         body: StreamBuilder<DocumentSnapshot>(
             stream: Firestore.instance
@@ -60,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SliverToBoxAdapter(
 
                       child: Container(
-                         height: size.height/3.5,
+                         height: isLargeScreen ? size.height/4.5 : size.height/3.5,
                         width: size.width,
                         color: Theme.of(context).primaryColor,
 
@@ -73,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             
                       ),
                               child: ClipRRect(
-                                  borderRadius: new BorderRadius.circular(80),
+                                  borderRadius: BorderRadius.circular(80),
 
                                     child: CachedNetworkImage(
                                         width: 120.0,
