@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myscout/news/create_news.dart';
+import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
 import 'package:myscout/screens/home/networks_screen.dart';
 import 'package:myscout/screens/home/placeholder.dart';
+import 'package:myscout/screens/notifications/notification_screen.dart';
 import 'package:myscout/screens/players/players_screen.dart';
 import 'package:myscout/screens/profile/create_profile.dart';
 import 'package:myscout/screens/profile/edit_profile.dart';
@@ -25,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     PlaceholderWidget(Colors.white),
     PlaceholderWidget(Colors.white),
     CreatePost(),
-    PlaceholderWidget(Colors.green),
+    NotificationScreen(),
     ProfileScreen()
   ];
 
@@ -60,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey,
+
       appBar: AppBar(
         centerTitle: true,
         elevation: 0.0,
@@ -136,9 +140,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text("STATS",style: TextStyle(color: Colors.white)),
               ),
               Divider(color: Colors.white,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("NEWS",style: TextStyle(color: Colors.white)),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => NewsScreen(),
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("NEWS",style: TextStyle(color: Colors.white)),
+                ),
               ),
               Divider(color: Colors.white,),
               Padding(

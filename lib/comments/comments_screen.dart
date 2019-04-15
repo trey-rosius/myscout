@@ -76,25 +76,30 @@ class CommentsScreen extends StatelessWidget {
                               .document(docRef.documentID).updateData({
                             Config.commentId: docRef.documentID
                           });
+                          if(postAdminId != userId)
+                          {
+                            Firestore.instance
+                                .collection(Config.notifications)
+
+                                .add({Config.senderId: userId, Config.receiverId:postAdminId,
+                              Config.notificationText:" commented on your post",
+                              Config.notificationType:"comment",
+                              Config.commentId:docRef.documentID,
+                              Config.postId:postId,
+
+                              Config.createdOn:FieldValue.serverTimestamp()}).then((DocumentReference docRef){
+                              Firestore.instance
+                                  .collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID});
+                            });
+                          }
+                          else
+                          {
+                            print("this post belongs to you");
+                          }
 
                           textEditingController.text = "";
                         });
-                        if(postAdminId != userId)
-                        {
-                          Firestore.instance
-                              .collection(Config.notifications)
 
-                              .add({Config.senderId: userId, Config.receiverId:postAdminId,
-                            Config.notificationText:" commented on your post",
-                            Config.createdOn:FieldValue.serverTimestamp()}).then((DocumentReference docRef){
-                            Firestore.instance
-                                .collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID});
-                          });
-                        }
-                        else
-                        {
-                         print("this post belongs to you");
-                        }
                       }
 
                     },

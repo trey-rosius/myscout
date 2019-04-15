@@ -44,9 +44,11 @@ class Config{
   static final String userPosts = "userPosts";
   static final String likedPosts = "likedPosts";
   static final String likes = "likes";
+  static final String like = "like";
 
 
   static final String comments = "comments";
+  static final String comment = "comment";
   static final String commentId = "commentId";
   static final String commentText = "commentText";
   static final String commentAdminId = "commentAdminId";
@@ -54,9 +56,23 @@ class Config{
 
   static final String notifications = "notifications";
   static final String notificationId = "notificationId";
+  static final String notificationType= "notificationType";
   static final String notificationText = "notificationText";
   static final String senderId = "senderId";
   static final String receiverId = "receiverId";
+
+
+
+  static final String linkId= "linkId";
+  static final String linkTitle = "linkTitle";
+  static final String linkImage = "linkImage";
+  static final String linkDescription= "linkDesc";
+  static final String linkUrl= "linkUrl";
+  static final String linkAdmin= "linkAdmin";
+  static final String news= "news";
+  static final String linkPreviewAccessKey = "5cb391178d1789407be1bd4c5f4d01dd9b1a971290160";
+
+
 
 
 

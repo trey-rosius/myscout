@@ -18,7 +18,7 @@ class PostItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: size.width,
-      height: isLargeScreen ? size.height / 2 : size.height / 1.7,
+      height: isLargeScreen ? size.height / 2.2 : size.height / 1.7,
       margin: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
@@ -176,7 +176,9 @@ class PostItem extends StatelessWidget {
                                           .collection(Config.notifications)
 
                                           .add({Config.senderId: userId, Config.receiverId:document[Config.postAdminId],
+                                        Config.postId:document[Config.postId],
                                         Config.notificationText:" liked your post",
+                                        Config.notificationType:"like",
                                         Config.createdOn:FieldValue.serverTimestamp()}).then((DocumentReference docRef){
                                         Firestore.instance
                                             .collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID});
