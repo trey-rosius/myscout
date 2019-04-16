@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/comments/comments_screen.dart';
 import 'package:myscout/post/view_post_item.dart';
-import 'package:myscout/screens/gallery/view_image.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

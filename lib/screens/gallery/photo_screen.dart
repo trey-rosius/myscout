@@ -42,7 +42,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
     final double itemWidth = size.width / 2.3;
     return Scaffold(
       body:  StreamBuilder(
-        stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).snapshots(),
+        stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).where(Config.isAward, isEqualTo: false).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return LoadingScreen();

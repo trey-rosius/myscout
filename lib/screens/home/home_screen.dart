@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/news/create_news.dart';
+
 import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
+import 'package:myscout/screens/awards/awards_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
-import 'package:myscout/screens/home/networks_screen.dart';
+
 import 'package:myscout/screens/home/placeholder.dart';
 import 'package:myscout/screens/notifications/notification_screen.dart';
 import 'package:myscout/screens/players/players_screen.dart';
-import 'package:myscout/screens/profile/create_profile.dart';
+
 import 'package:myscout/screens/profile/edit_profile.dart';
 import 'package:myscout/screens/profile/profile_screen.dart';
 class HomeScreen extends StatefulWidget {
@@ -155,9 +156,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Divider(color: Colors.white,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("AWARDS",style: TextStyle(color: Colors.white)),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => AwardsScreen(),
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("AWARDS",style: TextStyle(color: Colors.white)),
+                ),
               ),
               Divider(color: Colors.white,),
               InkWell(

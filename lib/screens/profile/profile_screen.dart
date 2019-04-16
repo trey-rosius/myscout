@@ -333,7 +333,7 @@ bool isLargeScreen = false;
                     ),),
 
                     StreamBuilder(
-                      stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).snapshots(),
+                      stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).where(Config.isAward,isEqualTo: false).snapshots(),
                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return SliverToBoxAdapter(

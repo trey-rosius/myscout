@@ -31,6 +31,8 @@ class Config{
   static final String url = "url";
   static final String athletes = "athletes";
   static final String coaches = "coaches";
+  static final String isAward = "isAward";
+  static final String awardYear = "awardYear";
 
 
   static final String posts = "posts";

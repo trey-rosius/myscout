@@ -28,6 +28,7 @@ class _CreatePostState extends State<CreatePost> {
   VoidCallback listener;
   bool loading = false;
   File mainFile;
+  bool isAward = false;
 
   void _onImageButtonPressed(ImageSource source) {
     setState(() {
@@ -140,9 +141,11 @@ class _CreatePostState extends State<CreatePost> {
       Map userInfo = new Map<String, dynamic>();
       userInfo[Config.postText] = postController.text;
       userInfo[Config.isVideoPost] = isVideo;
+      userInfo[Config.isAward] = isAward;
      isVideo ? userInfo[Config.postVideoUrl] = data : userInfo[Config.postImageUrl] = data;
      userInfo[Config.createdOn] =FieldValue.serverTimestamp();
      userInfo[Config.postAdminId] = userId;
+     userInfo[Config.awardYear] = yearController.text;
 
      Firestore.instance.collection(Config.posts).add(userInfo).then((DocumentReference docRef){
        String id = docRef.documentID;
@@ -164,6 +167,7 @@ class _CreatePostState extends State<CreatePost> {
           _controller = null;
           _imageFile = null;
           postController.text="";
+          isAward = false;
         });
 
 
@@ -219,6 +223,7 @@ class _CreatePostState extends State<CreatePost> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final postController = TextEditingController();
+  final yearController = TextEditingController();
   bool autovalidate = false;
   @override
   Widget build(BuildContext context) {
@@ -242,6 +247,20 @@ class _CreatePostState extends State<CreatePost> {
                   child: isVideo ? _previewVideo(_controller) : _previewImage()),
 
           ),
+           isVideo ? SliverToBoxAdapter(
+             child: Container(),
+           ) :
+           SliverToBoxAdapter(
+             child: Container(
+               child: CheckboxListTile(value: isAward, onChanged: ((bool value){
+                 setState(() {
+                   isAward = value;
+                   print(value);
+                 });
+               }),title: Text("Is Selected Image An Award ?",style: TextStyle(fontSize: 17.0),),),
+             ),
+
+           ),
            SliverToBoxAdapter(
              child: Padding(
                padding: const EdgeInsets.only(top:20.0,left: 10.0),
@@ -260,6 +279,32 @@ class _CreatePostState extends State<CreatePost> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    isAward ?
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 0.0),
+                      child: new TextFormField(
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+
+                          if (value.isEmpty) {
+                            return "Award Year";
+                          }
+                        },
+                        maxLength: 4,
+                        controller: yearController,
+
+                        decoration: new InputDecoration(
+                            labelText: "Award Year",
+
+                            contentPadding: new EdgeInsets.all(12.0),
+                            border: new OutlineInputBorder(
+                              borderSide: new BorderSide(
+                                  width: 2.0, color: Colors.white),
+                            )),
+                      ),
+                    ) :
+                        Container(),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 0.0),
