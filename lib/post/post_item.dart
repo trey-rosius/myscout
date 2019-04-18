@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/comments/comments_screen.dart';
 import 'package:myscout/post/view_post_item.dart';
+import 'package:myscout/screens/profile/external_profile_screen.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -91,28 +92,47 @@ class PostItem extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: ClipRRect(
-                                borderRadius: new BorderRadius.circular(50),
-                                child: CachedNetworkImage(
-                                  width: 40.0,
-                                  height: 40.0,
-                                  fit: BoxFit.cover,
-                                  imageUrl: docSnap.data[Config.profilePicUrl],
-                                  placeholder: (context, url) =>
-                                      new CircularProgressIndicator(),
-                                  errorWidget: (context, url, ex) =>
-                                      new Icon(Icons.error),
+                            InkWell(
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ExternalProfileScreen(userId: document[Config.postAdminId],)),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: ClipRRect(
+                                  borderRadius: new BorderRadius.circular(50),
+                                  child: CachedNetworkImage(
+                                    width: 40.0,
+                                    height: 40.0,
+                                    fit: BoxFit.cover,
+                                    imageUrl: docSnap.data[Config.profilePicUrl],
+                                    placeholder: (context, url) =>
+                                        new CircularProgressIndicator(),
+                                    errorWidget: (context, url, ex) =>
+                                        new Icon(Icons.error),
+                                  ),
                                 ),
                               ),
                             ),
-                            Text(
-                              docSnap.data[Config.fullNames],
-                              style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor),
+                            InkWell(
+                              onTap:(){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ExternalProfileScreen(userId: document[Config.postAdminId],)),
+                                );
+
+                },
+                              child: Text(
+                                docSnap.data[Config.fullNames],
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor),
+                              ),
                             )
                           ],
                         ),

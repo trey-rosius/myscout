@@ -5,6 +5,7 @@ import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/awards/awards_screen.dart';
+import 'package:myscout/screens/chats/conversation_list_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
 
@@ -153,6 +154,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text("NEWS",style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              Divider(color: Colors.white,),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => ConversationListScreen(),
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("CHATS",style: TextStyle(color: Colors.white)),
                 ),
               ),
               Divider(color: Colors.white,),

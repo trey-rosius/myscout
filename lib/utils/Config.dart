@@ -75,6 +75,18 @@ class Config{
   static final String linkPreviewAccessKey = "5cb391178d1789407be1bd4c5f4d01dd9b1a971290160";
 
 
+  static final String chats= "chats";
+  static final String typing= "typing...";
+  static final String imageUrl= "imageUrl";
+  static final String messageType= "messageType";
+  static final String messageId= "messageId";
+  static final String message= "message";
+  static final String text= "text";
+  static final String image= "image";
+  static final String chatThread= "chatThread";
+  static final String receiver= "chatThread";
+  static final String visible= "visible";
+  static final String chatList= "chatList";
 
 
 
