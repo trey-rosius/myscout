@@ -97,7 +97,15 @@ class NewsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onLongPress: (){
-        deleteConfirmation(context, document[Config.linkId]);
+        if(userId ==  document[Config.linkAdmin])
+          {
+            deleteConfirmation(context, document[Config.linkId]);
+          }
+          else
+            {
+
+            }
+
       },
       onTap: (){
         _launchURL(document[Config.linkUrl]);

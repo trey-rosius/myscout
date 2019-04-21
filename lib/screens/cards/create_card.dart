@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/screens/cards/card_color.dart';
 import 'data.dart';
@@ -31,8 +35,22 @@ class _CreateCardState extends State<CreateCard> {
   int currentColorIndex = 0;
   static DateTime dateTime = DateTime.now();
   static DateTime dateTime1 = DateTime.now();
+  String cardPic;
 
   ProfileModel pModel = ProfileModel();
+
+  File file;
+
+  String _error;
+
+  Future<File> _imageFile;
+  String profilePic;
+
+  void _onImageButtonPressed(ImageSource source, int numberOfItems) {
+    setState(() {
+      _imageFile = ImagePicker.pickImage(source: source);
+    });
+  }
 
   List<Widget> colorSelector() {
     List<Widget> colorItemList = new List();
@@ -74,6 +92,68 @@ class _CreateCardState extends State<CreateCard> {
     }
   }
 
+  Widget _previewImage() {
+    return FutureBuilder<File>(
+        future: _imageFile,
+        builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
+            file = snapshot.data;
+
+            return InkWell(
+              onTap: () => _onImageButtonPressed(ImageSource.gallery, 1),
+              child: new Container(
+                  padding: EdgeInsets.all(10),
+                  // height: MediaQuery.of(context).size.height/2.5,
+                  child: CircleAvatar(
+                    radius: 70.0,
+                    backgroundImage: FileImage(snapshot.data),
+                  )),
+            );
+          } else if (snapshot.error != null) {
+            // showInSnackBar("Error Picking Image");
+            return InkWell(
+              onTap: () {
+                _onImageButtonPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10.0),
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  radius: 70.0,
+                  child: Icon(
+                    Icons.account_circle,
+                    color: Colors.white,
+                    size: 70.0,
+                  ),
+                ),
+              ),
+            );
+          } else {
+            // showInSnackBar("You have not yet picked an image.");
+            return InkWell(
+              onTap: () {
+                _onImageButtonPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10.0),
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  radius: 70.0,
+                  child: Icon(
+                    Icons.account_circle,
+                    color: Colors.white,
+                    size: 70.0,
+                  ),
+                ),
+              ),
+            );
+          }
+        });
+  }
+
 
 
   @override
@@ -107,7 +187,7 @@ class _CreateCardState extends State<CreateCard> {
             height: size.height / 5,
             alignment: Alignment.center,
             child: Text(
-              "Create Profile",
+              "Create Card",
               style: TextStyle(fontSize: 20.0, color: Colors.white),
             ),
           ),
@@ -118,6 +198,47 @@ class _CreateCardState extends State<CreateCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+
+                  InkWell(
+                      onTap: () {
+                        _onImageButtonPressed(ImageSource.gallery, 1);
+                      },
+                      child: _imageFile == null
+                          ? Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: ClipOval(
+                            child: profilePic != null
+                                ?  ClipRRect(
+                              borderRadius:
+                              new BorderRadius.circular(30),
+                              child:
+
+                              CachedNetworkImage(
+                                width: 120.0,
+                                height: 120.0,
+                                fit: BoxFit.cover,
+                                imageUrl: profilePic,
+                                placeholder: (context, url) =>
+                                new CircularProgressIndicator(),
+                                errorWidget: (context, url, ex) =>
+                                new Icon(Icons.error),
+                              ),
+                            )
+                                : CircleAvatar(
+                              backgroundColor:
+                              Theme.of(context).accentColor,
+                              radius: 70.0,
+                              child: Icon(
+                                Icons.account_circle,
+                                color: Colors.white,
+                                size:70.0,
+                              ),
+                            ),
+                          ))
+                          : _previewImage()
+                    // child: _prev,
+
+                  ),
                   Form(
                     key: formKey,
                     autovalidate: autovalidate,

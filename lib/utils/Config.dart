@@ -88,6 +88,24 @@ class Config{
   static final String visible= "visible";
   static final String chatList= "chatList";
 
+  static final String schedules= "schedules";
+  static final String userSchedules= "userSchedules";
+  static final String scheduleDayName= "scheduleDayName";
+  static final String scheduleDay= "scheduleDay";
+  static final String scheduleMonth= "scheduleMonth";
+  static final String scheduleMonthName= "scheduleMonthName";
+  static final String scheduleYear= "scheduleYear";
+  static final String scheduleId= "scheduleId";
+  static final String scheduleAdmin= "scheduleAdmin";
+  static final String scheduleStartTime= "scheduleStartTime";
+  static final String scheduleDate= "scheduleDate";
+  static final String scheduleEndTime= "scheduleEndTime";
+  static final String scheduleTitle= "scheduleTitle";
+  static final String scheduleDescription= "scheduleDescription";
+  static final String scheduleStatus= "scheduleStatus";
+  static final String private= "private";
+  static final String public= "public";
+
 
 
 

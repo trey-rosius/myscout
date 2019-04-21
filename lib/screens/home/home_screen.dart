@@ -5,6 +5,7 @@ import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/awards/awards_screen.dart';
+import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/chats/conversation_list_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
@@ -15,6 +16,7 @@ import 'package:myscout/screens/players/players_screen.dart';
 
 import 'package:myscout/screens/profile/edit_profile.dart';
 import 'package:myscout/screens/profile/profile_screen.dart';
+import 'package:myscout/screens/schedule/schedule_screen.dart';
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.userId});
   final String userId;
@@ -26,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   int _currentIndex = 0;
+
+
   final List<Widget> _children = [
     PlaceholderWidget(Colors.white),
     PlaceholderWidget(Colors.white),
@@ -33,7 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     NotificationScreen(),
     ProfileScreen()
   ];
-
   final List<Widget> _segmentChildren = [
     PlayerScreen(),
     CoachScreen()
@@ -63,6 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+
     return Scaffold(
       key: _scaffoldKey,
 
@@ -111,10 +116,25 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             preferredSize: Size(double.infinity, 60)) : PreferredSize(child: Container(), preferredSize: null)
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+
+
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (context) =>  CreateCard()));
+
+      },child: Icon(Icons.card_giftcard),
+      ),
       drawer: Drawer(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 40.0),
-          color: Theme.of(context).primaryColorLight,
+           decoration: BoxDecoration(
+               color: Theme.of(context).primaryColorLight,
+
+           ),
+
+
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -203,9 +223,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Divider(color: Colors.white,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("SCHEDULE",style: TextStyle(color: Colors.white)),
+              InkWell(
+                onTap: (){
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) =>  SchedulesScreen(),
+                      ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("SCHEDULE",style: TextStyle(color: Colors.white)),
+                ),
               ),
               Divider(color: Colors.white,),
               Padding(

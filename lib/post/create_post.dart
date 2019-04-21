@@ -15,6 +15,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:video_player/video_player.dart';
 class CreatePost extends StatefulWidget {
+  CreatePost({this.userId});
+  final String userId;
 
   @override
   _CreatePostState createState() => _CreatePostState();
