@@ -1,19 +1,28 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/screens/cards/card_color.dart';
+import 'package:myscout/utils/Config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'data.dart';
 import 'package:myscout/models/profile_model.dart';
 class CreateCard extends StatefulWidget {
+  CreateCard({this.userId,this.cardId});
+  final String userId;
+  final String cardId;
   @override
   _CreateCardState createState() => _CreateCardState();
 }
 
 class _CreateCardState extends State<CreateCard> {
 
+  String sports = "BasketBall";
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
@@ -21,15 +30,23 @@ class _CreateCardState extends State<CreateCard> {
   final dobController = TextEditingController();
   final locationController = TextEditingController();
   final shortBioController = TextEditingController();
-  final schoolController = TextEditingController();
-  final gpaController = TextEditingController();
+
+
   final actSatController = TextEditingController();
   final classController = TextEditingController();
   final sportsController = TextEditingController();
   final positionController = TextEditingController();
   final heightController = TextEditingController();
   final weightController = TextEditingController();
-
+  List<String> colorCodes = [
+    "0xFF958d78",
+    "0xFF6c6c6c",
+    "0xFF11567b",
+    "0xFFa4241d",
+    "0xFF034f08",
+    "0xFF935d05",
+    "0xFF530673"
+  ];
   bool autovalidate = false;
   bool loading = false;
   int currentColorIndex = 0;
@@ -45,11 +62,131 @@ class _CreateCardState extends State<CreateCard> {
 
   Future<File> _imageFile;
   String profilePic;
+  String userType;
 
+  @override
+  void initState() {
+    loadCardDetails();
+    _getUserType();
+    super.initState();
+  }
   void _onImageButtonPressed(ImageSource source, int numberOfItems) {
     setState(() {
       _imageFile = ImagePicker.pickImage(source: source);
     });
+  }
+
+  _getUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    userType = prefs.getString(Config.userType);
+  print("userType is"+userType);
+  }
+
+
+  loadCardDetails(){
+
+    Firestore.instance
+        .collection(Config.cards)
+        .document(widget.cardId)
+        .get()
+        .then((DocumentSnapshot snapshot) {
+      setState(() {
+        profilePic = snapshot[Config.profilePicUrl];
+        fullNamesController.text = snapshot[Config.fullNames];
+        dobController.text = snapshot[Config.dob];
+        locationController.text = snapshot[Config.location];
+        shortBioController.text = snapshot[Config.shortBio];
+
+        currentColorIndex = snapshot[Config.cardColorIndex];
+
+        actSatController.text = snapshot[Config.actSat];
+        classController.text = snapshot[Config.CLASS];
+        sports = snapshot[Config.selectSport];
+        positionController.text = snapshot[Config.position];
+        heightController.text = snapshot[Config.height];
+        weightController.text = snapshot[Config.weight];
+      });
+
+
+    });
+
+  }
+
+
+
+
+
+  saveCardDetailsWithImage(){
+
+    print(pModel.sports);
+
+    setState(() {
+      loading = true;
+    });
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    uploadImage(file, storage).then((String data) {
+
+
+      Map userInfo = new Map<String, dynamic>();
+      userInfo[Config.fullNames]= fullNamesController.text;
+      userInfo[Config.dob]= dobController.text;
+      userInfo[Config.location]= locationController.text;
+      userInfo[Config.shortBio]= shortBioController.text;
+      userInfo[Config.collectedCount]= 0;
+
+
+
+      userInfo[Config.profilePicUrl] = data;
+      userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+      userInfo[Config.cardColorIndex] = currentColorIndex;
+      userInfo[Config.userType] = userType;
+      userInfo[Config.cardCreatorId] = widget.userId;
+
+
+      userInfo[Config.actSat]= actSatController.text;
+      userInfo[Config.CLASS]= classController.text;
+      userInfo[Config.position]= positionController.text;
+      userInfo[Config.height]= heightController.text;
+      userInfo[Config.weight]= weightController.text;
+      userInfo[Config.selectSport]= sports;
+
+      Firestore.instance
+          .collection(Config.cards).add(userInfo).then((DocumentReference docRef){
+
+            Firestore.instance.collection(Config.cards).document(docRef.documentID).updateData({
+              Config.cardId:docRef.documentID
+            }).then((_){
+              Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).document(docRef.documentID)
+                  .setData({
+                Config.cardId:docRef.documentID
+              });
+              setState(() {
+                loading = false;
+              });
+              Navigator.of(context).pop();
+            });
+      });
+
+    });
+
+
+  }
+
+  /**
+   * upload Profile Pic
+   */
+  Future<String> uploadImage(var imageFile, FirebaseStorage storage) async {
+    var uuid = new Uuid().v1();
+    StorageReference ref = storage
+        .ref()
+        .child(Config.cards)
+        .child(widget.userId)
+        .child("$uuid.jpg");
+    StorageUploadTask uploadTask = ref.putFile(imageFile);
+    StorageTaskSnapshot storageTask = await uploadTask.onComplete;
+    String downloadUrl = await storageTask.ref.getDownloadURL();
+    return downloadUrl;
   }
 
   List<Widget> colorSelector() {
@@ -102,13 +239,17 @@ class _CreateCardState extends State<CreateCard> {
 
             return InkWell(
               onTap: () => _onImageButtonPressed(ImageSource.gallery, 1),
-              child: new Container(
-                  padding: EdgeInsets.all(10),
-                  // height: MediaQuery.of(context).size.height/2.5,
-                  child: CircleAvatar(
-                    radius: 70.0,
-                    backgroundImage: FileImage(snapshot.data),
-                  )),
+              child:Container(
+                padding: EdgeInsets.all(10),
+                height: 150,
+                width: 150,
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Image.file(snapshot.data,width: 150,height: 150,fit: BoxFit.cover,),
+                  ),
             );
           } else if (snapshot.error != null) {
             // showInSnackBar("Error Picking Image");
@@ -117,17 +258,20 @@ class _CreateCardState extends State<CreateCard> {
                 _onImageButtonPressed(ImageSource.gallery, 1);
               },
               child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).accentColor,
-                  radius: 70.0,
-                  child: Icon(
+                height: 150,
+                width: 150,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
                     Icons.account_circle,
                     color: Colors.white,
                     size: 70.0,
                   ),
-                ),
+                
               ),
             );
           } else {
@@ -137,17 +281,20 @@ class _CreateCardState extends State<CreateCard> {
                 _onImageButtonPressed(ImageSource.gallery, 1);
               },
               child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).accentColor,
-                  radius: 70.0,
-                  child: Icon(
-                    Icons.account_circle,
+                height: 150,
+                width: 150,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
+                    Icons.card_membership,
                     color: Colors.white,
                     size: 70.0,
                   ),
-                ),
+                
               ),
             );
           }
@@ -164,8 +311,8 @@ class _CreateCardState extends State<CreateCard> {
     dobController.dispose();
     locationController.dispose();
     shortBioController.dispose();
-    schoolController.dispose();
-    gpaController.dispose();
+
+
     actSatController.dispose();
     classController.dispose();
     sportsController.dispose();
@@ -179,21 +326,27 @@ class _CreateCardState extends State<CreateCard> {
   Widget build(BuildContext context) {
      Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Text(
+          "Create Card",
+          style: TextStyle(fontSize: 20.0, color: Colors.white),
+        ),
+        centerTitle: true,
+
+      ),
       body: Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: size.height / 5,
+            height: size.height / 10,
             alignment: Alignment.center,
-            child: Text(
-              "Create Card",
-              style: TextStyle(fontSize: 20.0, color: Colors.white),
-            ),
+
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 100.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -206,35 +359,46 @@ class _CreateCardState extends State<CreateCard> {
                       child: _imageFile == null
                           ? Padding(
                           padding: EdgeInsets.all(10.0),
-                          child: ClipOval(
-                            child: profilePic != null
-                                ?  ClipRRect(
+                          child:Container(
+                            height: 150,
+                            width: 150,
+                            decoration: BoxDecoration(
+                              border:Border.all(color: Theme.of(context).accentColor,width: 4),
                               borderRadius:
-                              new BorderRadius.circular(30),
-                              child:
+                               BorderRadius.circular(10),
+                            ),
+                            child: profilePic != null
+                                  ?
+                                CachedNetworkImage(
+                                  width: 150.0,
+                                  height: 150.0,
+                                  fit: BoxFit.cover,
+                                  imageUrl: profilePic,
+                                  placeholder: (context, url) =>
+                                  new CircularProgressIndicator(),
+                                  errorWidget: (context, url, ex) =>
+                                  new Icon(Icons.error),
+                                )
 
-                              CachedNetworkImage(
-                                width: 120.0,
-                                height: 120.0,
-                                fit: BoxFit.cover,
-                                imageUrl: profilePic,
-                                placeholder: (context, url) =>
-                                new CircularProgressIndicator(),
-                                errorWidget: (context, url, ex) =>
-                                new Icon(Icons.error),
+                                  :
+                            Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                borderRadius:
+                                BorderRadius.circular(10),
                               ),
-                            )
-                                : CircleAvatar(
-                              backgroundColor:
-                              Theme.of(context).accentColor,
-                              radius: 70.0,
-                              child: Icon(
-                                Icons.account_circle,
-                                color: Colors.white,
-                                size:70.0,
+                              child:
+                             Icon(
+                                  Icons.card_membership,
+                                  color: Theme.of(context).accentColor,
+                                  size:70.0,
+
                               ),
                             ),
-                          ))
+                          )
+                          )
                           : _previewImage()
                     // child: _prev,
 
@@ -455,7 +619,7 @@ class _CreateCardState extends State<CreateCard> {
                                       Text("Select Sports"),
 
                                       DropdownButton(
-                                          value: pModel.sports ??
+                                          value: sports ??
                                               "BasketBall",
                                           items: <String>[
                                             "BasketBall",
@@ -470,9 +634,10 @@ class _CreateCardState extends State<CreateCard> {
                                                   style: TextStyle(fontSize: 16.0),
                                                 ));
                                           }).toList(),
+
                                           onChanged: (String value) {
                                             setState(() {
-                                              pModel.sports = value.trim();
+                                              sports = value.trim();
                                             });
                                           }),
 
@@ -565,7 +730,7 @@ class _CreateCardState extends State<CreateCard> {
                                 elevation: 0.0,
                                 onPressed: () {
                                   if (formKey.currentState.validate()) {
-                                   // saveProfileDetails();
+                                    saveCardDetailsWithImage();
                                   }
                                 },
                                 color: Theme.of(context).primaryColorLight,

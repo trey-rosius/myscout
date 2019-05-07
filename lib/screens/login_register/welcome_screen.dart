@@ -38,7 +38,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
+                        builder: (context) => LoginScreen(userType: "Athlete/Parent",),
                       ),
                     );
 
@@ -64,15 +64,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                  child: RaisedButton(
 
                    onPressed: () {
-                     //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
-                     /*
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdminSignIn(),
-                      ),
-                    );
-                    */
+
+                     Navigator.push(
+                       context,
+                       MaterialPageRoute(
+                         builder: (context) => LoginScreen(userType: "Coach/Scout",),
+                       ),
+                     );
+
                    },
                    color: Colors.white,
                    child: new Padding(
@@ -95,15 +94,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                  child: RaisedButton(
 
                    onPressed: () {
-                     //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
-                     /*
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdminSignIn(),
-                      ),
-                    );
-                    */
+
+                     Navigator.push(
+                       context,
+                       MaterialPageRoute(
+                         builder: (context) => LoginScreen(userType: "Fan",),
+                       ),
+                     );
                    },
                    color: Colors.white,
                    child: new Padding(

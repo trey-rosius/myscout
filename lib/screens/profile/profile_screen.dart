@@ -1,14 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/gallery/photo_item.dart';
+import 'package:myscout/screens/cards/card_screen_scroller.dart';
+
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ProfileScreen extends StatefulWidget {
+  ProfileScreen({this.userId});
+  final String userId;
 
 
 
@@ -19,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
 
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
+/*
   String userId;
 
   getUserId() async{
@@ -28,13 +31,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       userId = sharedPreferences.get(Config.userId);
     });
   }
+*/
 
 
   @override
   void initState() {
     // TODO: implement initState
 
-    getUserId();
+   // getUserId();
     super.initState();
   }
 
@@ -58,7 +62,7 @@ bool isLargeScreen = false;
         body: StreamBuilder<DocumentSnapshot>(
             stream: Firestore.instance
                 .collection(Config.users)
-                .document(userId)
+                .document(widget.userId)
                 .snapshots(),
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -92,11 +96,11 @@ bool isLargeScreen = false;
                                         new CircularProgressIndicator(),
                                         errorWidget: (context, url, ex) => CircleAvatar(
                                           backgroundColor: Theme.of(context).accentColor,
-                                          radius: 100.0,
+                                          radius: 50.0,
                                           child: Icon(
                                             Icons.account_circle,
                                             color: Colors.white,
-                                            size: 100.0,
+                                            size: 50.0,
 
                                         )),
                                   )),
@@ -127,14 +131,13 @@ bool isLargeScreen = false;
                        padding: const EdgeInsets.only(bottom:10.0),
                        child: Text("POSITION", style: TextStyle(
 
-                             fontFamily: 'Montserrat',
                              color: Theme.of(context).primaryColor,
                              fontWeight: FontWeight.bold,
                              fontSize: 18.0)),
 
                    ),
                        Text(snapshot.data[Config.position]??"", style: TextStyle(
-                             fontFamily: 'Montserrat',
+
                              color: Colors.grey,
                              fontWeight: FontWeight.bold,
                              fontSize: 16.0)),
@@ -152,14 +155,14 @@ bool isLargeScreen = false;
                                    padding: const EdgeInsets.only(bottom:10.0),
                                    child: Text("HEIGHT", style: TextStyle(
 
-                                       fontFamily: 'Montserrat',
+
                                        color: Theme.of(context).primaryColor,
                                        fontWeight: FontWeight.bold,
                                        fontSize: 18.0)),
 
                                  ),
                                  Text(snapshot.data[Config.height]??"", style: TextStyle(
-                                     fontFamily: 'Montserrat',
+
                                      color: Colors.grey,
                                      fontWeight: FontWeight.bold,
                                      fontSize: 16.0)),
@@ -193,14 +196,13 @@ bool isLargeScreen = false;
                                     padding: const EdgeInsets.only(bottom:10.0),
                                     child: Text("WEIGHT", style: TextStyle(
 
-                                        fontFamily: 'Montserrat',
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18.0)),
 
                                   ),
                                   Text(snapshot.data[Config.weight]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
+
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0)),
@@ -218,14 +220,14 @@ bool isLargeScreen = false;
                                     padding: const EdgeInsets.only(bottom:10.0),
                                     child: Text("CLASS", style: TextStyle(
 
-                                        fontFamily: 'Montserrat',
+
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18.0)),
 
                                   ),
                                   Text(snapshot.data[Config.CLASS]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
+
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0)),
@@ -258,7 +260,7 @@ bool isLargeScreen = false;
                                     padding: const EdgeInsets.only(bottom:10.0,right: 5.0),
                                     child: Text("HOMETOWN", style: TextStyle(
 
-                                          fontFamily: 'Montserrat',
+
                                           color: Theme.of(context).primaryColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18.0)),
@@ -266,7 +268,7 @@ bool isLargeScreen = false;
 
                                   
                                   Text(snapshot.data[Config.location]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
+
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0)),
@@ -284,14 +286,13 @@ bool isLargeScreen = false;
                                     padding: const EdgeInsets.only(bottom:10.0),
                                     child: Text("HIGH SCHOOL", style: TextStyle(
 
-                                        fontFamily: 'Montserrat',
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18.0)),
 
                                   ),
                                   Text(snapshot.data[Config.schoolOrOrg]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
+
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0)),
@@ -311,7 +312,7 @@ bool isLargeScreen = false;
                       padding: const EdgeInsets.all(10.0),
                       child: Text("BIO",style: TextStyle(
 
-                          fontFamily: 'Montserrat',
+
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0)),
@@ -326,14 +327,14 @@ bool isLargeScreen = false;
                       padding: const EdgeInsets.all(10.0),
                       child: Text("PHOTOS",style: TextStyle(
 
-                          fontFamily: 'Montserrat',
+
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0)),
                     ),),
 
                     StreamBuilder(
-                      stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).where(Config.isAward,isEqualTo: false).snapshots(),
+                      stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:widget.userId).where(Config.isVideoPost,isEqualTo: false).where(Config.isAward,isEqualTo: false).snapshots(),
                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return SliverToBoxAdapter(
@@ -367,7 +368,7 @@ bool isLargeScreen = false;
                       padding: const EdgeInsets.all(10.0),
                       child: Text("HIGHLIGHTS",style: TextStyle(
 
-                          fontFamily: 'Montserrat',
+
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0)),
@@ -379,19 +380,26 @@ bool isLargeScreen = false;
                         children: <Widget>[
                           Text("MY CARDS",style: TextStyle(
 
-                              fontFamily: 'Montserrat',
+
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
                           Text("CREATE NEW",style: TextStyle(
 
-                              fontFamily: 'Montserrat',
+
                               color: Theme.of(context).accentColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
                         ],
                       ),
                     ),),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 20.0),
+                        height: size.height/2.5,
+                        child: CardScreenScroller(userId: widget.userId,),
+                      ),
+                    )
 
 
 

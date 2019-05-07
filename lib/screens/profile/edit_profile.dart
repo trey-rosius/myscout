@@ -5,10 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/profile_model.dart';
-import 'package:myscout/screens/home/home_screen.dart';
+
 import 'package:myscout/utils/Config.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 class EditProfile extends StatefulWidget {
@@ -91,12 +91,14 @@ class _EditProfileState extends State<EditProfile> {
       });
 
       print("completed");
-
+      Navigator.of(context).pop();
+/*
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => HomeScreen(userId:widget.userId)),
       );
+      */
 
     });
 
@@ -136,11 +138,16 @@ class _EditProfileState extends State<EditProfile> {
 
         print("completed");
 
+        Navigator.of(context).pop();
+
+
+/*
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen()),
         );
+        */
 
       });
 

@@ -1,24 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/screens/gallery/photo_item.dart';
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
+import 'package:myscout/screens/trade_card/trade_screen.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CardScreen extends StatefulWidget {
+class CardDetails extends StatefulWidget {
+  CardDetails({this.cardId,this.cardName,this.isLargeScreen});
+  final String cardId;
+  final String cardName;
+  final bool isLargeScreen;
+
 
 
 
   @override
-  _CardScreenState createState() => _CardScreenState();
+  _CardDetailsState createState() => _CardDetailsState();
 }
 
 
 
-class _CardScreenState extends State<CardScreen> {
+class _CardDetailsState extends State<CardDetails> {
 
   String userId;
 
@@ -46,69 +53,146 @@ class _CardScreenState extends State<CardScreen> {
     Size size = MediaQuery
         .of(context)
         .size;
-    if(size.width < 412)
-    {
-      isLargeScreen = false;
-    }
-    else
-    {
-      isLargeScreen = true;
-    }
+
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Text(widget.cardName,maxLines: 1,style: TextStyle(fontSize: 20.0,color: Colors.white),),
+        centerTitle: true,
+
+      ),
         body: StreamBuilder<DocumentSnapshot>(
             stream: Firestore.instance
-                .collection(Config.users)
-                .document(userId)
+                .collection(Config.cards)
+                .document(widget.cardId)
                 .snapshots(),
             builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasData) {
+                AsyncSnapshot<DocumentSnapshot> document) {
+              if (document.hasData) {
                 return CustomScrollView(
                   slivers: <Widget>[
+
                     SliverToBoxAdapter(
+                      child: Stack(
 
-                        child: Container(
-                          height: isLargeScreen ? size.height/4.5 : size.height/3.5,
-                          width: size.width,
-                          color: Theme.of(context).primaryColor,
+                        children: <Widget>[
+                          Container(
+                            height: isLargeScreen ? size.height/4.5 : size.height/5,
+                            width: size.width,
+                            color: Theme.of(context).primaryColor,
 
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white,width: 5),
-                                    borderRadius: BorderRadius.circular(80)
 
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(80),
 
-                                    child: CachedNetworkImage(
-                                      width: 120.0,
-                                      height: 120.0,
-                                      fit: BoxFit.cover,
-                                      imageUrl: snapshot.data[Config.profilePicUrl]?? "",
-                                      placeholder: (context, url) =>
-                                      new CircularProgressIndicator(),
-                                      errorWidget: (context, url, ex) => CircleAvatar(
-                                          backgroundColor: Theme.of(context).accentColor,
-                                          radius: 100.0,
-                                          child: Icon(
-                                            Icons.account_circle,
-                                            color: Colors.white,
-                                            size: 100.0,
-
-                                          )),
-                                    )),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(snapshot.data[Config.fullNames],style: TextStyle(color: Colors.white,fontSize: 20.0),),
-                              )
-                            ],
                           ),
-                        )
+                          Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: size.height/20),
+                              child: Stack(
+                                children: <Widget>[
+                                  Container(
+                                      color: Color(int.parse(document.data[Config.cardColor])),
+                                      child: Image.asset('assets/images/card_athlete.png',height: 255,)),
+                                  Positioned(
+                                    top: 8,
+                                    left: 40,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        child: CachedNetworkImage(
+                                          height: 200,
+                                          width: 135,
+                                          fit: BoxFit.cover,
+                                          imageUrl: document.data[Config.profilePicUrl],
+                                          placeholder: (context,url) => SpinKitWave(
+                                            itemBuilder: (_, int index) {
+                                              return DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context).accentColor,
+                                                ),
+                                              );
+                                            },
+                                          ),
+
+
+                                          errorWidget: (context,url,error) =>Icon(Icons.error),
+                                        ),
+
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                      top: 30.0,
+                                      left: size.width/60,
+                                      child: RotatedBox(quarterTurns: 1,child: Stack(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 38.0,
+                                            width: 175.0,
+                                            padding: EdgeInsets.all(10),
+                                            color: Color(int.parse(document.data[Config.cardColor])),
+                                            // child: Text(document[Config.cardColor]),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(top: 10.0,left: 2.0),
+                                            child: Row(
+
+                                              children: <Widget>[
+                                                Container(
+
+                                                  padding: EdgeInsets.all(4),
+                                                  child: Text("HEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
+                                                ),
+                                                Container(
+
+                                                  padding: EdgeInsets.all(2),
+                                                  child: Text(document.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
+                                                ),
+                                                Container(
+
+                                                  padding: EdgeInsets.all(4),
+                                                  child: Text("WEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
+                                                ),
+                                                Container(
+
+                                                  padding: EdgeInsets.all(4),
+                                                  child: Text(document.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),)
+                                  ),
+
+                                  Positioned(
+                                      top: isLargeScreen ? size.height/4.3: size.height/3.3,
+                                      left: size.width/8.1,
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 45.0,
+                                            width: 128.0,
+                                            padding: EdgeInsets.all(10),
+                                            color: Color(int.parse(document.data[Config.cardColor])),
+                                            // child: Text(document[Config.cardColor]),
+                                          ),
+                                          Container(
+                                            width: 150.0,
+                                            padding: EdgeInsets.all(4),
+                                            child: Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
+                                          ),
+                                        ],
+                                      )
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+
 
                     SliverToBoxAdapter(
                       child: Container(
@@ -133,7 +217,7 @@ class _CardScreenState extends State<CardScreen> {
                                         fontSize: 18.0)),
 
                                   ),
-                                  Text(snapshot.data[Config.position]??"", style: TextStyle(
+                                  Text(document.data[Config.position]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -158,7 +242,7 @@ class _CardScreenState extends State<CardScreen> {
                                         fontSize: 18.0)),
 
                                   ),
-                                  Text(snapshot.data[Config.height]??"", style: TextStyle(
+                                  Text(document.data[Config.height]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -199,7 +283,7 @@ class _CardScreenState extends State<CardScreen> {
                                         fontSize: 18.0)),
 
                                   ),
-                                  Text(snapshot.data[Config.weight]??"", style: TextStyle(
+                                  Text(document.data[Config.weight]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -224,7 +308,7 @@ class _CardScreenState extends State<CardScreen> {
                                         fontSize: 18.0)),
 
                                   ),
-                                  Text(snapshot.data[Config.CLASS]??"", style: TextStyle(
+                                  Text(document.data[Config.CLASS]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -265,7 +349,7 @@ class _CardScreenState extends State<CardScreen> {
                                   ),
 
 
-                                  Text(snapshot.data[Config.location]??"", style: TextStyle(
+                                  Text(document.data[Config.location]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -290,7 +374,7 @@ class _CardScreenState extends State<CardScreen> {
                                         fontSize: 18.0)),
 
                                   ),
-                                  Text(snapshot.data[Config.schoolOrOrg]??"", style: TextStyle(
+                                  Text(document.data[Config.schoolOrOrg]??"", style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -319,80 +403,150 @@ class _CardScreenState extends State<CardScreen> {
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: Text(snapshot.data[Config.shortBio]??""),
-                      ),
+                        child: Text(document.data[Config.shortBio]??""),
+                      )
                     ),
-                    SliverToBoxAdapter(child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text("PHOTOS",style: TextStyle(
 
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0)),
-                    ),),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            userId == document.data[Config.cardCreatorId] ? Container(
+                              padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
-                    StreamBuilder(
-                      stream: Firestore.instance.collection(Config.posts).where(Config.postAdminId,isEqualTo:userId).where(Config.isVideoPost,isEqualTo: false).where(Config.isAward,isEqualTo: false).snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (!snapshot.hasData) {
-                          return SliverToBoxAdapter(
-                            child: LoadingScreen(),
-                          );
-                        } else if (snapshot.hasData) {
-                          return SliverToBoxAdapter(
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 20.0),
-                              height: size.height/3.5,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data.documents.length,
-                                  itemBuilder: (_, int index)
-                                  {
-                                    final DocumentSnapshot document = snapshot.data.documents[
-                                    index];
-                                    return PhotoItemScroller(document: document);
-                                  }),
-                            ),
-                          );
+                              width: size.width / 2.3,
+                              //  color: Theme.of(context).primaryColor,
 
-                        } else {
-                          return SliverToBoxAdapter(
-                            child: ErrorScreen(error: snapshot.error.toString()),
-                          );
-                        }
-                      },
-                    ),
-                    SliverToBoxAdapter(child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text("HIGHLIGHTS",style: TextStyle(
+                              child: RaisedButton(
+                                elevation: 0.0,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TradeScreen(userId: userId,cardName: widget.cardName,cardId: document.data[Config.cardId],)),
+                                  );
+                                },
+                                color: Theme.of(context).primaryColorLight,
+                                child: new Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: new Text("Trade Card",
+                                      style: new TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ),
+                            ) :Container(),
+    StreamBuilder<DocumentSnapshot>(
+    stream: Firestore.instance
+        .collection(Config.users)
+        .document(userId)
+        .collection(Config.myCards)
+        .document(document.data[Config.cardId])
+        .snapshots(),
+    builder: (BuildContext context,
+    AsyncSnapshot<DocumentSnapshot> docSnap) {
+    if (docSnap.hasData && docSnap.data.exists) {
+     return Container(
+        padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0)),
-                    ),),
-                    SliverToBoxAdapter(child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("MY CARDS",style: TextStyle(
+        width: size.width / 2,
+        //  color: Theme.of(context).primaryColor,
 
-                              fontFamily: 'Montserrat',
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0)),
-                          Text("CREATE NEW",style: TextStyle(
+        child: RaisedButton(
+          elevation: 0.0,
+          onPressed: () {
 
-                              fontFamily: 'Montserrat',
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0)),
-                        ],
+            int count = document.data[Config.collectedCount] +1;
+            Firestore.instance.collection(Config.cards).document(document.data[Config.cardId])
+                .updateData({
+              Config.collectedCount:count
+            }).then((_){
+              Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
+                  .document(document.data[Config.cardId])
+                  .delete();
+            });
+
+
+
+          },
+          color: Theme.of(context).primaryColorLight,
+          child: new Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: new Text("UnCollect Card",
+                style: new TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ),
+      );
+
+    } else
+      {
+       return Container(
+          padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+
+          width: size.width / 2.3,
+          //  color: Theme.of(context).primaryColor,
+
+          child: RaisedButton(
+            elevation: 0.0,
+            onPressed: () {
+
+              int count = document.data[Config.collectedCount] +1;
+              Firestore.instance.collection(Config.cards).document(document.data[Config.cardId])
+                  .updateData({
+                Config.collectedCount:count
+              }).then((_){
+                Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
+                    .document(document.data[Config.cardId])
+                    .setData({
+                  Config.cardId:document.data[Config.cardId]
+                });
+              });
+
+
+              Map notific = Map<String,dynamic>();
+              notific[Config.notificationType] =Config.cardCollected;
+              notific[Config.cardId] = document.data[Config.cardId];
+              notific[Config.senderId] = userId;
+              notific[Config.receiverId] = document.data[Config.cardCreatorId];
+              notific[Config.cardName] = document.data[Config.fullNames];
+              notific[Config.createdOn] = FieldValue.serverTimestamp();
+              notific[Config.notificationText] = Config.collectedText;
+
+              Firestore.instance.collection(Config.notifications).add(notific).then((DocumentReference docRef){
+                Firestore.instance.collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID}).then((_){
+
+
+                });
+
+              });
+
+
+            },
+            color: Theme.of(context).accentColor,
+            child: new Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: new Text("Collect Card",
+                  style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600)),
+            ),
+          ),
+        );
+      }
+    })
+
+
+                          ],
+                        ),
                       ),
-                    ),),
-
+                    )
 
 
 

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/comments/comments_screen.dart';
 import 'package:myscout/post/view_complete_post.dart';
+import 'package:myscout/screens/cards/accepted_card_details.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:timeago/timeago.dart' as timeago;
 class NotificationItem extends StatelessWidget {
@@ -18,7 +19,7 @@ class NotificationItem extends StatelessWidget {
         .snapshots(),
     builder: (BuildContext context,
     AsyncSnapshot<DocumentSnapshot> docSnap) {
-    if (docSnap.hasData)
+    if (docSnap.hasData && docSnap.data.exists)
     {
 
       return InkWell(
@@ -46,7 +47,20 @@ class NotificationItem extends StatelessWidget {
 
                       ),
                     ));
-              }
+              } else if(document[Config.notificationType] == Config.acceptTrade)
+                {
+
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => AcceptedCardDetails(
+                          cardId: document[Config.cardId],
+                          cardName: document[Config.cardName],
+                          userId: document[Config.receiverId],
+
+                        ),
+                      ));
+                }
         },
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 10.0,horizontal: 10.0),

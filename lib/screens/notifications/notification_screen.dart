@@ -6,12 +6,14 @@ import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class NotificationScreen extends StatefulWidget {
+  NotificationScreen({this.userId});
+  final String userId;
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-
+/*
   String userId;
 
   getUserId() async{
@@ -20,13 +22,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
       userId = sharedPreferences.get(Config.userId);
     });
   }
-
+*/
 
   @override
   void initState() {
     // TODO: implement initState
 
-    getUserId();
+   // getUserId();
     super.initState();
   }
 
@@ -36,7 +38,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: Container(
 
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.notifications).where(Config.receiverId,isEqualTo: userId).snapshots(),
+          stream: Firestore.instance.collection(Config.notifications).where(Config.receiverId,isEqualTo: widget.userId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();
@@ -49,7 +51,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   {
                     final DocumentSnapshot document = snapshot.data.documents[
                     index];
-                    return NotificationItem(document: document,userId:userId);
+                    return NotificationItem(document: document,userId:widget.userId);
                   });
 
 

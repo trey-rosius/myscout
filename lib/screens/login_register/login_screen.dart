@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/cards/create_card.dart';
+
 import 'package:myscout/screens/login_register/sign_up.dart';
 import 'package:myscout/screens/profile/create_profile.dart';
 import 'package:myscout/utils/Config.dart';
@@ -9,6 +9,8 @@ import 'package:myscout/utils/authentication.dart';
 import 'package:myscout/utils/validations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
+  LoginScreen({this.userType});
+  final String userType;
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -46,6 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString(Config.userId, uid);
   }
 
+  _saveUserType(String userType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    print("saved userId to preferences");
+    prefs.setString(Config.userType, userType);
+  }
+
   void _handleFormSubmission() {
     final FormState form = formKey.currentState;
     if (!form.validate()) {
@@ -70,7 +79,22 @@ class _LoginScreenState extends State<LoginScreen> {
             print(user.displayName);
             print(user.uid);
             _saveUserId(user.uid);
+            _saveUserType(widget.userType);
 
+
+            var map = new Map<String, dynamic>();
+            map[Config.userId] = user.uid;
+            map[Config.email] = user.email;
+            map[Config.admin] = false;
+
+            map[Config.userType] = widget.userType;
+
+            map[Config.createdOn] = new DateTime.now().toString();
+            Firestore.instance.collection(Config.users)
+                .document(user.uid)
+                .setData(map,merge: true)
+
+                .then((_) {
               setState(() {
                 loading = false;
 
@@ -78,17 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (context) => CreateProfile(userId:user.uid),
+                      builder: (context) => CreateProfile(userId: user.uid),
                     ));
-
-            /*
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) =>  CreateCard(),
-                    ));
-                    */
               });
+            });
 
 
 
@@ -153,15 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             signUp = false;
                           });
-                          //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
-                          /*
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AdminSignIn(),
-                          ),
-                        );
-                        */
+
                         },
                         color: signUp ? Theme.of(context).primaryColorDark :Theme.of(context).accentColor,
                         child: new Padding(
@@ -193,15 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             signUp = true;
                           });
-                          //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
-                          /*
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AdminSignIn(),
-                          ),
-                        );
-                        */
+
                         },
                         color: signUp ? Theme.of(context).accentColor :Theme.of(context).primaryColorDark,
 
@@ -346,6 +347,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: RaisedButton(
                         elevation: 0.0,
                         onPressed: () {
+                          print("userType is"+widget.userType);
 
                           //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
                           /*

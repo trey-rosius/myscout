@@ -5,6 +5,8 @@ import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/awards/awards_screen.dart';
+import 'package:myscout/screens/cards/card_details.dart';
+import 'package:myscout/screens/cards/card_screen.dart';
 import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/chats/conversation_list_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
@@ -30,13 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
 
-  final List<Widget> _children = [
-    PlaceholderWidget(Colors.white),
-    PlaceholderWidget(Colors.white),
-    CreatePost(),
-    NotificationScreen(),
-    ProfileScreen()
-  ];
+
   final List<Widget> _segmentChildren = [
     PlayerScreen(),
     CoachScreen()
@@ -67,7 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-
+    final List<Widget> _children = [
+      CardScreen(),
+      PlaceholderWidget(Colors.white),
+      CreatePost(),
+      NotificationScreen(userId: widget.userId,),
+      ProfileScreen(userId: widget.userId,)
+    ];
     return Scaffold(
       key: _scaffoldKey,
 
@@ -122,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
               context,
               new MaterialPageRoute(
-                builder: (context) =>  CreateCard()));
+                builder: (context) =>  CreateCard(userId: widget.userId,)));
 
       },child: Icon(Icons.card_giftcard),
       ),

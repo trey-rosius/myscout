@@ -7,8 +7,9 @@ import 'package:myscout/utils/validations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class SignUpScreen extends StatefulWidget {
-  SignUpScreen({this.scaffoldKey});
+  SignUpScreen({this.scaffoldKey,this.userType});
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final String userType;
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -41,6 +42,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     prefs.setString('email', _email);
 
 
+  }
+
+  _saveUserType(String userType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    print("saved userId to preferences");
+    prefs.setString(Config.userType, userType);
   }
   _saveUid(String _uid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -79,6 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           map[Config.email] = firebaseUser.email;
           map[Config.admin] = false;
           map[Config.fullNames] = fullNamesController.text;
+          map[Config.userType] = widget.userType;
 
           map[Config.createdOn] = new DateTime.now().toString();
           Firestore.instance.collection(Config.users)
@@ -101,6 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           //save uid
           _saveUid(firebaseUser.uid);
+          _saveUserType(widget.userType);
         });
         setState(() {
           _loading = false;

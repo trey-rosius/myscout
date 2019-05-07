@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 class Config{
 
-  static final String storageBucket = "gs://cori-b6795.appspot.com/";
+  //static final String storageBucket = "gs://cori-b6795.appspot.com/";
 
 
 
@@ -48,13 +48,11 @@ class Config{
   static final String likes = "likes";
   static final String like = "like";
 
-
   static final String comments = "comments";
   static final String comment = "comment";
   static final String commentId = "commentId";
   static final String commentText = "commentText";
   static final String commentAdminId = "commentAdminId";
-
 
   static final String notifications = "notifications";
   static final String notificationId = "notificationId";
@@ -105,16 +103,33 @@ class Config{
   static final String scheduleStatus= "scheduleStatus";
   static final String private= "private";
   static final String public= "public";
+  static final String userType= "userType";
+  static final String cardCreatorId= "cardCreatorId";
 
+  static final String cards= "cards";
+  static final String cardId= "cardId";
+  static final String myCards= "myCards";
+  static final String cardColor= "cardColor";
+  static final String cardColorIndex= "cardColorIndex";
 
-
-
-
-
-
+  static final String followers= "followers";
+  static final String following= "following";
 
   static final String email = "email";
   static final String phoneNumer= "phoneNumber";
+
+  static final String acceptTrade= "acceptTrade";
+  static final String tradeAccepted= "tradeAccepted";
+  static final String tradeAcceptedText= "trade request accepted";
+  static final String tradeText= "traded a card with you";
+
+  static final String cardName= "cardName";
+
+
+  static final String collectedCount= "collectedCount";
+  static final String cardCollected= "cardCollected";
+  static final String collectedText= "collected your card";
+
 
 
   static Future<FirebaseApp> firebaseConfig() async {
