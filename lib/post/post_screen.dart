@@ -7,13 +7,15 @@ import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PostScreen extends StatefulWidget {
+  PostScreen({this.userId});
+  final String userId;
   @override
   _PostScreenState createState() => _PostScreenState();
 }
 
 class _PostScreenState extends State<PostScreen> {
   bool isLargeScreen = false;
-
+/*
   String userId;
 
   getUserId() async{
@@ -22,13 +24,13 @@ class _PostScreenState extends State<PostScreen> {
       userId = sharedPreferences.get(Config.userId);
     });
   }
-
+*/
 
   @override
   void initState() {
     // TODO: implement initState
 
-    getUserId();
+   // getUserId();
     super.initState();
   }
   @override
@@ -68,7 +70,7 @@ class _PostScreenState extends State<PostScreen> {
                       {
                         final DocumentSnapshot document = snapshot.data.documents[
                         index];
-                        return PostItem(document: document,size:size,isLargeScreen:isLargeScreen,userId:userId);
+                        return PostItem(document: document,size:size,isLargeScreen:isLargeScreen,userId:widget.userId);
                       });
 
 

@@ -11,6 +11,7 @@ import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/chats/conversation_list_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';
+import 'package:myscout/screens/home/home_page.dart';
 
 import 'package:myscout/screens/home/placeholder.dart';
 import 'package:myscout/screens/notifications/notification_screen.dart';
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = MediaQuery.of(context).size;
 
     final List<Widget> _children = [
-      CardScreen(),
+      HomePage(userId: widget.userId,),
       PlaceholderWidget(Colors.white),
       CreatePost(),
       NotificationScreen(userId: widget.userId,),
@@ -118,16 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             preferredSize: Size(double.infinity, 60)) : PreferredSize(child: Container(), preferredSize: null)
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
 
-
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                builder: (context) =>  CreateCard(userId: widget.userId,)));
-
-      },child: Icon(Icons.card_giftcard),
-      ),
       drawer: Drawer(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 40.0),
@@ -216,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       new MaterialPageRoute(
-                        builder: (context) =>  PostScreen(),
+                        builder: (context) =>  PostScreen(userId: widget.userId,),
                       ));
                 },
                 child: Padding(

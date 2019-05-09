@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
+import 'package:myscout/screens/cards/create_card.dart';
 
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
 import 'package:myscout/utils/Config.dart';
@@ -341,7 +342,8 @@ bool isLargeScreen = false;
                             child: LoadingScreen(),
                           );
                         } else if (snapshot.hasData) {
-                          return SliverToBoxAdapter(
+                          return  snapshot.data.documents.length >0 ?
+                          SliverToBoxAdapter(
                             child: Container(
                               margin: EdgeInsets.only(bottom: 20.0),
                               height: size.height/3.5,
@@ -355,6 +357,8 @@ bool isLargeScreen = false;
                                     return PhotoItemScroller(document: document);
                                   }),
                             ),
+                          ) :SliverToBoxAdapter(
+                            child: Container(),
                           );
 
                         } else {
@@ -384,12 +388,56 @@ bool isLargeScreen = false;
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
-                          Text("CREATE NEW",style: TextStyle(
+
+    StreamBuilder<DocumentSnapshot>(
+    stream: Firestore.instance
+        .collection(Config.users)
+        .document(widget.userId)
+        .snapshots(),
+    builder: (BuildContext context,
+    AsyncSnapshot<DocumentSnapshot> docSnap) {
+    if (docSnap.hasData && docSnap.data.exists) {
+      return docSnap.data[Config.cardId] != null ? FlatButton(
+        onPressed: (){
+
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>  CreateCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],)));
+        },
+        child: Text("EDIT CARD",style: TextStyle(
 
 
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0)),
+            color: Theme.of(context).accentColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 14.0),
+        ),
+      ) :
+      FlatButton(
+      onPressed: (){
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) =>  CreateCard(userId: widget.userId,)));
+
+      },
+      child: Text("CREATE CARD",style: TextStyle(
+
+
+      color: Theme.of(context).accentColor,
+      fontWeight: FontWeight.bold,
+      fontSize: 14.0),
+      ),
+      );
+
+    }else
+      {
+        return Container();
+      }
+
+
+              })
+
                         ],
                       ),
                     ),),

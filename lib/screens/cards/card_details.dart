@@ -504,7 +504,11 @@ class _CardDetailsState extends State<CardDetails> {
                 Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
                     .document(document.data[Config.cardId])
                     .setData({
-                  Config.cardId:document.data[Config.cardId]
+                  Config.cardCreatorId: document.data[Config.cardCreatorId],
+                  Config.cardId:document.data[Config.cardId],
+
+
+
                 });
               });
 

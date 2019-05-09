@@ -150,6 +150,8 @@ class _CreateCardState extends State<CreateCard> {
       userInfo[Config.height]= heightController.text;
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= sports;
+      userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+
 
       Firestore.instance
           .collection(Config.cards).add(userInfo).then((DocumentReference docRef){
@@ -159,7 +161,13 @@ class _CreateCardState extends State<CreateCard> {
             }).then((_){
               Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).document(docRef.documentID)
                   .setData({
-                Config.cardId:docRef.documentID
+                Config.cardId:docRef.documentID,
+                Config.cardCreatorId:widget.userId
+              });
+              Firestore.instance.collection(Config.users).document(widget.userId)
+                  .updateData({
+                Config.cardId:docRef.documentID,
+
               });
               setState(() {
                 loading = false;
@@ -329,7 +337,7 @@ class _CreateCardState extends State<CreateCard> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
-          "Create Card",
+          widget.cardId== null ? "Create Card" : "Edit Card",
           style: TextStyle(fontSize: 20.0, color: Colors.white),
         ),
         centerTitle: true,
