@@ -11,10 +11,10 @@ import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CardDetails extends StatefulWidget {
-  CardDetails({this.cardId,this.cardName,this.isLargeScreen});
+  CardDetails({this.cardId,this.cardName});
   final String cardId;
   final String cardName;
-  final bool isLargeScreen;
+
 
 
 
@@ -28,6 +28,7 @@ class CardDetails extends StatefulWidget {
 class _CardDetailsState extends State<CardDetails> {
 
   String userId;
+
 
   getUserId() async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -46,13 +47,33 @@ class _CardDetailsState extends State<CardDetails> {
   }
 
 
+
   bool isLargeScreen = false;
+  bool isSmallScreen = false;
+  bool  isMediumScreen = false;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
+
+
+    if(size.width < 400)
+    {
+      isMediumScreen = false;
+      isLargeScreen = false;
+      isSmallScreen = true;
+
+    }
+    else if(size.width >400 && size.width <412)
+    {
+      isMediumScreen = true;
+      isLargeScreen = false;
+      isSmallScreen = false;
+    } else{
+      isMediumScreen = false;
+      isLargeScreen = true;
+      isSmallScreen = false;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -93,15 +114,13 @@ class _CardDetailsState extends State<CardDetails> {
                                       color: Color(int.parse(document.data[Config.cardColor])),
                                       child: Image.asset('assets/images/card_athlete.png',height: 255,)),
                                   Positioned(
-                                    top: 8,
-                                    left: 40,
+                                    top: isSmallScreen ?6 :isMediumScreen ?6 :6,
+                                    left:isSmallScreen ?40 :isMediumScreen ? 37 :37,
                                     child: Padding(
                                       padding: const EdgeInsets.only(left:5.0,right:5.0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                        child: CachedNetworkImage(
-                                          height: 200,
-                                          width: 135,
+                                      child: CachedNetworkImage(
+                                          height: isSmallScreen ? 193 : isMediumScreen ? 190 : 190,
+                                          width: isSmallScreen ?133 :isMediumScreen ? 135 :135,
                                           fit: BoxFit.cover,
                                           imageUrl: document.data[Config.profilePicUrl],
                                           placeholder: (context,url) => SpinKitWave(
@@ -120,19 +139,11 @@ class _CardDetailsState extends State<CardDetails> {
 
                                       ),
                                     ),
-                                  ),
+
                                   Positioned(
                                       top: 30.0,
                                       left: size.width/60,
-                                      child: RotatedBox(quarterTurns: 1,child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 38.0,
-                                            width: 175.0,
-                                            padding: EdgeInsets.all(10),
-                                            color: Color(int.parse(document.data[Config.cardColor])),
-                                            // child: Text(document[Config.cardColor]),
-                                          ),
+                                      child: RotatedBox(quarterTurns: 1,child:
                                           Container(
                                             margin: EdgeInsets.only(top: 10.0,left: 2.0),
                                             child: Row(
@@ -160,30 +171,21 @@ class _CardDetailsState extends State<CardDetails> {
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+
+
                                       ),)
                                   ),
 
                                   Positioned(
-                                      top: isLargeScreen ? size.height/4.3: size.height/3.3,
-                                      left: size.width/8.1,
-                                      child: Stack(
-                                        children: <Widget>[
+                                    top: isSmallScreen ? size.height/2.8 :isMediumScreen ? size.height/3.3 : size.height/4.3,
+                                    left: size.width/7,
+                                      child:
                                           Container(
-                                            height: 45.0,
-                                            width: 128.0,
-                                            padding: EdgeInsets.all(10),
-                                            color: Color(int.parse(document.data[Config.cardColor])),
-                                            // child: Text(document[Config.cardColor]),
-                                          ),
-                                          Container(
-                                            width: 150.0,
+                                            width: isSmallScreen ? 140 :isMediumScreen ? 150 : 150,
                                             padding: EdgeInsets.all(4),
                                             child: Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
                                           ),
-                                        ],
-                                      )
+
                                   )
                                 ],
                               ),
@@ -439,7 +441,7 @@ class _CardDetailsState extends State<CardDetails> {
                                 ),
                               ),
                             ) :Container(),
-    StreamBuilder<DocumentSnapshot>(
+                            userId == document.data[Config.cardCreatorId]? Container() :  StreamBuilder<DocumentSnapshot>(
     stream: Firestore.instance
         .collection(Config.users)
         .document(userId)
@@ -474,7 +476,7 @@ class _CardDetailsState extends State<CardDetails> {
           },
           color: Theme.of(context).primaryColorLight,
           child: new Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(14.0),
             child: new Text("UnCollect Card",
                 style: new TextStyle(
                     color: Colors.white,
@@ -534,7 +536,7 @@ class _CardDetailsState extends State<CardDetails> {
             },
             color: Theme.of(context).accentColor,
             child: new Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(14.0),
               child: new Text("Collect Card",
                   style: new TextStyle(
                       color: Colors.white,

@@ -6,13 +6,36 @@ import 'package:myscout/screens/cards/card_details.dart';
 import 'package:myscout/utils/Config.dart';
 
 class CardItemScroller extends StatelessWidget {
-  CardItemScroller({this.document,this.isLargeScreen});
+  CardItemScroller({this.document});
   final DocumentSnapshot document;
-  final bool isLargeScreen;
+
+  bool isLargeScreen = false;
+  bool isSmallScreen = false;
+  bool  isMediumScreen = false;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+
+    if(size.width < 400)
+    {
+      isMediumScreen = false;
+      isLargeScreen = false;
+      isSmallScreen = true;
+
+    }
+    else if(size.width >400 && size.width <412)
+    {
+      isMediumScreen = true;
+      isLargeScreen = false;
+      isSmallScreen = false;
+    } else{
+      isMediumScreen = false;
+      isLargeScreen = true;
+      isSmallScreen = false;
+    }
+
     return  StreamBuilder<DocumentSnapshot>(
           stream: Firestore.instance.collection(Config.cards).document(document[Config.cardId]).snapshots(),
           builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
@@ -23,7 +46,7 @@ class CardItemScroller extends StatelessWidget {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                            builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames],isLargeScreen: isLargeScreen,),
+                            builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames]),
                           ));
                     },
                     child:
@@ -35,15 +58,13 @@ class CardItemScroller extends StatelessWidget {
                           color: Color(int.parse(docs.data[Config.cardColor])),
                           child: Image.asset('assets/images/card_athlete.png',height: 350,)),
                       Positioned(
-                        top: 7,
-                        left:  40,
+                        top: isSmallScreen ?5 :isMediumScreen ?6 :8,
+                        left:isSmallScreen ?33 :isMediumScreen ? 37 :55,
                         child: Padding(
                           padding: const EdgeInsets.only(left:5.0,right:5.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5.0),
-                            child: CachedNetworkImage(
-                              height: 200,
-                              width: 135 ,
+                          child:CachedNetworkImage(
+                              height: isSmallScreen ? 165 : isMediumScreen ? 190 : 260,
+                              width: isSmallScreen ?113 :isMediumScreen ? 135 :176,
                               fit: BoxFit.cover,
                               imageUrl: docs.data[Config.profilePicUrl],
                               placeholder: (context,url) => SpinKitWave(
@@ -61,20 +82,13 @@ class CardItemScroller extends StatelessWidget {
                             ),
 
                           ),
-                        ),
+
                       ),
                       Positioned(
-                          top: isLargeScreen ? 30 :30.0,
-                          left: size.width/60,
-                          child: RotatedBox(quarterTurns: 1,child: Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 38.0,
-                                width: 168.0,
-                                padding: EdgeInsets.all(10),
-                                color: Color(int.parse(docs.data[Config.cardColor])),
-                                // child: Text(document[Config.cardColor]),
-                              ),
+                          top: isLargeScreen ? 50 :30.0,
+                          left: isLargeScreen ?size.width/20 :size.width/60,
+                          child: RotatedBox(quarterTurns: 1,child:
+
                               Container(
                                 margin: EdgeInsets.only(top: 10.0,left: 2.0),
                                 child: Row(
@@ -83,50 +97,42 @@ class CardItemScroller extends StatelessWidget {
                                     Container(
 
                                       padding: EdgeInsets.all(4),
-                                      child: Text("HEIGHT",style: TextStyle(fontSize: 10.0,color: Colors.white),),
-                                    ),
-                                    Container(
-
-                                      padding: EdgeInsets.all(2),
-                                      child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                      child: Text("HEIGHT",style: TextStyle(fontSize:isLargeScreen? 14: 10.0,color: Colors.white),),
                                     ),
                                     Container(
 
                                       padding: EdgeInsets.all(4),
-                                      child: Text("WEIGHT",style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                      child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: isLargeScreen? 14: 10.0,color: Colors.white),),
                                     ),
                                     Container(
 
                                       padding: EdgeInsets.all(4),
-                                      child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                      child: Text("WEIGHT",style: TextStyle(fontSize: isLargeScreen? 14: 10.0,color: Colors.white),),
+                                    ),
+                                    Container(
+
+                                      padding: EdgeInsets.all(4),
+                                      child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:isLargeScreen? 14: 10.0,color: Colors.white),),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),)
-                      ),
 
+                          ),
+                      ),
                       Positioned(
-                          top: isLargeScreen ? size.height/4.35 : size.height/3.3,
-                          left: size.width/8.1,
-                          child: Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 45.0,
-                                width: 128.0,
-                                padding: EdgeInsets.all(10),
-                                color: Color(int.parse(docs.data[Config.cardColor])),
-                                // child: Text(document[Config.cardColor]),
-                              ),
+                          top: isLargeScreen ? size.height/3.3 : size.height/3.3,
+                          left: isLargeScreen ? size.width/5 : size.width/8.1,
+                          child:
                               Container(
                                 width: 150.0,
                                 padding: EdgeInsets.all(4),
                                 child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
                               ),
-                            ],
-                          )
+
                       )
+
+
                     ],
                   ),)
                 );

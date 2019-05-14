@@ -141,11 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
       body:SingleChildScrollView(
         child: Container(
 
-          padding: EdgeInsets.symmetric(horizontal: 30.0,vertical: 20.0),
+          padding: EdgeInsets.symmetric(horizontal: 30.0,vertical: 10.0),
           child: Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: size.height/12),
+                padding: EdgeInsets.only(top: size.height/14),
                 child: Image.asset(
                   'assets/images/myscout.png',
                   fit: BoxFit.cover,

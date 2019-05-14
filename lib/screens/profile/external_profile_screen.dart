@@ -104,7 +104,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                     SliverToBoxAdapter(
 
                         child: Container(
-                          height: isLargeScreen ? size.height/4.5 : size.height/3.5,
+                          height: isLargeScreen ? size.height/4.5 : size.height/3.2,
                           width: size.width,
                           color: Theme.of(context).primaryColor,
 

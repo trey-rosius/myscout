@@ -126,12 +126,16 @@ class PostItem extends StatelessWidget {
                                 );
 
                 },
-                              child: Text(
-                                docSnap.data[Config.fullNames],
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor),
+                              child: Container(
+                                width: size.width/2.5,
+                                child: Text(
+                                  docSnap.data[Config.fullNames],overflow: TextOverflow.ellipsis,maxLines: 1,
+                                  style: TextStyle(
+                                      fontSize: 17.0,
+
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                ),
                               ),
                             )
                           ],

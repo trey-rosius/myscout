@@ -57,7 +57,7 @@ class _PostScreenState extends State<PostScreen> {
       Container(
         color: Theme.of(context).primaryColor,
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.posts).where(Config.isVideoPost,isEqualTo: false).snapshots(),
+          stream: Firestore.instance.collection(Config.posts).where(Config.isVideoPost,isEqualTo: false).orderBy(Config.createdOn,descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();

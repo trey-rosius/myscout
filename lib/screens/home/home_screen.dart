@@ -134,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               InkWell(
+
                 onTap: (){
                   Navigator.of(context).pop();
                   Navigator.push(
@@ -162,10 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       new MaterialPageRoute(
-                        builder: (context) => NewsScreen(),
+                        builder: (context) => NewsScreen(userId: widget.userId,),
                       ));
                 },
-                child: Padding(
+                child: Container(
+
+                  width: size.width,
                   padding: const EdgeInsets.all(8.0),
                   child: Text("NEWS",style: TextStyle(color: Colors.white)),
                 ),
@@ -180,7 +183,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => ConversationListScreen(),
                       ));
                 },
-                child: Padding(
+                child: Container(
+
+                  width: size.width,
                   padding: const EdgeInsets.all(8.0),
                   child: Text("CHATS",style: TextStyle(color: Colors.white)),
                 ),
@@ -195,7 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => AwardsScreen(),
                       ));
                 },
-                child: Padding(
+                child:Container(
+
+                  width: size.width,
                   padding: const EdgeInsets.all(8.0),
                   child: Text("AWARDS",style: TextStyle(color: Colors.white)),
                 ),
@@ -211,7 +218,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) =>  PostScreen(userId: widget.userId,),
                       ));
                 },
-                child: Padding(
+                child:Container(
+
+                  width: size.width,
                   padding: const EdgeInsets.all(8.0),
                   child: Text("SOCIAL FEED",style: TextStyle(color: Colors.white)),
                 ),
@@ -226,13 +235,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) =>  SchedulesScreen(),
                       ));
                 },
-                child: Padding(
+                child:Container(
+
+                  width: size.width,
                   padding: const EdgeInsets.all(8.0),
                   child: Text("SCHEDULE",style: TextStyle(color: Colors.white)),
                 ),
               ),
               Divider(color: Colors.white,),
-              Padding(
+              Container(
+
+                width: size.width,
                 padding: const EdgeInsets.all(8.0),
                 child: Text("SETTINGS",style: TextStyle(color: Colors.white)),
               ),

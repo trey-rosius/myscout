@@ -206,12 +206,15 @@ class NewsItem extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Text(
-                                docSnap.data[Config.fullNames],
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor),
+                              Container(
+                                width: size.width/2.5,
+                                child: Text(
+                                  docSnap.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 17.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                ),
                               )
                             ],
                           ),

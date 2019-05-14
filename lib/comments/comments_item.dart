@@ -29,33 +29,54 @@ class CommentsItem extends StatelessWidget {
           color: Colors.white,
         borderRadius: BorderRadius.circular(10.0)
       ),
-      child: ListTile(
-        leading:  Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: ClipRRect(
-            borderRadius: new BorderRadius.circular(50),
-            child: CachedNetworkImage(
-              width: 40.0,
-              height: 40.0,
-              fit: BoxFit.cover,
-              imageUrl: docSnap.data[Config.profilePicUrl],
-              placeholder: (context, url) =>
-              new CircularProgressIndicator(),
-              errorWidget: (context, url, ex) => new Icon(Icons.error),
-            ),
-          ),
-        ),
-        title:  Text(docSnap.data[Config.fullNames],style: TextStyle(fontSize: 17.0,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),),
-        subtitle:  Padding(
-          padding: const EdgeInsets.only(top:5.0),
-          child: Text(document[Config.commentText],style: TextStyle(fontSize: 15.0,color: Theme.of(context).primaryColor),),
-        ),
-        trailing: Text(document[Config.createdOn] == null
+      child: Container(
+         child: Row(
+           mainAxisAlignment: MainAxisAlignment.start,
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: <Widget>[
+             Padding(
+               padding: const EdgeInsets.all(10.0),
+               child: ClipRRect(
+                 borderRadius: new BorderRadius.circular(50),
+                 child: CachedNetworkImage(
+                   width: 40.0,
+                   height: 40.0,
+                   fit: BoxFit.cover,
+                   imageUrl: docSnap.data[Config.profilePicUrl],
+                   placeholder: (context, url) =>
+                   new CircularProgressIndicator(),
+                   errorWidget: (context, url, ex) => new Icon(Icons.error),
+                 ),
+               ),
+             ),
+             Column(
+               mainAxisAlignment: MainAxisAlignment.start,
+               crossAxisAlignment: CrossAxisAlignment.start,
+             children: <Widget>[
+
+      Padding(
+        padding: const EdgeInsets.only(top:10.0),
+        child: Text(docSnap.data[Config.fullNames],style: TextStyle(fontSize: 17.0,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),),
+      ),
+
+     Text(document[Config.commentText],style: TextStyle(fontSize: 15.0,color: Theme.of(context).primaryColor),),
+
+      Padding(
+        padding: const EdgeInsets.only(top:5.0,bottom: 10.0),
+        child: Text(document[Config.createdOn] == null
             ? ""
             :
-            timeago.format(DateTime.fromMillisecondsSinceEpoch(
-                document[Config.createdOn].millisecondsSinceEpoch)),style: TextStyle(fontSize: 12),
-                )
+        timeago.format(DateTime.fromMillisecondsSinceEpoch(
+            document[Config.createdOn].millisecondsSinceEpoch)),style: TextStyle(fontSize: 12,color: Theme.of(context).primaryColorLight),
+        ),
+      )
+           ],
+         ),
+
+
+
+           ],
+         ),
       ),
     );
 

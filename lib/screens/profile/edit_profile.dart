@@ -651,11 +651,13 @@ class _EditProfileState extends State<EditProfile> {
 
                                       DropdownButton(
                                           value: pModel.sports ??
-                                              "BasketBall",
+                                              "Basketball",
                                           items: <String>[
-                                            "BasketBall",
-                                            "FootBall",
-                                            "VolleyBall",
+                                            "Basketball",
+                                            "Football",
+                                            "Soccer",
+                                            "Tennis",
+                                            "Baseball"
 
                                           ].map((String value) {
                                             return new DropdownMenuItem(

@@ -44,7 +44,7 @@ class _CardScreenScrollerState extends State<CardScreenScroller> {
                 {
                   final DocumentSnapshot document = snapshot.data.documents[
                   index];
-                  return CardItemScroller(document: document,isLargeScreen:isLargeScreen);
+                  return CardItemScroller(document: document);
                 });
 
           } else {

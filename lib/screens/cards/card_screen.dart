@@ -18,14 +18,7 @@ class _CardScreenState extends State<CardScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    if(size.width < 412)
-    {
-      isLargeScreen = false;
-    }
-    else
-    {
-      isLargeScreen = true;
-    }
+
 
     /*24 is for notification bar on Android*/
    final double itemHeight = (size.height - kToolbarHeight - 24) / 2.5;
@@ -47,7 +40,7 @@ class _CardScreenState extends State<CardScreen> {
                 {
                   final DocumentSnapshot document = snapshot.data.documents[
                   index];
-                  return CardItem(document: document,isLargeScreen:isLargeScreen);
+                  return CardItem(document: document);
                 });
 
           } else {

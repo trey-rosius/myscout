@@ -9,6 +9,8 @@ import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewsScreen extends StatefulWidget {
+  NewsScreen({this.userId});
+  final String userId;
   @override
   _NewsScreenState createState() => _NewsScreenState();
 }
@@ -16,14 +18,6 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   bool isLargeScreen = false;
 
-  String userId;
-
-  getUserId() async{
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      userId = sharedPreferences.get(Config.userId);
-    });
-  }
 
 
   Future<Null> help(BuildContext context) async {
@@ -37,7 +31,7 @@ class _NewsScreenState extends State<NewsScreen> {
             backgroundColor: Theme.of(context).primaryColor,
 
             content: Container(
-                height: 140.0,
+                height: 160.0,
 
               child: Column(
                 children: <Widget>[
@@ -83,7 +77,7 @@ class _NewsScreenState extends State<NewsScreen> {
   void initState() {
     // TODO: implement initState
 
-    getUserId();
+
     super.initState();
   }
   @override
@@ -122,7 +116,7 @@ class _NewsScreenState extends State<NewsScreen> {
         Navigator.push(
             context,
             new MaterialPageRoute(
-              builder: (context) => CreateNews(userId:userId),
+              builder: (context) => CreateNews(userId:widget.userId),
             ));
 
       }, child: Icon(Icons.link),),
@@ -143,7 +137,7 @@ class _NewsScreenState extends State<NewsScreen> {
                   {
                     final DocumentSnapshot document = snapshot.data.documents[
                     index];
-                    return NewsItem(document: document,size:size,isLargeScreen:isLargeScreen,userId:userId);
+                    return NewsItem(document: document,size:size,isLargeScreen:isLargeScreen,userId:widget.userId);
                   });
 
 

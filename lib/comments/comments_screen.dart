@@ -6,13 +6,25 @@ import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
 
-class CommentsScreen extends StatelessWidget {
+class Comment{
+  String commentText;
+
+  Comment({this.commentText});
+
+}
+class CommentsScreen extends StatefulWidget {
   CommentsScreen({this.userId,this.postId,this.postAdminId});
   final String userId;
   final String postId;
   final String postAdminId;
 
+  @override
+  _CommentsScreenState createState() => _CommentsScreenState();
+}
+
+class _CommentsScreenState extends State<CommentsScreen> {
   final TextEditingController textEditingController = new TextEditingController();
+
   Widget buildInput(BuildContext context) {
     return  Container(
 
@@ -38,7 +50,7 @@ class CommentsScreen extends StatelessWidget {
                     reverse: true,
                     child: TextField(
                       maxLines: null,
-                     
+
 
                       style: TextStyle(color: Colors.black, fontSize: 15.0),
                       controller: textEditingController,
@@ -66,26 +78,29 @@ class CommentsScreen extends StatelessWidget {
                       if(textEditingController.text.toString().length >0){
                         Map map = Map<String,dynamic>();
                         map[Config.commentText] = textEditingController.text;
-                        map[Config.commentAdminId] = userId;
-                        map[Config.postId] = postId;
+                        map[Config.commentAdminId] = widget.userId;
+                        map[Config.postId] = widget.postId;
                         map[Config.createdOn] = FieldValue.serverTimestamp();
-                        
-                        Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments).add(map)
+
+                        Firestore.instance.collection(Config.posts).document(widget.postId).collection(Config.comments).add(map)
                             .then((DocumentReference docRef){
-                          Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments)
+                          Firestore.instance.collection(Config.posts).document(widget.postId).collection(Config.comments)
                               .document(docRef.documentID).updateData({
+
                             Config.commentId: docRef.documentID
+                          }).then((_){
+                            textEditingController.text = "";
                           });
-                          if(postAdminId != userId)
+                          if(widget.postAdminId != widget.userId)
                           {
                             Firestore.instance
                                 .collection(Config.notifications)
 
-                                .add({Config.senderId: userId, Config.receiverId:postAdminId,
+                                .add({Config.senderId: widget.userId, Config.receiverId:widget.postAdminId,
                               Config.notificationText:" commented on your post",
                               Config.notificationType:"comment",
                               Config.commentId:docRef.documentID,
-                              Config.postId:postId,
+                              Config.postId:widget.postId,
 
                               Config.createdOn:FieldValue.serverTimestamp()}).then((DocumentReference docRef){
                               Firestore.instance
@@ -97,10 +112,13 @@ class CommentsScreen extends StatelessWidget {
                             print("this post belongs to you");
                           }
 
-                          textEditingController.text = "";
+
                         });
 
-                      }
+                      }else
+                        {
+
+                        }
 
                     },
                     color: Colors.white,
@@ -135,7 +153,7 @@ class CommentsScreen extends StatelessWidget {
               children: <Widget>[
                 Flexible(
                   child:  StreamBuilder(
-                      stream: Firestore.instance.collection(Config.posts).document(postId).collection(Config.comments).snapshots(),
+                      stream: Firestore.instance.collection(Config.posts).document(widget.postId).collection(Config.comments).snapshots(),
                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return LoadingScreen();

@@ -14,19 +14,9 @@ class PopularCardScroller extends StatefulWidget {
 }
 
 class _PopularCardScrollerState extends State<PopularCardScroller> {
-  bool isLargeScreen = false;
+
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
-    if(size.width < 412)
-    {
-      isLargeScreen = false;
-    }
-    else
-    {
-      isLargeScreen = true;
-    }
 
 
     return Scaffold(
@@ -44,7 +34,7 @@ class _PopularCardScrollerState extends State<PopularCardScroller> {
                 {
                   final DocumentSnapshot document = snapshot.data.documents[
                   index];
-                  return CardItemScroller(document: document,isLargeScreen:isLargeScreen);
+                  return CardItemScroller(document: document);
                 });
 
           } else {
