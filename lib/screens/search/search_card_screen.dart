@@ -5,16 +5,24 @@ import 'package:myscout/screens/players/player_item.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
-class CardScreen extends StatefulWidget {
-  CardScreen({this.userId,this.cardType});
+class SearchCardScreen extends StatefulWidget {
+  SearchCardScreen({this.userId,this.searchString});
   final String userId;
-  final String cardType;
+  final String searchString;
   @override
-  _CardScreenState createState() => _CardScreenState();
+  _SearchCardScreenState createState() => _SearchCardScreenState();
 }
 
-class _CardScreenState extends State<CardScreen> {
+class _SearchCardScreenState extends State<SearchCardScreen> {
+
   bool isLargeScreen = false;
+
+  @override
+  void initState() {
+    print("search String is"+widget.searchString);
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -27,23 +35,10 @@ class _CardScreenState extends State<CardScreen> {
     final double itemWidth = size.width / 2.3;
     return Scaffold(
 
-      appBar:
-      AppBar(
-        centerTitle: true,
-        elevation: 0.0,
-
-        title:Text(widget.cardType ==Config.popularCards ?"Popular Cards" :
-        widget.cardType ==Config.newCards ?"New Cards" :"My Cards" ,style: TextStyle(fontSize: 20.0),),
-
-
-      ),
       body:  StreamBuilder(
-     stream: widget.cardType ==Config.popularCards ?
-     Firestore.instance.collection(Config.cards).orderBy(Config.collectedCount,descending: true).snapshots()
-          :
-     widget.cardType ==Config.newCards ?
-     Firestore.instance.collection(Config.cards).orderBy(Config.createdOn,descending: false).snapshots() :
-     Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).snapshots(),
+     stream:
+     Firestore.instance.collection(Config.cards).snapshots(),
+
 
 
 
@@ -59,7 +54,11 @@ class _CardScreenState extends State<CardScreen> {
                 {
                   final DocumentSnapshot document = snapshot.data.documents[
                   index];
-                  return CardItem(document: document);
+                  return document[Config.fullNames]
+                      .toLowerCase()
+                      .contains(widget.searchString.toLowerCase()) ?
+
+                    CardItem(document: document) :Container();
                 });
 
           } else {

@@ -58,13 +58,13 @@ class CardItem extends StatelessWidget {
                           color: Color(int.parse(docs.data[Config.cardColor])),
                           child: Image.asset('assets/images/card_athlete.png',height: 350,)),
                       Positioned(
-                        top: isSmallScreen ?5 :isMediumScreen ?6 :6,
-                        left:isSmallScreen ?33 :isMediumScreen ? 37 :37,
+                        top: isSmallScreen ?5 :isMediumScreen ?6 :8,
+                        left:isSmallScreen ?33 :isMediumScreen ? 37 :55,
                         child: Padding(
                           padding: const EdgeInsets.only(left:5.0,right:5.0),
                           child:CachedNetworkImage(
-                            height: isSmallScreen ? 165 : isMediumScreen ? 190 : 190,
-                            width: isSmallScreen ?113 :isMediumScreen ? 135 :135,
+                            height: isSmallScreen ? 165 : isMediumScreen ? 190 : 260,
+                            width: isSmallScreen ?113 :isMediumScreen ? 135 :176,
                             fit: BoxFit.cover,
                             imageUrl: docs.data[Config.profilePicUrl],
                             placeholder: (context,url) => SpinKitWave(
@@ -85,8 +85,8 @@ class CardItem extends StatelessWidget {
 
                       ),
                       Positioned(
-                        top: isLargeScreen ? 30 :30.0,
-                        left: size.width/60,
+                        top: isLargeScreen ? 50 :30.0,
+                        left: isLargeScreen ?size.width/20 :size.width/60,
                         child: RotatedBox(quarterTurns: 1,child:
 
                         Container(
@@ -97,22 +97,22 @@ class CardItem extends StatelessWidget {
                               Container(
 
                                 padding: EdgeInsets.all(4),
-                                child: Text("HEIGHT",style: TextStyle(fontSize: 10.0,color: Colors.white),),
-                              ),
-                              Container(
-
-                                padding: EdgeInsets.all(2),
-                                child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                child: Text("HEIGHT",style: TextStyle(fontSize:isLargeScreen? 14: 10.0,color: Colors.white),),
                               ),
                               Container(
 
                                 padding: EdgeInsets.all(4),
-                                child: Text("WEIGHT",style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: isLargeScreen? 14: 10.0,color: Colors.white),),
                               ),
                               Container(
 
                                 padding: EdgeInsets.all(4),
-                                child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 10.0,color: Colors.white),),
+                                child: Text("WEIGHT",style: TextStyle(fontSize: isLargeScreen? 14: 10.0,color: Colors.white),),
+                              ),
+                              Container(
+
+                                padding: EdgeInsets.all(4),
+                                child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:isLargeScreen? 14: 10.0,color: Colors.white),),
                               ),
                             ],
                           ),
@@ -121,8 +121,8 @@ class CardItem extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: isLargeScreen ? size.height/4.35 : size.height/3.3,
-                        left: size.width/8.1,
+                        top: isLargeScreen ? size.height/3.3 : size.height/3.3,
+                        left: isLargeScreen ? size.width/5 : size.width/8.1,
                         child:
                         Container(
                           width: 150.0,

@@ -198,6 +198,8 @@ class _CreateProfileState extends State<CreateProfile> {
   void initState() {
     // TODO: implement initState
    loadProfileDetails();
+
+   print("user Id is"+widget.userId);
     super.initState();
   }
 

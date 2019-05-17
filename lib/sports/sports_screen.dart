@@ -21,6 +21,7 @@ class _SportScreenState extends State<SportScreen> {
     // TODO: implement initState
     super.initState();
     print(widget.item.name);
+    print("user id is " +widget.userId);
   }
   @override
   Widget build(BuildContext context) {

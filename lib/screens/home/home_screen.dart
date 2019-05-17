@@ -20,6 +20,7 @@ import 'package:myscout/screens/players/players_screen.dart';
 import 'package:myscout/screens/profile/edit_profile.dart';
 import 'package:myscout/screens/profile/profile_screen.dart';
 import 'package:myscout/screens/schedule/schedule_screen.dart';
+import 'package:myscout/screens/search/search_screen.dart';
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.userId});
   final String userId;
@@ -117,7 +118,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             ),
-            preferredSize: Size(double.infinity, 60)) : PreferredSize(child: Container(), preferredSize: null)
+            preferredSize: Size(double.infinity, 60)) :
+           _currentIndex ==0 ?
+           PreferredSize(child: InkWell(
+             onTap: (){
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+
+                  builder: (context) => SearchScreen(userId: widget.userId,),
+                ),
+              );
+
+
+             },
+             child: Container(
+               margin: EdgeInsets.all(10),
+               decoration: BoxDecoration(
+                   color: Colors.white,
+                   borderRadius: BorderRadius.circular(10)),
+               child: TextField(
+                 enabled: false,
+                 decoration: InputDecoration(
+                   border: InputBorder.none,
+                   contentPadding: EdgeInsets.only(top: 14.0),
+                   hintText: 'Search cards, products or awards..',
+                   hintStyle:
+                   TextStyle(fontFamily: 'Montserrat', fontSize: 14.0),
+
+                   prefixIcon: Icon(Icons.search, color: Colors.grey),
+                 ),
+               ),
+             ),
+
+
+           ), preferredSize: Size(double.infinity, 60))
+           :
+
+
+        PreferredSize(child: Container(), preferredSize: null)
       ),
 
       drawer: Drawer(
@@ -170,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   width: size.width,
                   padding: const EdgeInsets.all(8.0),
-                  child: Text("NEWS",style: TextStyle(color: Colors.white)),
+                  child: Center(child: Text("NEWS",style: TextStyle(color: Colors.white))),
                 ),
               ),
               Divider(color: Colors.white,),
@@ -186,8 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
 
                   width: size.width,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("CHATS",style: TextStyle(color: Colors.white)),
+                  padding:  EdgeInsets.all(8.0),
+                  child: Center(child: Text("CHATS",style: TextStyle(color: Colors.white))),
                 ),
               ),
               Divider(color: Colors.white,),
@@ -196,15 +236,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.of(context).pop();
                   Navigator.push(
                       context,
-                      new MaterialPageRoute(
+                       MaterialPageRoute(
                         builder: (context) => AwardsScreen(),
                       ));
                 },
                 child:Container(
 
                   width: size.width,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("AWARDS",style: TextStyle(color: Colors.white)),
+                  padding:  EdgeInsets.all(8.0),
+                  child: Center(child: Text("AWARDS",style: TextStyle(color: Colors.white))),
                 ),
               ),
               Divider(color: Colors.white,),
@@ -221,8 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child:Container(
 
                   width: size.width,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("SOCIAL FEED",style: TextStyle(color: Colors.white)),
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(child: Text("SOCIAL FEED",style: TextStyle(color: Colors.white))),
                 ),
               ),
               Divider(color: Colors.white,),
@@ -238,16 +278,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 child:Container(
 
                   width: size.width,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("SCHEDULE",style: TextStyle(color: Colors.white)),
+                  padding:  EdgeInsets.all(8.0),
+                  child: Center(child: Text("SCHEDULE",style: TextStyle(color: Colors.white))),
                 ),
               ),
               Divider(color: Colors.white,),
               Container(
 
                 width: size.width,
-                padding: const EdgeInsets.all(8.0),
-                child: Text("SETTINGS",style: TextStyle(color: Colors.white)),
+                padding:  EdgeInsets.all(8.0),
+                child: Center(child: Text("SETTINGS",style: TextStyle(color: Colors.white))),
               ),
 
             ],

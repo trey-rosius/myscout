@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/login_register/login_screen.dart';
+import 'package:myscout/utils/Config.dart';
 class WelcomeScreen extends StatefulWidget {
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
@@ -39,7 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginScreen(userType: "Athlete/Parent",),
+                        builder: (context) => LoginScreen(userType: Config.athleteOrParent,),
                       ),
                     );
 
@@ -48,7 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: new Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: new Text(
-                        "Athlete Or Parent",
+                        Config.athleteOrParent,
                         style: new TextStyle(
 
                             color: Colors.white,
@@ -69,7 +70,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                      Navigator.push(
                        context,
                        MaterialPageRoute(
-                         builder: (context) => LoginScreen(userType: "Coach/Scout",),
+                         builder: (context) => LoginScreen(userType: Config.coachScout,),
                        ),
                      );
 
@@ -78,7 +79,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                    child: new Padding(
                      padding: const EdgeInsets.all(15.0),
                      child: new Text(
-                         "Coach Or Scout",
+                         Config.coachScout,
                          style: new TextStyle(
 
                              color: Theme.of(context).primaryColorLight,
@@ -99,7 +100,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                      Navigator.push(
                        context,
                        MaterialPageRoute(
-                         builder: (context) => LoginScreen(userType: "Fan",),
+                         builder: (context) => LoginScreen(userType: Config.fan,),
                        ),
                      );
                    },
@@ -107,7 +108,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                    child: new Padding(
                      padding: const EdgeInsets.all(15.0),
                      child: new Text(
-                         "Fan",
+                         Config.fan,
                          style: new TextStyle(
 
                              color: Theme.of(context).primaryColorLight,

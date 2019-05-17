@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/cards/card_item.dart';
+import 'package:myscout/screens/cards/card_screen.dart';
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
 import 'package:myscout/screens/cards/new_card_scroller.dart';
 import 'package:myscout/screens/cards/popular_card_scroller.dart';
@@ -19,12 +20,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isLargeScreen = false;
+
+  @override
+  void initState() {
+    print("userId is "+widget.userId);
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
 
     return Scaffold(
+
       body: CustomScrollView(
         slivers: <Widget>[
       SliverToBoxAdapter(child: Padding(
@@ -38,12 +47,21 @@ class _HomePageState extends State<HomePage> {
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0)),
-            Text("VIEW ALL",style: TextStyle(
+            InkWell(
+              onTap: (){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) => CardScreen(userId: widget.userId,cardType: Config.popularCards,),
+                    ));
+              },
+              child: Text("VIEW ALL",style: TextStyle(
 
 
-                color: Theme.of(context).accentColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 14.0)),
+                  color: Theme.of(context).accentColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.0)),
+            ),
           ])
     )),
 
@@ -97,12 +115,21 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0)),
-                Text("VIEW ALL",style: TextStyle(
+                InkWell(
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (context) => CardScreen(userId: widget.userId,cardType: Config.newCards,),
+                        ));
+                  },
+                  child: Text("VIEW ALL",style: TextStyle(
 
 
-                    color: Theme.of(context).accentColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.0)),
+                      color: Theme.of(context).accentColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0)),
+                ),
               ])
       )),
       SliverToBoxAdapter(
@@ -123,12 +150,21 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0)),
-                Text("VIEW ALL",style: TextStyle(
+                InkWell(
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (context) => CardScreen(userId: widget.userId,cardType: Config.myCards,),
+                        ));
+                  },
+                  child: Text("VIEW ALL",style: TextStyle(
 
 
-                    color: Theme.of(context).accentColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.0)),
+                      color: Theme.of(context).accentColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0)),
+                ),
               ])
       )),
       SliverToBoxAdapter(

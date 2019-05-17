@@ -2,12 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:myscout/screens/gallery/photo_item.dart';
-import 'package:myscout/screens/gallery/photo_item_scroller.dart';
+
 import 'package:myscout/screens/trade_card/trade_screen.dart';
 import 'package:myscout/utils/Config.dart';
-import 'package:myscout/utils/error_screen.dart';
-import 'package:myscout/utils/loading_screen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CardDetails extends StatefulWidget {
@@ -28,12 +26,14 @@ class CardDetails extends StatefulWidget {
 class _CardDetailsState extends State<CardDetails> {
 
   String userId;
+  String userType;
 
 
   getUserId() async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       userId = sharedPreferences.get(Config.userId);
+      userType = sharedPreferences.get(Config.userType);
     });
   }
 
@@ -413,8 +413,10 @@ class _CardDetailsState extends State<CardDetails> {
                       child: Container(
                         padding: EdgeInsets.all(10.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+
+                            userType == Config.fan ? Container() :
                             userId == document.data[Config.cardCreatorId] ? Container(
                               padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
@@ -432,7 +434,7 @@ class _CardDetailsState extends State<CardDetails> {
                                 },
                                 color: Theme.of(context).primaryColorLight,
                                 child: new Padding(
-                                  padding: const EdgeInsets.all(18.0),
+                                  padding: const EdgeInsets.all(12.0),
                                   child: new Text("Trade Card",
                                       style: new TextStyle(
                                           color: Colors.white,
@@ -454,7 +456,7 @@ class _CardDetailsState extends State<CardDetails> {
      return Container(
         padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
-        width: size.width / 2,
+        width: size.width / 1.5,
         //  color: Theme.of(context).primaryColor,
 
         child: RaisedButton(
@@ -476,7 +478,7 @@ class _CardDetailsState extends State<CardDetails> {
           },
           color: Theme.of(context).primaryColorLight,
           child: new Padding(
-            padding: const EdgeInsets.all(14.0),
+            padding: const EdgeInsets.all(12.0),
             child: new Text("UnCollect Card",
                 style: new TextStyle(
                     color: Colors.white,
@@ -491,7 +493,7 @@ class _CardDetailsState extends State<CardDetails> {
        return Container(
           padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
-          width: size.width / 2.3,
+          width: size.width / 1.5,
           //  color: Theme.of(context).primaryColor,
 
           child: RaisedButton(
@@ -536,7 +538,7 @@ class _CardDetailsState extends State<CardDetails> {
             },
             color: Theme.of(context).accentColor,
             child: new Padding(
-              padding: const EdgeInsets.all(14.0),
+              padding: const EdgeInsets.all(12.0),
               child: new Text("Collect Card",
                   style: new TextStyle(
                       color: Colors.white,

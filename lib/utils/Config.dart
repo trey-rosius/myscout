@@ -131,6 +131,16 @@ class Config{
   static final String collectedText= "collected your card";
 
 
+  static final String athleteOrParent= "Athlete/Parent";
+  static final String coachScout= "Coach/Scout";
+  static final String fan= "Fan";
+
+
+  static final String popularCards= "popularCards";
+  static final String newCards= "newCards";
+
+
+
 
   static Future<FirebaseApp> firebaseConfig() async {
     final FirebaseApp app = await FirebaseApp.configure(

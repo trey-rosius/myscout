@@ -8,6 +8,7 @@ import 'package:myscout/screens/gallery/photo_item_scroller.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -23,23 +24,24 @@ class ProfileScreen extends StatefulWidget {
 
 
 class _ProfileScreenState extends State<ProfileScreen> {
-/*
-  String userId;
 
-  getUserId() async{
+  String userType;
+
+  getUserType() async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      userId = sharedPreferences.get(Config.userId);
+      userType= sharedPreferences.get(Config.userType);
+      print("userType is"+userType);
     });
   }
-*/
+
 
 
   @override
   void initState() {
     // TODO: implement initState
 
-   // getUserId();
+   getUserType();
     super.initState();
   }
 
@@ -389,6 +391,8 @@ bool isLargeScreen = false;
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
 
+
+   userType == Config.fan ? Container() :
     StreamBuilder<DocumentSnapshot>(
     stream: Firestore.instance
         .collection(Config.users)

@@ -30,6 +30,8 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       userId = sharedPreferences.get(Config.userId);
+      print("userId is "+userId);
+      print("send userID is "+widget.userId);
     });
   }
 

@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     print("saved userId to preferences");
     prefs.setString(Config.userId, uid);
+    print("user id is saved"+uid);
   }
 
   _saveUserType(String userType) async {
@@ -223,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
               ),
-              signUp ? SignUpScreen(scaffoldKey: _scaffoldKey,):  Container(
+              signUp ? SignUpScreen(scaffoldKey: _scaffoldKey,userType: widget.userType,):  Container(
                 padding: EdgeInsets.only(top: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
