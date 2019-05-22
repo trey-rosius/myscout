@@ -5,9 +5,7 @@ import 'package:myscout/news/news_screen.dart';
 import 'package:myscout/post/create_post.dart';
 import 'package:myscout/post/post_screen.dart';
 import 'package:myscout/screens/awards/awards_screen.dart';
-import 'package:myscout/screens/cards/card_details.dart';
-import 'package:myscout/screens/cards/card_screen.dart';
-import 'package:myscout/screens/cards/create_card.dart';
+
 import 'package:myscout/screens/chats/conversation_list_screen.dart';
 import 'package:myscout/screens/coaches/coach_screen.dart';
 import 'package:myscout/screens/home/gallery_screen.dart';

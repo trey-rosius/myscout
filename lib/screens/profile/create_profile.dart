@@ -102,7 +102,13 @@ class _CreateProfileState extends State<CreateProfile> {
 
   }
 
+  _saveUserId(String uid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    print("saved userId to preferences");
+    prefs.setString(Config.userId, uid);
+    print("user id is saved"+uid);
+  }
 
   saveProfileDetailsWithImage(){
 
@@ -198,7 +204,7 @@ class _CreateProfileState extends State<CreateProfile> {
   void initState() {
     // TODO: implement initState
    loadProfileDetails();
-
+   _saveUserId(widget.userId);
    print("user Id is"+widget.userId);
     super.initState();
   }

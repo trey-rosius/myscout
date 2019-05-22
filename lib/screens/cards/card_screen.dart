@@ -22,9 +22,9 @@ class _CardScreenState extends State<CardScreen> {
 
 
     /*24 is for notification bar on Android*/
-   final double itemHeight = (size.height - kToolbarHeight - 24) / 2.5;
-   final double itemHeight1 = (size.height - kToolbarHeight - 24) / 3.4;
-    final double itemWidth = size.width / 2.3;
+   final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+   final double itemHeight1 = (size.height - kToolbarHeight - 24) / 5;
+    final double itemWidth = size.width / 1.8;
     return Scaffold(
 
       appBar:

@@ -1,38 +1,129 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:myscout/utils/Config.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:myscout/screens/cards/card_details.dart';
+import 'package:myscout/utils/Config.dart';
+
 class CoachItem extends StatelessWidget {
-  CoachItem ({this.document});
+  CoachItem({this.document});
   final DocumentSnapshot document;
 
+  bool isLargeScreen = false;
+  bool isSmallScreen = false;
+  bool  isMediumScreen = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left:5.0,right:5.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5.0),
-        child: CachedNetworkImage(
-
-          fit: BoxFit.cover,
-          imageUrl: document[Config.url],
-          placeholder: (context,url) => SpinKitWave(
-            itemBuilder: (_, int index) {
-              return DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
-                ),
-              );
-            },
-          ),
+    Size size = MediaQuery.of(context).size;
 
 
-          errorWidget: (context,url,error) =>Icon(Icons.error),
-        ),
+    if(size.width < 400)
+    {
+      isMediumScreen = false;
+      isLargeScreen = false;
+      isSmallScreen = true;
 
-      ),
-    );
+    }
+    else if(size.width >400 && size.width <412)
+    {
+      isMediumScreen = true;
+      isLargeScreen = false;
+      isSmallScreen = false;
+    } else{
+      isMediumScreen = false;
+      isLargeScreen = true;
+      isSmallScreen = false;
+    }
+
+    return  StreamBuilder<DocumentSnapshot>(
+        stream: Firestore.instance.collection(Config.cards).document(document[Config.cardId]).snapshots(),
+        builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
+          if(docs.data !=null)
+          {
+            return  InkWell(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames]),
+                      ));
+                },
+                child:
+                Container(
+
+
+                  padding: EdgeInsets.all(10),
+                  child: Stack(
+                    children: <Widget>[
+
+                      Positioned(
+                        top: isSmallScreen ?5 :isMediumScreen ?6 :6,
+                        //  left:isSmallScreen ?0 :isMediumScreen ? 0 :0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:5.0,right:5.0),
+                          child:CachedNetworkImage(
+                            height: isSmallScreen ? 165 : isMediumScreen ? 242 : 250,
+                            width: isSmallScreen ?145 :isMediumScreen ? 173 :176,
+                            fit: BoxFit.cover,
+                            imageUrl: docs.data[Config.profilePicUrl],
+                            placeholder: (context,url) => SpinKitWave(
+                              itemBuilder: (_, int index) {
+                                return DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                );
+                              },
+                            ),
+
+
+                            errorWidget: (context,url,error) =>Icon(Icons.error),
+                          ),
+
+                        ),
+
+                      ),
+
+
+                      Positioned(
+                        top: isSmallScreen ? 165 : isMediumScreen ? size.height/3.35 : size.height/4.3,
+
+                        child: Container(
+                          margin: EdgeInsets.only(left: 4,right: 10),
+                          width: isSmallScreen ? 144 : isMediumScreen ? 172 : 260,
+                          height: isSmallScreen ? 163 : isMediumScreen ? 50 : 50,
+                          color: Color(int.parse(docs.data[Config.cardColor])),
+                        ),
+                      ),
+                      Positioned(
+                        top:isSmallScreen ?size.height/3.5: isMediumScreen ? size.height/3.2 :size.height/4.2,
+
+                        left: isLargeScreen ? size.width/10: size.width/15,
+                        child:
+                        Container(
+                          width: isSmallScreen ?120.0 :isMediumScreen ? 140 : 140,
+                          padding: EdgeInsets.all(4),
+
+                          child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
+                        ),
+
+                      ),
+
+                      Container(
+
+                          child: Image.asset('assets/images/card_coach.png')),
+                    ],
+                  ),)
+            );
+
+          }
+          else
+          {
+            return Container();
+          }
+
+        });
+
   }
 }

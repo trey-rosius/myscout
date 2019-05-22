@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/awards/awards_screen.dart';
+
 import 'package:myscout/screens/awards/search_awards.dart';
-import 'package:myscout/screens/search/screen1.dart';
-import 'package:myscout/screens/search/screen2.dart';
+
 import 'package:myscout/screens/search/search_card_screen.dart';
 import 'package:myscout/screens/search/users_search.dart';
 
@@ -44,6 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
     length: 3,
         child: Scaffold(
       appBar: AppBar(
+
         backgroundColor: Theme.of(context).primaryColor,
         bottom: PreferredSize(child: Column(
           children: <Widget>[

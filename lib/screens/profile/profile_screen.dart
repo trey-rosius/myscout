@@ -32,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       userType= sharedPreferences.get(Config.userType);
       print("userType is"+userType);
+      print("user Id is"+widget.userId);
     });
   }
 

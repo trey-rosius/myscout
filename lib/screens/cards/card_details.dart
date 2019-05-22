@@ -93,6 +93,88 @@ class _CardDetailsState extends State<CardDetails> {
                 return CustomScrollView(
                   slivers: <Widget>[
 
+                    document.data[Config.userType] == Config.coachScout ?
+
+                    SliverToBoxAdapter(
+                      child: Stack(
+
+                        children: <Widget>[
+                          Container(
+                            height: isLargeScreen ? size.height/4.5 : size.height/5,
+                            width: size.width,
+                            color: Theme.of(context).primaryColor,
+
+
+
+                          ),
+                          Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: size.height/20),
+                              child: Stack(
+                                children: <Widget>[
+
+                                  Positioned(
+                                    top: isSmallScreen ?5 :isMediumScreen ?6 :8,
+
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
+                                      child: CachedNetworkImage(
+                                        height: isSmallScreen ? 245 : isMediumScreen ? 242 : 260,
+                                        width: isSmallScreen ?175 :isMediumScreen ? 173 :225,
+                                        fit: BoxFit.cover,
+                                        imageUrl: document.data[Config.profilePicUrl],
+                                        placeholder: (context,url) => SpinKitWave(
+                                          itemBuilder: (_, int index) {
+                                            return DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context).accentColor,
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+
+                                        errorWidget: (context,url,error) =>Icon(Icons.error),
+                                      ),
+
+                                    ),
+                                  ),
+
+
+                                  Positioned(
+                                    top: isSmallScreen ? size.height/2.98 : isMediumScreen ? size.height/3.45 : size.height/5,
+
+                                    child: Container(
+                                      margin: EdgeInsets.only(left: 6,right: 10),
+                                      width: isSmallScreen ? 180 : isMediumScreen ? 172 : 260,
+                                      height: isSmallScreen ? 50 : isMediumScreen ? 50 : 260,
+                                      color: Color(int.parse(document.data[Config.cardColor])),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    top: isSmallScreen ? size.height/2.9 :isMediumScreen ? size.height/3.3 : size.height/4.5,
+                                    left: isSmallScreen ? size.height/15 :isMediumScreen ? size.height/15 : size.height/20,
+                                    child:
+                                    Container(
+                                      width: isSmallScreen ? 140 :isMediumScreen ? 150 : 150,
+                                      padding: EdgeInsets.all(4),
+                                      child:  Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
+                                    ),
+
+                                  ),
+                                  Container(
+
+                                      child: Image.asset('assets/images/card_coach.png',height: 255,)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    :
+
                     SliverToBoxAdapter(
                       child: Stack(
 

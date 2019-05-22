@@ -25,6 +25,58 @@ class CommentsScreen extends StatefulWidget {
 class _CommentsScreenState extends State<CommentsScreen> {
   final TextEditingController textEditingController = new TextEditingController();
 
+  Future<Null> help(BuildContext context) async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return Container(
+
+          child: AlertDialog(
+            backgroundColor: Theme.of(context).primaryColor,
+
+            content: Container(
+                height: 190.0,
+
+                child: Column(
+                  children: <Widget>[
+                    Image.asset('assets/images/myscout.png'),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("Press and hold a comment to delete. You can only delete a comment you created Or If the post belongs to You",style: TextStyle(
+                          color: Colors.white,fontSize: 18.0
+                      ),),
+                    )
+                  ],
+                )
+            ),
+            actions: <Widget>[
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  color: Theme.of(context).accentColor,
+                  child: new Text(
+                    "Ok",
+                    style: TextStyle(fontSize: 14.0,color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+
+                    // checkUserType();
+                  },
+                ),
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
   Widget buildInput(BuildContext context) {
     return  Container(
 
@@ -80,6 +132,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         map[Config.commentText] = textEditingController.text;
                         map[Config.commentAdminId] = widget.userId;
                         map[Config.postId] = widget.postId;
+                        map[Config.postAdminId] = widget.postAdminId;
                         map[Config.createdOn] = FieldValue.serverTimestamp();
 
                         Firestore.instance.collection(Config.posts).document(widget.postId).collection(Config.comments).add(map)
@@ -144,6 +197,18 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
         title:Text("Comments",style: TextStyle(fontSize: 20.0),),
 
+        actions: <Widget>[
+          InkWell(
+            onTap: (){
+              help(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right:20.0,top: 10.0),
+              child: Icon(Icons.help_outline,color: Theme.of(context).primaryColorLight,),
+            ),
+          )
+        ],
+
       ),
       body:
 
@@ -166,7 +231,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                               {
                                 final DocumentSnapshot document = snapshot.data.documents[
                                 index];
-                                return CommentsItem(document: document);
+                                return CommentsItem(document: document,userId: widget.userId,postAdminId: widget.postAdminId,);
                               });
 
 

@@ -14,6 +14,59 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+
+
+  Future<Null> help(BuildContext context) async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return Container(
+
+          child: AlertDialog(
+            backgroundColor: Theme.of(context).primaryColor,
+
+            content: Container(
+                height: 150.0,
+
+                child: Column(
+                  children: <Widget>[
+                    Image.asset('assets/images/myscout.png'),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("Press and hold a post to delete. You can only delete a post you created",style: TextStyle(
+                          color: Colors.white,fontSize: 18.0
+                      ),),
+                    )
+                  ],
+                )
+            ),
+            actions: <Widget>[
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  color: Theme.of(context).accentColor,
+                  child: new Text(
+                    "Ok",
+                    style: TextStyle(fontSize: 14.0,color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+
+                    // checkUserType();
+                  },
+                ),
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   bool isLargeScreen = false;
 /*
   String userId;
@@ -31,6 +84,7 @@ class _PostScreenState extends State<PostScreen> {
     // TODO: implement initState
 
    // getUserId();
+    print("user Id is" + widget.userId);
     super.initState();
   }
   @override
@@ -51,6 +105,18 @@ class _PostScreenState extends State<PostScreen> {
         elevation: 0.0,
 
         title:Text("Social Feed",style: TextStyle(fontSize: 20.0),),
+
+        actions: <Widget>[
+          InkWell(
+            onTap: (){
+              help(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right:20.0,top: 10.0),
+              child: Icon(Icons.help_outline,color: Theme.of(context).primaryColorLight,),
+            ),
+          )
+        ],
 
       ),
       body:

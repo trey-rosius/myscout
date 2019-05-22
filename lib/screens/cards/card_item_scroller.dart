@@ -41,7 +41,83 @@ class CardItemScroller extends StatelessWidget {
           builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
             if(docs.data !=null)
               {
-                return InkWell(
+                return document[Config.userType] == Config.coachScout ? InkWell(
+                    onTap: (){
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                            builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames]),
+                          ));
+                    },
+                    child:
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Stack(
+                        children: <Widget>[
+
+                          Positioned(
+                            top: isSmallScreen ?5 :isMediumScreen ?6 :8,
+                            left:isSmallScreen ?0 :isMediumScreen ? 0 :5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left:5.0,right:4.0),
+                              child:CachedNetworkImage(
+                                height: isSmallScreen ? 208 : isMediumScreen ? 242 : 322,
+                                width: isSmallScreen ?147 :isMediumScreen ? 173 :230,
+                                fit: BoxFit.cover,
+                                imageUrl: docs.data[Config.profilePicUrl],
+                                placeholder: (context,url) => SpinKitWave(
+                                  itemBuilder: (_, int index) {
+                                    return DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).accentColor,
+                                      ),
+                                    );
+                                  },
+                                ),
+
+
+                                errorWidget: (context,url,error) =>Icon(Icons.error),
+                              ),
+
+                            ),
+
+                          ),
+                          Positioned(
+                            top: isSmallScreen ? 165 : isMediumScreen ? size.height/3.45 : 260,
+
+                            child: Container(
+                              margin: EdgeInsets.only(left: 6,right: 10),
+                              width: isSmallScreen ? 165 : isMediumScreen ? 172 : 260,
+                              height: isSmallScreen ? 165 : isMediumScreen ? 50 : 260,
+                              color: Color(int.parse(docs.data[Config.cardColor])),
+                            ),
+                          ),
+
+
+                          Positioned(
+                            top: isLargeScreen ? size.height/3.3 : size.height/3.3,
+                            left: isLargeScreen ? size.width/5 : size.width/10,
+                            child:
+                            Container(
+                              width: 150.0,
+                              padding: EdgeInsets.all(4),
+
+                              child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
+                            ),
+
+                          ),
+
+                          Container(
+
+                              child: Image.asset('assets/images/card_coach.png',height: 350,)),
+                        ],
+                      ),)
+                )
+
+                    :
+
+
+                  InkWell(
                     onTap: (){
                       Navigator.push(
                           context,

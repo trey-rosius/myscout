@@ -27,16 +27,11 @@ class MyApp extends StatelessWidget {
 
       ),
       routes: <String, WidgetBuilder>{
-        //'/Signes': (BuildContext context) => SignesScreen(),
-        '/Login': (BuildContext context) => LoginScreen(),
-        '/Welcome': (BuildContext context) => WelcomeScreen(),
 
-        // '/HomePatients': (BuildContext context) => HomePatients(),
-        // '/HomeAdmin': (BuildContext context) => HomeAdminScreen(),
-        // '/HomePatientsNonAdmin': (BuildContext context) =>
-        //  HomePatientsNonAdmin(),
+        '/Login': (BuildContext context) => LoginScreen(),
+
       },
-      home: SplashScreen(),
+      home: WelcomeScreen(),
     );
   }
 }
