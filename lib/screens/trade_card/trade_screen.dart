@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/cards/card_item.dart';
-import 'package:myscout/screens/players/player_item.dart';
 import 'package:myscout/screens/trade_card/trade_card_item.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';

@@ -95,7 +95,7 @@ class _CreateProfileState extends State<CreateProfile> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HomeScreen(userId:widget.userId)),
+            builder: (context) => HomeScreen()),
       );
 
     });
@@ -145,7 +145,7 @@ class _CreateProfileState extends State<CreateProfile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => HomeScreen(userId:widget.userId)),
+              builder: (context) => HomeScreen()),
         );
 
       });

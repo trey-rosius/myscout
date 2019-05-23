@@ -174,22 +174,22 @@ class CardItem extends StatelessWidget {
                             children: <Widget>[
                               Container(
 
-                                padding: EdgeInsets.all(4),
+                                padding: EdgeInsets.all(2),
                                 child: Text("HEIGHT",style: TextStyle(fontSize:isLargeScreen? 12: 10.0,color: Colors.white),),
                               ),
                               Container(
 
-                                padding: EdgeInsets.all(4),
+                                padding: EdgeInsets.all(2),
                                 child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: isLargeScreen? 12: 10.0,color: Colors.white),),
                               ),
                               Container(
 
-                                padding: EdgeInsets.all(4),
+                                padding: EdgeInsets.all(2),
                                 child: Text("WEIGHT",style: TextStyle(fontSize: isLargeScreen? 12: 10.0,color: Colors.white),),
                               ),
                               Container(
 
-                                padding: EdgeInsets.all(4),
+                                padding: EdgeInsets.all(2),
                                 child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:isLargeScreen? 12: 10.0,color: Colors.white),),
                               ),
                             ],

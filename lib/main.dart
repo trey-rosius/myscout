@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:myscout/screens/home/home_screen.dart';
 import 'package:myscout/screens/login_register/login_screen.dart';
 import 'package:myscout/screens/splash_screen.dart';
 import 'package:myscout/screens/login_register/welcome_screen.dart';
+import 'package:myscout/utils/app_inherited_widget.dart';
+import 'package:myscout/utils/app_settings.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-void main() => runApp(MyApp());
+Future<void> main()async {
+  final preferences = await StreamingSharedPreferences.instance;
+  final settings = AppSettings(preferences);
+  runApp(App(settings));
+}
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
+  App(this.settings);
+  final AppSettings settings;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -14,7 +24,11 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return MaterialApp(
+    return
+      AppInheritedWidget(
+      child:
+
+      MaterialApp(
       title: 'myscout',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -31,8 +45,11 @@ class MyApp extends StatelessWidget {
         '/Login': (BuildContext context) => LoginScreen(),
 
       },
-      home: WelcomeScreen(),
-    );
+      home: HomeScreen(),
+    ),
+        settings: settings,
+
+      );
   }
 }
 
