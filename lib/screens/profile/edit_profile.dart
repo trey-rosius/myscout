@@ -79,7 +79,7 @@ class _EditProfileState extends State<EditProfile> {
     userInfo[Config.position]= positionController.text;
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
-    userInfo[Config.selectSport]= pModel.sports;
+    userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
 
     Firestore.instance
         .collection(Config.users)

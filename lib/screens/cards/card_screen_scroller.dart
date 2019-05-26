@@ -16,6 +16,12 @@ class CardScreenScroller extends StatefulWidget {
 class _CardScreenScrollerState extends State<CardScreenScroller> {
   bool isLargeScreen = false;
   @override
+  void initState() {
+    print("card user Id is "+widget.userId);
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 

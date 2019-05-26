@@ -74,7 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
         onWillPop: () => Future<bool>.value(false),
         child: PreferenceBuilder<String>(
-          settings.userId,
+
+          preference:settings.userId,
+
           builder: (context, String userId) {
             if (userId != Config.userId) {
               final List<Widget> _children = [

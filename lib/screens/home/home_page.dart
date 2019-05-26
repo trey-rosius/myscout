@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/cards/card_item.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myscout/screens/cards/card_screen.dart';
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
 import 'package:myscout/screens/cards/new_card_scroller.dart';
 import 'package:myscout/screens/cards/popular_card_scroller.dart';
 import 'package:myscout/screens/categories/category_data.dart';
 import 'package:myscout/screens/categories/category_item.dart';
+import 'package:myscout/screens/chats/chat_screen.dart';
+import 'package:myscout/screens/notifications/full_notification_screen.dart';
 import 'package:myscout/screens/players/player_item.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
@@ -19,18 +22,82 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   bool isLargeScreen = false;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     print("userId is "+widget.userId);
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+
+        //  _showItemDialog(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+
+        if(message['data']['receiverId'] != null)
+          {
+
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    senderId:message['data']['senderId'],
+                    receiverId: message['data']['receiverId'],
+
+                  ),
+                ));
+          }else
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+
+                  builder: (context) => FullNotificationScreen(userId: widget.userId),
+                ),
+              );
+            }
+
+        //  _navigateToItemDetail(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        if(message['data']['receiverId'] != null)
+        {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  senderId:message['data']['receiverId'],
+                  receiverId: message['data']['senderId'],
+
+                ),
+              ));
+
+        }else
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+
+              builder: (context) => FullNotificationScreen(userId: widget.userId),
+            ),
+          );
+        }
+        //  _navigateToItemDetail(message);
+      },
+    );
     // TODO: implement initState
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
 
     return Scaffold(
 
@@ -68,7 +135,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               margin: EdgeInsets.only(bottom: 20.0),
-              height: size.height/2.5,
+              height: ScreenUtil.getInstance().setHeight(620),
               child: PopularCardScroller(userId: widget.userId,),
             ),
           ),
@@ -135,7 +202,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: Container(
           margin: EdgeInsets.only(bottom: 20.0),
-          height: size.height/2.5,
+          height: ScreenUtil.getInstance().setHeight(620),
           child: NewCardScroller(userId: widget.userId,),
         ),
       ),
@@ -170,7 +237,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: Container(
           margin: EdgeInsets.only(bottom: 20.0),
-          height: size.height/2.5,
+          height: ScreenUtil.getInstance().setHeight(620),
           child: CardScreenScroller(userId: widget.userId,),
         ),
       )

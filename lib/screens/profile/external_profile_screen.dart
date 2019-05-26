@@ -421,6 +421,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
+                          widget.userId != userId ? Container() :
                           Text("CREATE NEW",style: TextStyle(
 
                               fontFamily: 'Montserrat',

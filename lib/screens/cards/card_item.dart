@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/screens/cards/card_details.dart';
 import 'package:myscout/utils/Config.dart';
@@ -9,32 +10,12 @@ class CardItem extends StatelessWidget {
   CardItem({this.document});
   final DocumentSnapshot document;
 
-  bool isLargeScreen = false;
-  bool isSmallScreen = false;
-  bool  isMediumScreen = false;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-
-    if(size.width < 400)
-    {
-      isMediumScreen = false;
-      isLargeScreen = false;
-      isSmallScreen = true;
-
-    }
-    else if(size.width >400 && size.width <412)
-    {
-      isMediumScreen = true;
-      isLargeScreen = false;
-      isSmallScreen = false;
-    } else{
-      isMediumScreen = false;
-      isLargeScreen = true;
-      isSmallScreen = false;
-    }
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
 
     return  StreamBuilder<DocumentSnapshot>(
         stream: Firestore.instance.collection(Config.cards).document(document[Config.cardId]).snapshots(),
@@ -52,19 +33,18 @@ class CardItem extends StatelessWidget {
                 child:
                 Container(
 
-
-                  padding: EdgeInsets.all(10),
+                  color: Color(int.parse(docs.data[Config.cardColor])),
+                  margin: EdgeInsets.all(10),
                   child: Stack(
                     children: <Widget>[
 
                       Positioned(
-                        top: isSmallScreen ?5 :isMediumScreen ?6 :6,
-                      //  left:isSmallScreen ?0 :isMediumScreen ? 0 :0,
+
                         child: Padding(
                           padding: const EdgeInsets.only(left:5.0,right:5.0),
                           child:CachedNetworkImage(
-                            height: isSmallScreen ? 165 : isMediumScreen ? 242 : 250,
-                            width: isSmallScreen ?145 :isMediumScreen ? 173 :176,
+                            height: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.getInstance().setHeight(400) :ScreenUtil.screenWidthDp >650 ?ScreenUtil.getInstance().setHeight(450) : ScreenUtil.getInstance().setHeight(500),
+                            width: ScreenUtil.getInstance().setWidth(385),
                             fit: BoxFit.cover,
                             imageUrl: docs.data[Config.profilePicUrl],
                             placeholder: (context,url) => SpinKitWave(
@@ -86,29 +66,19 @@ class CardItem extends StatelessWidget {
                       ),
 
 
-                      Positioned(
-                        top: isSmallScreen ? 165 : isMediumScreen ? size.height/3.35 : size.height/4.3,
 
-                        child: Container(
-                          margin: EdgeInsets.only(left: 4,right: 10),
-                          width: isSmallScreen ? 144 : isMediumScreen ? 172 : 260,
-                          height: isSmallScreen ? 163 : isMediumScreen ? 50 : 50,
-                          color: Color(int.parse(docs.data[Config.cardColor])),
-                        ),
-                      ),
-                      Positioned(
-                        top:isSmallScreen ?size.height/3.5: isMediumScreen ? size.height/3.2 :size.height/4.2,
 
-                        left: isLargeScreen ? size.width/10: size.width/15,
-                        child:
-                        Container(
-                          width: isSmallScreen ?120.0 :isMediumScreen ? 140 : 140,
-                          padding: EdgeInsets.all(4),
+                        Center(
+                          child: Container(
 
-                          child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
+                            margin: EdgeInsets.only(top:ScreenUtil.screenWidthDp>413? ScreenUtil.instance.setHeight(400) : ScreenUtil.instance.setHeight(500),left: 10),
+
+                            child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                            TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                          ),
                         ),
 
-                      ),
+
 
                       Container(
 
@@ -129,20 +99,16 @@ class CardItem extends StatelessWidget {
                 },
                 child:
                 Container(
-                  padding: EdgeInsets.all(10),
+                  color: Color(int.parse(docs.data[Config.cardColor])),
+                  margin: EdgeInsets.all(10),
                   child: Stack(
                     children: <Widget>[
-                      Container(
-                          color: Color(int.parse(docs.data[Config.cardColor])),
-                          child: Image.asset('assets/images/card_athlete.png',)),
+
                       Positioned(
-                        top: isSmallScreen ?5 :isMediumScreen ?6 :7,
-                        left:isSmallScreen ?33 :isMediumScreen ? 37 :40,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left:5.0,right:5.0),
-                          child:CachedNetworkImage(
-                            height: isSmallScreen ? 165 : isMediumScreen ? 190 : 200,
-                            width: isSmallScreen ?113 :isMediumScreen ? 135 :135,
+                        left:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.instance.setWidth(80) :ScreenUtil.screenWidthDp >650 ? ScreenUtil.instance.setWidth(60) : ScreenUtil.instance.setWidth(80),
+                        child: CachedNetworkImage(
+                            height:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil.getInstance().setHeight(420) : ScreenUtil.screenWidthDp >650 ? ScreenUtil.getInstance().setHeight(470) : ScreenUtil.getInstance().setHeight(550),
+                            width:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.getInstance().setWidth(280) : ScreenUtil.screenWidthDp >650 ? ScreenUtil.getInstance().setWidth(190) : ScreenUtil.getInstance().setWidth(280),
                             fit: BoxFit.cover,
                             imageUrl: docs.data[Config.profilePicUrl],
                             placeholder: (context,url) => SpinKitWave(
@@ -161,55 +127,74 @@ class CardItem extends StatelessWidget {
 
                         ),
 
+
+                      Container(
+
+                        child: Center(
+                          child: RotatedBox(quarterTurns: 1,child:
+
+                            Container(
+
+                              margin: EdgeInsets.only(top:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(300) : ScreenUtil.screenWidthDp>650? ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(360),
+                                  left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? 40 : ScreenUtil.screenWidthDp>650? 60 : 40),
+
+                              child: Row(
+
+                                children: <Widget>[
+                                  Container(
+
+                                    padding: EdgeInsets.all(2),
+                                    child: Text("HEIGHT",style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil(allowFontScaling: true).setSp(23) : ScreenUtil.screenWidthDp>650 ? ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(20),color: Colors.white),),
+                                  ),
+                                  Container(
+
+                                    padding: EdgeInsets.all(2),
+                                    child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil(allowFontScaling: true).setSp(23) : ScreenUtil.screenWidthDp>650 ? ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(20),color: Colors.white),),
+                                  ),
+                                  Container(
+
+                                    padding: EdgeInsets.all(2),
+                                    child: Text("WEIGHT",style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil(allowFontScaling: true).setSp(23) : ScreenUtil.screenWidthDp>650 ? ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(20),color: Colors.white),),
+                                  ),
+                                  Container(
+
+                                    padding: EdgeInsets.all(2),
+                                    child: Text(docs.data[Config.weight],maxLines: 1,overflow:
+                                    TextOverflow.ellipsis,style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil(allowFontScaling: true).setSp(23) : ScreenUtil.screenWidthDp>650 ? ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(20),color: Colors.white),),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            ),
+                        ),
                       ),
-                      Positioned(
-                        top: isLargeScreen ? 30 :30.0,
-                        left: isLargeScreen ?size.width/30 :size.width/60,
-                        child: RotatedBox(quarterTurns: 1,child:
 
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0,left: 2.0),
-                          child: Row(
 
-                            children: <Widget>[
-                              Container(
+                        Center(
+                          child: Container(
 
-                                padding: EdgeInsets.all(2),
-                                child: Text("HEIGHT",style: TextStyle(fontSize:isLargeScreen? 12: 10.0,color: Colors.white),),
-                              ),
-                              Container(
+                             width: ScreenUtil.screenWidthDp>413? ScreenUtil.instance.setWidth(400) : ScreenUtil.instance.setWidth(500),
 
-                                padding: EdgeInsets.all(2),
-                                child: Text(docs.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: isLargeScreen? 12: 10.0,color: Colors.white),),
-                              ),
-                              Container(
 
-                                padding: EdgeInsets.all(2),
-                                child: Text("WEIGHT",style: TextStyle(fontSize: isLargeScreen? 12: 10.0,color: Colors.white),),
-                              ),
-                              Container(
+                            margin: EdgeInsets.only(top:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.instance.setHeight(400) :ScreenUtil.screenWidthDp>650 ? ScreenUtil.instance.setHeight(450) : ScreenUtil.instance.setHeight(500),
+                                left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?60 : ScreenUtil.screenWidthDp >650 ?
 
-                                padding: EdgeInsets.all(2),
-                                child: Text(docs.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:isLargeScreen? 12: 10.0,color: Colors.white),),
-                              ),
-                            ],
+                                100 : 60),
+
+                            child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                            TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
                           ),
                         ),
 
-                        ),
-                      ),
-                      Positioned(
-                        top: isLargeScreen ? size.height/4.3 : size.height/3.3,
-                        left: isLargeScreen ? size.width/8 : size.width/8.1,
-                        child:
-                        Container(
-                          width: 100.0,
 
-                          padding: EdgeInsets.all(4),
-                          child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize:  14.0,color: Colors.white),),
-                        ),
+                      Container(
 
-                      )
+                          child: Image.asset('assets/images/card_athlete.png',)),
 
 
                     ],

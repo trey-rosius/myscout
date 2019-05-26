@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myscout/screens/cards/card_item.dart';
 import 'package:myscout/screens/coaches/coach_item.dart';
 import 'package:myscout/screens/players/player_item.dart';
@@ -16,16 +17,11 @@ class CoachScreen extends StatefulWidget {
 
 class _CoachScreenState extends State<CoachScreen> {
   bool isLargeScreen = false;
+  bool isMediumScreen = false;
+  bool isSmallScreen = false;
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
 
-
-
-    /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemHeight1 = (size.height - kToolbarHeight - 24) / 5;
-    final double itemWidth = size.width / 1.8;
     return Scaffold(
 
       body:  StreamBuilder(
@@ -39,8 +35,11 @@ class _CoachScreenState extends State<CoachScreen> {
             return LoadingScreen();
           } else if (snapshot.hasData) {
             return GridView.builder(
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: isLargeScreen ? (itemWidth / itemHeight1) : (itemWidth / itemHeight), crossAxisCount: 2),
+                gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(370)/ScreenUtil.instance.setHeight(650)) :
+                    (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(600))
+                        :(ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(980))
+                    ,crossAxisCount:ScreenUtil.screenWidthDp>1023 ? 3 : 2),
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (_, int index)
                 {

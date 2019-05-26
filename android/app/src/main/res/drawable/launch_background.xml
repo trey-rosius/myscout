@@ -7,6 +7,6 @@
      <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/splash_myscout" />
+            android:src="@mipmap/splash" />
     </item>
 </layer-list>

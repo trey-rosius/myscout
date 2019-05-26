@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/cards/card_item.dart';
-import 'package:myscout/screens/players/player_item.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
@@ -14,17 +14,17 @@ class CardScreen extends StatefulWidget {
 }
 
 class _CardScreenState extends State<CardScreen> {
-  bool isLargeScreen = false;
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-
-
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
     /*24 is for notification bar on Android*/
-   final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-   final double itemHeight1 = (size.height - kToolbarHeight - 24) / 5;
-    final double itemWidth = size.width / 1.8;
+  // final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+  // final double itemHeight1 = (size.height - kToolbarHeight - 24) / 2.05;
+  //  final double itemWidth1 = size.width / 1.4;
+  //  final double itemWidth = size.width / 1.8;
     return Scaffold(
 
       appBar:
@@ -53,7 +53,10 @@ class _CardScreenState extends State<CardScreen> {
           } else if (snapshot.hasData) {
             return GridView.builder(
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: isLargeScreen ? (itemWidth / itemHeight1) : (itemWidth / itemHeight), crossAxisCount: 2),
+                    childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(370)/ScreenUtil.instance.setHeight(650)) :
+                    (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(600))
+                        :(ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(980))
+                    ,crossAxisCount:ScreenUtil.screenWidthDp>1023 ? 3 : 2),
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (_, int index)
                 {

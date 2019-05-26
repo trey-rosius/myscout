@@ -5,14 +5,14 @@ import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class NotificationScreen extends StatefulWidget {
-  NotificationScreen({this.userId});
+class FullNotificationScreen extends StatefulWidget {
+  FullNotificationScreen({this.userId});
   final String userId;
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  _FullNotificationScreenState createState() => _FullNotificationScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
+class _FullNotificationScreenState extends State<FullNotificationScreen> {
 /*
   String userId;
 
@@ -28,13 +28,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void initState() {
     // TODO: implement initState
 
-   // getUserId();
+    // getUserId();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar:
+      AppBar(
+        centerTitle: true,
+        elevation: 0.0,
+
+        title:Text("Notifications",style: TextStyle(fontSize: 20.0),),
+
+
+      ),
       body: Container(
 
         child: StreamBuilder(

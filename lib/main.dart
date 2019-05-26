@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myscout/screens/home/home_screen.dart';
 import 'package:myscout/screens/login_register/login_screen.dart';
-import 'package:myscout/screens/splash_screen.dart';
-import 'package:myscout/screens/login_register/welcome_screen.dart';
 import 'package:myscout/utils/app_inherited_widget.dart';
 import 'package:myscout/utils/app_settings.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -20,6 +19,7 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

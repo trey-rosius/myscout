@@ -79,7 +79,7 @@ class _CreateProfileState extends State<CreateProfile> {
     userInfo[Config.position]= positionController.text;
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
-    userInfo[Config.selectSport]= pModel.sports;
+    userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
 
     Firestore.instance
         .collection(Config.users)
@@ -309,26 +309,38 @@ class _CreateProfileState extends State<CreateProfile> {
         });
   }
   bool isLargeScreen = false;
+  bool isMediumScreen = false;
+  bool isSmallScreen = false;
 
   @override
   Widget build(BuildContext context) {
    
     Size size = MediaQuery.of(context).size;
-    if(size.width < 412)
-      {
-        isLargeScreen = false;
-      }
-      else
-        {
-          isLargeScreen = true;
-        }
+
+    if(size.width < 400)
+    {
+      isMediumScreen = false;
+      isLargeScreen = false;
+      isSmallScreen = true;
+
+    }
+    else if(size.width >400 && size.width <412)
+    {
+      isMediumScreen = true;
+      isLargeScreen = false;
+      isSmallScreen = false;
+    } else{
+      isMediumScreen = false;
+      isLargeScreen = true;
+      isSmallScreen = false;
+    }
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: size.height / 3.8,
+            height: isSmallScreen ? size.height / 3.8 : isMediumScreen ?size.height / 4.5 : size.height / 3.8,
             alignment: Alignment.center,
             child: Text(
               "Create Profile",

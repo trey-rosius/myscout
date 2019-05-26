@@ -112,7 +112,7 @@ class NewsItem extends StatelessWidget {
       },
       child: Container(
         width: size.width,
-        height: isLargeScreen ? size.height / 2.2 : size.height / 1.5,
+        height: isLargeScreen ? size.height / 2.0 : size.height / 1.5,
         margin: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10.0)),

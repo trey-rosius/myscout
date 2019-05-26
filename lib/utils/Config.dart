@@ -129,6 +129,8 @@ class Config{
   static final String collectedCount= "collectedCount";
   static final String cardCollected= "cardCollected";
   static final String collectedText= "collected your card";
+  static final String notificationToken= "notificationToken";
+
 
 
   static final String athleteOrParent= "Athlete/Parent";

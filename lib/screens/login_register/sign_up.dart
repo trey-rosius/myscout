@@ -7,14 +7,21 @@ import 'package:myscout/utils/validations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class SignUpScreen extends StatefulWidget {
-  SignUpScreen({this.scaffoldKey,this.userType});
+  SignUpScreen({this.scaffoldKey,this.userType,this.token});
   final GlobalKey<ScaffoldState> scaffoldKey;
   final String userType;
+  final String token;
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("notification token"+widget.token);
+  }
   final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 
   ScrollController scrollController = new ScrollController();
@@ -86,6 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           map[Config.userId] = firebaseUser.uid;
           map[Config.email] = firebaseUser.email;
           map[Config.admin] = false;
+          map[Config.notificationToken] = widget.token;
           map[Config.fullNames] = fullNamesController.text;
           map[Config.userType] = widget.userType;
 

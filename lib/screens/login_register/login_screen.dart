@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:myscout/screens/login_register/sign_up.dart';
 import 'package:myscout/screens/profile/create_profile.dart';
 import 'package:myscout/utils/Config.dart';
@@ -9,13 +9,21 @@ import 'package:myscout/utils/authentication.dart';
 import 'package:myscout/utils/validations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
-  LoginScreen({this.userType});
+  LoginScreen({this.userType,this.token});
   final String userType;
+  final String token;
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("notification token"+widget.token);
+  }
 
   final GlobalKey<FormState> formKey =  GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey =  GlobalKey<ScaffoldState>();
@@ -28,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Validations validations = new Validations();
   bool loading = false;
+  bool loading1 = false;
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content:  Text(
@@ -38,6 +47,86 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Theme.of(context).accentColor,
     ));
   }
+
+  Future<Null> _facebookLogin(BuildContext context) async {
+    setState(() {
+      loading1 = true;
+    });
+
+    final FacebookLoginResult result =
+    await facebookSignIn.logInWithReadPermissions(['email']);
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accesstoken = result.accessToken;
+        //assuming sucess in FacebookLoginStatus.loggedIn
+        /// we use FacebookAuthProvider class to get a credential from accessToken
+        /// this will return an AuthCredential object that we will use to auth in firebase
+        AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: accesstoken.token);
+
+
+        FirebaseUser user = await _auth.signInWithCredential(credential);
+        // .signInWithFacebook(accessToken: accesstoken.token);
+        if (user != null) {
+          print(user.email);
+          print(user.displayName);
+          print(user.uid);
+          _saveUserId(user.uid);
+          _saveUserType(widget.userType);
+
+
+          var map = new Map<String, dynamic>();
+          map[Config.userId] = user.uid;
+          map[Config.email] = user.email;
+          map[Config.admin] = false;
+          map[Config.notificationToken] = widget.token;
+          map[Config.userType] = widget.userType;
+
+          map[Config.createdOn] = new DateTime.now().toString();
+          Firestore.instance.collection(Config.users)
+              .document(user.uid)
+              .setData(map,merge: true)
+
+              .then((_) {
+            setState(() {
+              loading = false;
+
+
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => CreateProfile(userId: user.uid),
+                  ));
+            });
+          });
+
+
+
+
+
+        }else
+          {
+            showInSnackBar("Something Went Wrong");
+          }
+
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        setState(() {
+          loading1 = false;
+        });
+        //  _showMessage('Login cancelled by the user.');
+        print('Login cancelled by the user.');
+        break;
+      case FacebookLoginStatus.error:
+        setState(() {
+          loading1 = false;
+        });
+        print('Something went wrong with the login process.\n'
+            'Here\'s the error Facebook gave us: ${result.errorMessage}');
+        break;
+    }
+  }
+
   bool signUp = false;
   bool autovalidate = false;
 
@@ -87,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
             map[Config.userId] = user.uid;
             map[Config.email] = user.email;
             map[Config.admin] = false;
-
+            map[Config.notificationToken] = widget.token;
             map[Config.userType] = widget.userType;
 
             map[Config.createdOn] = new DateTime.now().toString();
@@ -224,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
               ),
-              signUp ? SignUpScreen(scaffoldKey: _scaffoldKey,userType: widget.userType,):  Container(
+              signUp ? SignUpScreen(scaffoldKey: _scaffoldKey,userType: widget.userType,token: widget.token,):  Container(
                 padding: EdgeInsets.only(top: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -299,7 +388,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           Column(
                             children: <Widget>[
                               loading == true
-                                  ? new CircularProgressIndicator() :
+                                  ?  Padding(
+                              padding: EdgeInsets.all(10),
+                child: CircularProgressIndicator(),
+                          ) :
 
                               Container(
                                 padding: EdgeInsets.only(top: 10.0),
@@ -339,39 +431,39 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 40.0,vertical: 40.0),
                       child: Text("Forgot Password ?",style: TextStyle(color: Colors.white),),
                     ),
-                    Container(
-                     // padding: EdgeInsets.only(top: 10.0),
+                    Column(
+                      children: <Widget>[
 
-                      width: size.width / 1.3,
-                      //  color: Theme.of(context).primaryColor,
+                        loading1 == true
+                            ?  Padding(
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator(),
+                        ) :
+                        Container(
+                         // padding: EdgeInsets.only(top: 10.0),
 
-                      child: RaisedButton(
-                        elevation: 0.0,
-                        onPressed: () {
-                          print("userType is"+widget.userType);
+                          width: size.width / 1.3,
+                          //  color: Theme.of(context).primaryColor,
 
-                          //  Navigator.of(context).pushReplacementNamed('/HomeScreen');
-                          /*
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AdminSignIn(),
+                          child: RaisedButton(
+                            elevation: 0.0,
+                            onPressed: () =>_facebookLogin(context),
+
+
+                            color: Theme.of(context).primaryColorLight,
+                            child: new Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: new Text(
+                                  "Login with Facebook",
+                                  style: new TextStyle(
+
+                                      color: Colors.white,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600)),
+                            ),
                           ),
-                        );
-                        */
-                        },
-                        color: Theme.of(context).primaryColorLight,
-                        child: new Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: new Text(
-                              "Login with Facebook",
-                              style: new TextStyle(
-
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w600)),
                         ),
-                      ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
