@@ -80,16 +80,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
               child:
               Image.asset('assets/images/edit.png'),
             ):
-        InkWell(
-          onTap: (){
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (context) => ChatScreen(senderId: userId,receiverId: widget.userId,),
-                ));
-          },
-          child: Image.asset('assets/images/chat.png'),
-        )
+            Container()
           ],
 
         ),

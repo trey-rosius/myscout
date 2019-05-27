@@ -66,7 +66,7 @@ class PlayerItem extends StatelessWidget {
                           Container(
 
                             margin: EdgeInsets.only(top:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(300) : ScreenUtil.screenWidthDp>650? ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(360),
-                                left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? 40 : ScreenUtil.screenWidthDp>650? 60 : 40),
+                                left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? 40 : ScreenUtil.screenWidthDp>650? 60 : 50),
 
                             child: Row(
 
@@ -108,16 +108,42 @@ class PlayerItem extends StatelessWidget {
                       Center(
                         child: Container(
 
-                          width: ScreenUtil.screenWidthDp>413? ScreenUtil.instance.setWidth(400) : ScreenUtil.instance.setWidth(500),
+
+                          width: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.getInstance().setWidth(230) : ScreenUtil.screenWidthDp>650 ? ScreenUtil.getInstance().setWidth(160) : ScreenUtil.getInstance().setWidth(200),
 
 
-                          margin: EdgeInsets.only(top:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.instance.setHeight(400) :ScreenUtil.screenWidthDp>650 ? ScreenUtil.instance.setHeight(450) : ScreenUtil.instance.setHeight(500),
-                              left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?60 : ScreenUtil.screenWidthDp >650 ?
+                          margin: EdgeInsets.only(top:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.instance.setHeight(410) :ScreenUtil.screenWidthDp>650 ? ScreenUtil.instance.setHeight(450) : ScreenUtil.instance.setHeight(500),
+                              left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?45 : ScreenUtil.screenWidthDp >650 ?
 
                               100 : 60),
 
-                          child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
-                          TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(25),color: Colors.white),),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                              TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(25),color: Colors.white),),
+                              Padding(
+                                padding: const EdgeInsets.only(top:5.0),
+                                child: Row(
+
+
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(docs.data[Config.schoolOrOrg],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                      TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(14),color: Colors.white),),
+                                    ),
+
+                                    Text(" . #"+docs.data[Config.jerseyNumber],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(16),color: Colors.white),),
+                                    Text(docs.data[Config.position],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(16),color: Colors.white),),
+
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 

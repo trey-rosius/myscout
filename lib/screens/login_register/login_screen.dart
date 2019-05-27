@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:myscout/screens/login_register/forgot_password.dart';
 import 'package:myscout/screens/login_register/sign_up.dart';
 import 'package:myscout/screens/profile/create_profile.dart';
 import 'package:myscout/utils/Config.dart';
@@ -429,7 +430,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0,vertical: 40.0),
-                      child: Text("Forgot Password ?",style: TextStyle(color: Colors.white),),
+                      child: FlatButton(
+                             onPressed: ()=>  Navigator.push(
+                                 context,
+                                 new MaterialPageRoute(
+                                   builder: (context) => ForgotPasswordScreen(),
+                                 )),
+                          child: Text("Forgot Password ?",style: TextStyle(color: Colors.white),)),
                     ),
                     Column(
                       children: <Widget>[

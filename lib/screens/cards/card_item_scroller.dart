@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/screens/cards/card_details.dart';
+import 'package:myscout/screens/cards/full_screen_card.dart';
 import 'package:myscout/utils/Config.dart';
 
 class CardItemScroller extends StatelessWidget {
@@ -30,7 +31,8 @@ class CardItemScroller extends StatelessWidget {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                            builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames]),
+                          //  builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames],cardCreator: docs.data[Config.cardCreatorId] ,),
+                            builder: (context) => FullScreenCard(document: document,),
                           ));
                     },
                     child:
@@ -79,8 +81,26 @@ class CardItemScroller extends StatelessWidget {
 
                                 40 : 20),
 
-                                child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
-                                TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(36) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(22) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                    TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(36) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(22) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(docs.data[Config.schoolOrOrg],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                        TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(25) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(15) : ScreenUtil(allowFontScaling: true).setSp(22),color: Colors.white),),
+                                        Text(" - "+docs.data[Config.title],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                        TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(25) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(15) : ScreenUtil(allowFontScaling: true).setSp(22),color: Colors.white),),
+
+                                      ],
+                                    ),
+
+
+
+                                  ],
+                                ),
                               ),
                             ),
 
@@ -105,7 +125,8 @@ class CardItemScroller extends StatelessWidget {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                            builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames]),
+                            //  builder: (context) => CardDetails(cardId: document[Config.cardId],cardName: docs.data[Config.fullNames],cardCreator: docs.data[Config.cardCreatorId] ,),
+                            builder: (context) => FullScreenCard(document: document,),
                           ));
                     },
                     child:
@@ -149,7 +170,7 @@ class CardItemScroller extends StatelessWidget {
                                 Container(
 
                                   margin: EdgeInsets.only(bottom:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(30) : ScreenUtil.screenWidthDp>650? 20 : ScreenUtil.instance.setHeight(40),
-                                      left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? 50 : ScreenUtil.screenWidthDp>650? 80 : 30),
+                                      left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? 50 : ScreenUtil.screenWidthDp>650? 80 : 35),
 
                                   child: Row(
 
@@ -191,13 +212,40 @@ class CardItemScroller extends StatelessWidget {
 
 
                                   width: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ?  ScreenUtil.getInstance().setWidth(250) : ScreenUtil.screenWidthDp>650 ? ScreenUtil.getInstance().setWidth(160) : ScreenUtil.getInstance().setWidth(200),
-                                  margin:EdgeInsets.only(top: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?ScreenUtil.instance.setHeight(400) :ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(400) : ScreenUtil.instance.setHeight(400),
-                                       left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?80 : ScreenUtil.screenWidthDp >650 ?
+                                  margin:EdgeInsets.only(top: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?ScreenUtil.instance.setHeight(430) :ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(420) : ScreenUtil.instance.setHeight(400),
+                                       left: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)?65 : ScreenUtil.screenWidthDp >650 ?
 
-                                  100 : 40) ,
+                                  100 : 50) ,
 
-                                  child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
-                                  TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                      TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(30),color: Colors.white),),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top:5.0),
+                                      child: Row(
+
+
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(docs.data[Config.schoolOrOrg],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                            TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(14),color: Colors.white),),
+                                          ),
+
+                                          Text(" . #"+docs.data[Config.jerseyNumber],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                          TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(16),color: Colors.white),),
+                                          Text(docs.data[Config.position],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                          TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(20) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(18) : ScreenUtil(allowFontScaling: true).setSp(16),color: Colors.white),),
+
+                                        ],
+                                      ),
+                                    ),
+
+
+                                    ],
+                                  ),
                                 ),
                               ),
 

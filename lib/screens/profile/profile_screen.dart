@@ -409,7 +409,7 @@ bool isLargeScreen = false;
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) =>  CreateCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],)));
+                  builder: (context) =>  CreateCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],userType: userType)));
         },
         child: Text("EDIT CARD",style: TextStyle(
 
@@ -424,7 +424,7 @@ bool isLargeScreen = false;
         Navigator.push(
             context,
             new MaterialPageRoute(
-                builder: (context) =>  CreateCard(userId: widget.userId,)));
+                builder: (context) =>  CreateCard(userId: widget.userId,userType: userType,)));
 
       },
       child: Text("CREATE CARD",style: TextStyle(

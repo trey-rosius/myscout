@@ -72,8 +72,25 @@ class CoachItem extends StatelessWidget {
 
                           margin: EdgeInsets.only(top:ScreenUtil.screenWidthDp>413? ScreenUtil.instance.setHeight(400) : ScreenUtil.instance.setHeight(500),left: 10),
 
-                          child: Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
-                          TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(docs.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                              TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(30) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(25) : ScreenUtil(allowFontScaling: true).setSp(36),color: Colors.white),),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(docs.data[Config.schoolOrOrg],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                  TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(25) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(15) : ScreenUtil(allowFontScaling: true).setSp(22),color: Colors.white),),
+                                  Text(" - "+docs.data[Config.title],maxLines: 1,overflow: TextOverflow.ellipsis,style:
+                                  TextStyle(fontSize:(ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil(allowFontScaling: true).setSp(25) :  ScreenUtil.screenWidthDp>650 ?  ScreenUtil(allowFontScaling: true).setSp(15) : ScreenUtil(allowFontScaling: true).setSp(22),color: Colors.white),),
+
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 

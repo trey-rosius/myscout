@@ -103,6 +103,11 @@ class Config{
   static final String scheduleStatus= "scheduleStatus";
   static final String private= "private";
   static final String public= "public";
+  static final String title= "title";
+  static final String freshMan= "freshman";
+  static final String junior= "junior";
+  static final String senior= "senior";
+  static final String jerseyNumber= "jerseyNumber";
   static final String userType= "userType";
   static final String cardCreatorId= "cardCreatorId";
 

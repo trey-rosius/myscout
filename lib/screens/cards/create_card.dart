@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:myscout/models/card_model.dart';
 import 'package:myscout/screens/cards/card_color.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,9 +15,10 @@ import 'package:uuid/uuid.dart';
 import 'data.dart';
 import 'package:myscout/models/profile_model.dart';
 class CreateCard extends StatefulWidget {
-  CreateCard({this.userId,this.cardId});
+  CreateCard({this.userId,this.cardId,this.userType});
   final String userId;
   final String cardId;
+  final String userType;
   @override
   _CreateCardState createState() => _CreateCardState();
 }
@@ -30,6 +33,9 @@ class _CreateCardState extends State<CreateCard> {
   final dobController = TextEditingController();
   final locationController = TextEditingController();
   final shortBioController = TextEditingController();
+  final titleController = TextEditingController();
+  final jerseyNumController = TextEditingController();
+  final schoolOrganisationController = TextEditingController();
 
 
   final actSatController = TextEditingController();
@@ -54,7 +60,8 @@ class _CreateCardState extends State<CreateCard> {
   static DateTime dateTime1 = DateTime.now();
   String cardPic;
 
-  ProfileModel pModel = ProfileModel();
+ // ProfileModel pModel = ProfileModel();
+  CardModel pModel = CardModel();
 
   File file;
 
@@ -97,13 +104,23 @@ class _CreateCardState extends State<CreateCard> {
         dobController.text = snapshot[Config.dob];
         locationController.text = snapshot[Config.location];
         shortBioController.text = snapshot[Config.shortBio];
+        if(userType==Config.coachScout){
+          titleController.text = snapshot[Config.schoolOrOrg];
+        }
+        else
+        {
+          jerseyNumController.text = snapshot[Config.jerseyNumber];
+          positionController.text = snapshot[Config.position];
+        }
+
+        schoolOrganisationController.text = snapshot[Config.schoolOrOrg];
 
         currentColorIndex = snapshot[Config.cardColorIndex];
 
         actSatController.text = snapshot[Config.actSat];
         classController.text = snapshot[Config.CLASS];
         sports = snapshot[Config.selectSport];
-        positionController.text = snapshot[Config.position];
+
         heightController.text = snapshot[Config.height];
         weightController.text = snapshot[Config.weight];
       });
@@ -142,11 +159,22 @@ class _CreateCardState extends State<CreateCard> {
       userInfo[Config.cardColorIndex] = currentColorIndex;
       userInfo[Config.userType] = userType;
       userInfo[Config.cardCreatorId] = widget.userId;
+      userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+      if(userType==Config.coachScout){
+        userInfo[Config.title] = titleController.text;
+      }
+      else
+        {
+          userInfo[Config.position]= positionController.text;
+          userInfo[Config.jerseyNumber]= jerseyNumController.text;
+
+        }
+
 
 
       userInfo[Config.actSat]= actSatController.text;
       userInfo[Config.CLASS]= classController.text;
-      userInfo[Config.position]= positionController.text;
+
       userInfo[Config.height]= heightController.text;
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= sports;
@@ -319,6 +347,9 @@ class _CreateCardState extends State<CreateCard> {
     dobController.dispose();
     locationController.dispose();
     shortBioController.dispose();
+    titleController.dispose();
+    schoolOrganisationController.dispose();
+    jerseyNumController.dispose();
 
 
     actSatController.dispose();
@@ -348,7 +379,8 @@ class _CreateCardState extends State<CreateCard> {
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: size.height / 10,
+            height: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil.instance.setHeight(300) : ScreenUtil.screenWidthDp > 650 ?
+            ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(300),
             alignment: Alignment.center,
 
           ),
@@ -452,6 +484,28 @@ class _CreateCardState extends State<CreateCard> {
                                   ),
                                 ),
                               ),
+                              userType == Config.coachScout ?
+                              Container(
+                                child: new TextFormField(
+                                  controller: titleController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "Title";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.title = value.trim();
+                                  }),
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Title",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ) :Container(),
                               Container(
                                 child:  InkWell(
                                   onTap: ()=>_selectTodayDate1(context),
@@ -494,6 +548,49 @@ class _CreateCardState extends State<CreateCard> {
                                   // keyboardType: TextInputType.number,
                                   decoration: new InputDecoration(
                                     labelText: "Location",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: new TextFormField(
+                                  controller: jerseyNumController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "Jersey Number";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.jerseyNumber = value.trim();
+                                  }),
+
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Jersey Number",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: new TextFormField(
+                                  controller: schoolOrganisationController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "School Or Organisation";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.school = value.trim();
+                                  }),
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "School Or Organisation",
                                     contentPadding: new EdgeInsets.all(10.0),
                                     filled: false,
                                   ),
@@ -654,6 +751,8 @@ class _CreateCardState extends State<CreateCard> {
 
                                 ),
                                 Divider(color: Theme.of(context).primaryColor,),
+
+                                userType == Config.coachScout ? Container() :
                                 Container(
                                   child: new TextFormField(
                                     controller: positionController,

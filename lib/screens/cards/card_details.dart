@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:myscout/screens/chats/chat_screen.dart';
 
 import 'package:myscout/screens/trade_card/trade_screen.dart';
 import 'package:myscout/utils/Config.dart';
@@ -9,9 +10,10 @@ import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CardDetails extends StatefulWidget {
-  CardDetails({this.cardId,this.cardName});
+  CardDetails({this.cardId,this.cardName,this.cardCreator});
   final String cardId;
   final String cardName;
+  final String cardCreator;
 
 
 
@@ -42,6 +44,7 @@ class _CardDetailsState extends State<CardDetails> {
   void initState() {
     // TODO: implement initState
 
+    print("Card Creator Id "+widget.cardCreator);
     getUserId();
     super.initState();
   }
@@ -80,6 +83,19 @@ class _CardDetailsState extends State<CardDetails> {
         elevation: 0.0,
         title: Text(widget.cardName,maxLines: 1,style: TextStyle(fontSize: 20.0,color: Colors.white),),
         centerTitle: true,
+        actions: <Widget>[
+          userId == widget.cardCreator ? Container():
+          InkWell(
+            onTap: (){
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => ChatScreen(senderId: userId,receiverId: widget.cardCreator,),
+                  ));
+            },
+            child: Image.asset('assets/images/chat.png'),
+          )
+        ],
 
       ),
         body: StreamBuilder<DocumentSnapshot>(
