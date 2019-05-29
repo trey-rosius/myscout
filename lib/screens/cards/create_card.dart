@@ -4,16 +4,27 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
+
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/card_model.dart';
 import 'package:myscout/screens/cards/card_color.dart';
+import 'package:myscout/screens/cards/full_screen_card.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'data.dart';
-import 'package:myscout/models/profile_model.dart';
+
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/rendering.dart';
+
+
+import 'dart:ui' as ui;
+
 class CreateCard extends StatefulWidget {
   CreateCard({this.userId,this.cardId,this.userType});
   final String userId;
@@ -24,6 +35,60 @@ class CreateCard extends StatefulWidget {
 }
 
 class _CreateCardState extends State<CreateCard> {
+
+  GlobalKey _globalKey = new GlobalKey();
+
+
+  void  _capturePng() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+      RenderRepaintBoundary boundary =
+      _globalKey.currentContext.findRenderObject();
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+      var pngBytes = byteData.buffer.asUint8List();
+
+      var bs64 = base64Encode(pngBytes);
+      print(pngBytes);
+      print(bs64);
+      setState(() {});
+      final FirebaseStorage storage = FirebaseStorage.instance;
+      uploadImageBytes(pngBytes, storage).then((String data) {
+
+        Firestore.instance.collection(Config.cards).document(cardId).updateData({
+          Config.cardImageUrl:data
+        }).then((_){
+          print("image url"+ data);
+          setState(() {
+            loading = false;
+          });
+          Navigator.of(context).pop();
+        });
+      });
+
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future<String> uploadImageBytes(var pngBytes, FirebaseStorage storage) async {
+    var uuid = new Uuid().v1();
+    StorageReference ref = storage
+        .ref()
+        .child(Config.cards)
+        .child(widget.userId)
+        .child("$uuid.png");
+
+
+    StorageUploadTask uploadTask = ref.putData(pngBytes);
+    StorageTaskSnapshot storageTask = await uploadTask.onComplete;
+    String downloadUrl = await storageTask.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+
 
   String sports = "BasketBall";
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -59,6 +124,8 @@ class _CreateCardState extends State<CreateCard> {
   static DateTime dateTime = DateTime.now();
   static DateTime dateTime1 = DateTime.now();
   String cardPic;
+  bool fullScreenCard = false;
+  String cardId;
 
  // ProfileModel pModel = ProfileModel();
   CardModel pModel = CardModel();
@@ -133,7 +200,73 @@ class _CreateCardState extends State<CreateCard> {
 
 
 
+ saveCardDetailsWithImageUrl(){
 
+   print(pModel.sports);
+
+   setState(() {
+     loading = true;
+   });
+
+
+     Map userInfo = new Map<String, dynamic>();
+     userInfo[Config.fullNames]= fullNamesController.text;
+     userInfo[Config.dob]= dobController.text;
+     userInfo[Config.location]= locationController.text;
+     userInfo[Config.shortBio]= shortBioController.text;
+     userInfo[Config.collectedCount]= 0;
+
+
+
+     userInfo[Config.profilePicUrl] = profilePic;
+     userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+     userInfo[Config.cardColorIndex] = currentColorIndex;
+     userInfo[Config.userType] = userType;
+     userInfo[Config.cardCreatorId] = widget.userId;
+     userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+     if(userType==Config.coachScout){
+       userInfo[Config.title] = titleController.text;
+     }
+     else
+     {
+       userInfo[Config.position]= positionController.text;
+       userInfo[Config.jerseyNumber]= jerseyNumController.text;
+
+     }
+
+
+
+     userInfo[Config.actSat]= actSatController.text;
+     userInfo[Config.CLASS]= classController.text;
+
+     userInfo[Config.height]= heightController.text;
+     userInfo[Config.weight]= weightController.text;
+     userInfo[Config.selectSport]= sports;
+     userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+
+
+
+       Firestore.instance.collection(Config.cards).document(widget.cardId).updateData(userInfo).then((_){
+
+         setState(() {
+           loading = false;
+           cardId = widget.cardId;
+           fullScreenCard = true;
+         });
+         /*
+         Navigator.push(
+             context,
+             new MaterialPageRoute(
+               builder: (context) => FullScreenCard(cardId:widget.cardId,userId: widget.userId,),
+             ));
+             */
+         // Navigator.of(context).pop();
+       });
+
+
+
+
+ }
   saveCardDetailsWithImage(){
 
     print(pModel.sports);
@@ -199,8 +332,17 @@ class _CreateCardState extends State<CreateCard> {
               });
               setState(() {
                 loading = false;
+                cardId = docRef.documentID;
+                fullScreenCard = true;
               });
-              Navigator.of(context).pop();
+              /*
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                       builder: (context) => FullScreenCard(cardId:docRef.documentID,userId: widget.userId,),
+                  ));
+                  */
+             // Navigator.of(context).pop();
             });
       });
 
@@ -219,6 +361,8 @@ class _CreateCardState extends State<CreateCard> {
         .child(Config.cards)
         .child(widget.userId)
         .child("$uuid.jpg");
+
+
     StorageUploadTask uploadTask = ref.putFile(imageFile);
     StorageTaskSnapshot storageTask = await uploadTask.onComplete;
     String downloadUrl = await storageTask.ref.getDownloadURL();
@@ -374,13 +518,351 @@ class _CreateCardState extends State<CreateCard> {
         centerTitle: true,
 
       ),
-      body: Stack(
+      body: fullScreenCard ?
+      Center(
+        child:SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              RepaintBoundary(
+                key: _globalKey,
+
+                child:  Container(
+                    child: StreamBuilder<DocumentSnapshot>(
+                        stream: Firestore.instance
+                            .collection(Config.cards)
+                            .document(cardId)
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot<DocumentSnapshot> docs) {
+                          if (docs.data != null) {
+                            return docs.data[Config.userType] == Config.coachScout
+                                ? InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height: 400,
+                                  width: 300,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Positioned(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5.0, right: 5.0),
+                                          child: AspectRatio(
+                                            aspectRatio: 2 / 2.3,
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                              docs.data[Config.profilePicUrl],
+                                              placeholder: (context, url) =>
+                                                  SpinKitWave(
+                                                    itemBuilder: (_, int index) {
+                                                      return DecoratedBox(
+                                                        decoration: BoxDecoration(
+                                                          color: Theme.of(context)
+                                                              .accentColor,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 330,
+                                        height: 100,
+                                        margin: EdgeInsets.fromLTRB(10, 330, 10, 0),
+                                        color: Color(
+                                            int.parse(docs.data[Config.cardColor])),
+                                      ),
+                                      Center(
+                                        child: Container(
+                                          margin:
+                                          EdgeInsets.fromLTRB(10, 330, 10, 0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(docs.data[Config.fullNames],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                      docs.data[Config.schoolOrOrg],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white)),
+                                                  Text(
+                                                      " - " +
+                                                          docs.data[Config.title],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white))
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                          child: Image.asset(
+                                            'assets/images/card_coach.png',
+                                            height: 400,
+                                            width: 300,
+                                          )),
+                                    ],
+                                  ),
+                                ))
+                                : InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  color: Color(
+                                      int.parse(docs.data[Config.cardColor])),
+
+                                  height: 400,
+                                  width: 290  ,
+
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 40),
+                                        child: AspectRatio(
+                                          aspectRatio: 1.4 / 1.82,
+                                          child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            imageUrl:
+                                            docs.data[Config.profilePicUrl],
+                                            placeholder: (context, url) =>
+                                                SpinKitWave(
+                                                  itemBuilder: (_, int index) {
+                                                    return DecoratedBox(
+                                                      decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .accentColor,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                          ),
+                                        ),
+                                      ),
+                                      RotatedBox(
+                                        quarterTurns: 1,
+                                        child: Container(
+                                          margin: EdgeInsets.fromLTRB(80, 0, 0, 10),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  "HEIGHT",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.height],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  "WEIGHT",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.weight],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+
+                                                child: Text(
+                                                  "lbs",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        margin: EdgeInsets.only(left:90,top: 340),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                                          children: <Widget>[
+                                            Text(
+                                              docs.data[Config.fullNames],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                            ),
+                                            Container(
+
+                                              margin: EdgeInsets.only(top: 5,right: 20),
+                                              child: Row(
+
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      docs.data[
+                                                      Config.schoolOrOrg],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    " . #" +
+                                                        docs.data[
+                                                        Config.jerseyNumber],
+                                                    maxLines: 1,
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color: Colors.white),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left:5.0),
+                                                    child: Text(
+                                                      docs.data[Config.position],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+
+                                      Container(
+
+
+
+
+                                          child: Image.asset(
+                                            'assets/images/card_athlete.png',
+                                            height: 400,
+                                            width: 300,
+                                          )),
+                                      Container(
+                                        margin: EdgeInsets.only(left:10,top: 340),
+                                        child:
+                                        Text(
+
+                                          docs.data[Config.CLASS].toLowerCase() == Config.freshMan ? "FR":docs.data[Config.CLASS].toLowerCase() == Config.senior ? "SR" : "JR" ,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 40,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF998e6f)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ),
+              Column(
+                children: <Widget>[
+                  loading == true
+                      ?  Container(
+                    padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+                    child: CircularProgressIndicator(),
+                  )
+                      : Container(
+                    padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+
+                    width: size.width / 1.3,
+                    //  color: Theme.of(context).primaryColor,
+
+                    child: RaisedButton(
+                      elevation: 0.0,
+                      onPressed: () =>_capturePng(),
+
+
+                      color: Theme.of(context).primaryColorLight,
+                      child: new Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: new Text("Save Card",
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ) :
+      Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650)? ScreenUtil.instance.setHeight(300) : ScreenUtil.screenWidthDp > 650 ?
-            ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(300),
+            height: 300,
             alignment: Alignment.center,
 
           ),
@@ -553,7 +1035,7 @@ class _CreateCardState extends State<CreateCard> {
                                   ),
                                 ),
                               ),
-                              Container(
+                              userType == Config.coachScout ? Container():  Container(
                                 child: new TextFormField(
                                   controller: jerseyNumController,
                                   validator: (value) {
@@ -651,7 +1133,7 @@ class _CreateCardState extends State<CreateCard> {
                                   ),
                                 ),
 
-                                Container(
+                                userType == Config.coachScout ? Container():    Container(
                                   padding: EdgeInsets.only(top: 20.0),
                                   child: new TextFormField(
                                     controller: actSatController,
@@ -673,7 +1155,7 @@ class _CreateCardState extends State<CreateCard> {
                                     ),
                                   ),
                                 ),
-                                Container(
+                                userType == Config.coachScout ? Container():      Container(
                                   child: new TextFormField(
                                     controller: classController,
                                     validator: (value) {
@@ -826,7 +1308,10 @@ class _CreateCardState extends State<CreateCard> {
                         Column(
                           children: <Widget>[
                             loading == true
-                                ? new CircularProgressIndicator()
+                                ?  Padding(
+                              padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+                              child: CircularProgressIndicator(),
+                            )
                                 : Container(
                               padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
@@ -837,7 +1322,15 @@ class _CreateCardState extends State<CreateCard> {
                                 elevation: 0.0,
                                 onPressed: () {
                                   if (formKey.currentState.validate()) {
-                                    saveCardDetailsWithImage();
+                                   if(profilePic != null)
+                                     {
+                                       saveCardDetailsWithImageUrl();
+
+                                     }
+                                     else
+                                       {
+                                         saveCardDetailsWithImage();
+                                       }
                                   }
                                 },
                                 color: Theme.of(context).primaryColorLight,

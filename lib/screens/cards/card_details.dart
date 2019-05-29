@@ -106,121 +106,33 @@ class _CardDetailsState extends State<CardDetails> {
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> document) {
               if (document.hasData) {
-                return CustomScrollView(
-                  slivers: <Widget>[
-
-                    document.data[Config.userType] == Config.coachScout ?
-
-                    SliverToBoxAdapter(
-                      child: Stack(
-
-                        children: <Widget>[
-                          Container(
-                            height: isLargeScreen ? size.height/4.5 : size.height/5,
-                            width: size.width,
-                            color: Theme.of(context).primaryColor,
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
 
 
+                     Stack(
 
-                          ),
-                          Center(
-                            child: Container(
-                              margin: EdgeInsets.only(top: size.height/20),
-                              child: Stack(
-                                children: <Widget>[
-
-                                  Positioned(
-                                    top: isSmallScreen ?5 :isMediumScreen ?6 :8,
-
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
-                                      child: CachedNetworkImage(
-                                        height: isSmallScreen ? 245 : isMediumScreen ? 242 : 260,
-                                        width: isSmallScreen ?175 :isMediumScreen ? 173 :225,
-                                        fit: BoxFit.cover,
-                                        imageUrl: document.data[Config.profilePicUrl],
-                                        placeholder: (context,url) => SpinKitWave(
-                                          itemBuilder: (_, int index) {
-                                            return DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context).accentColor,
-                                              ),
-                                            );
-                                          },
-                                        ),
-
-
-                                        errorWidget: (context,url,error) =>Icon(Icons.error),
-                                      ),
-
-                                    ),
-                                  ),
-
-
-                                  Positioned(
-                                    top: isSmallScreen ? size.height/2.98 : isMediumScreen ? size.height/3.45 : size.height/5,
-
-                                    child: Container(
-                                      margin: EdgeInsets.only(left: 6,right: 10),
-                                      width: isSmallScreen ? 180 : isMediumScreen ? 172 : 260,
-                                      height: isSmallScreen ? 50 : isMediumScreen ? 50 : 260,
-                                      color: Color(int.parse(document.data[Config.cardColor])),
-                                    ),
-                                  ),
-
-                                  Positioned(
-                                    top: isSmallScreen ? size.height/2.9 :isMediumScreen ? size.height/3.3 : size.height/4.5,
-                                    left: isSmallScreen ? size.height/15 :isMediumScreen ? size.height/15 : size.height/20,
-                                    child:
-                                    Container(
-                                      width: isSmallScreen ? 140 :isMediumScreen ? 150 : 150,
-                                      padding: EdgeInsets.all(4),
-                                      child:  Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
-                                    ),
-
-                                  ),
-                                  Container(
-
-                                      child: Image.asset('assets/images/card_coach.png',height: 255,)),
-                                ],
-                              ),
+                          children: <Widget>[
+                            Container(
+                              height: size.height/5,
+                              color:Theme.of(context).primaryColor ,
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                    :
+                            Center(
+                              child: Container(
 
-                    SliverToBoxAdapter(
-                      child: Stack(
-
-                        children: <Widget>[
-                          Container(
-                            height: isLargeScreen ? size.height/4.5 : size.height/5,
-                            width: size.width,
-                            color: Theme.of(context).primaryColor,
+                                height: 400,
+                                width: 300,
 
 
+                                  child:AspectRatio(
 
-                          ),
-                          Center(
-                            child: Container(
-                              margin: EdgeInsets.only(top: size.height/20),
-                              child: Stack(
-                                children: <Widget>[
-                                  Container(
-                                      color: Color(int.parse(document.data[Config.cardColor])),
-                                      child: Image.asset('assets/images/card_athlete.png',height: 255,)),
-                                  Positioned(
-                                    top: isSmallScreen ?6 :isMediumScreen ?6 :6,
-                                    left:isSmallScreen ?40 :isMediumScreen ? 37 :37,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
-                                      child: CachedNetworkImage(
-                                          height: isSmallScreen ? 193 : isMediumScreen ? 190 : 190,
-                                          width: isSmallScreen ?133 :isMediumScreen ? 135 :135,
+                                    aspectRatio: 2/2.7,
+                                        child: CachedNetworkImage(
                                           fit: BoxFit.cover,
-                                          imageUrl: document.data[Config.profilePicUrl],
+                                          imageUrl: document.data[Config.cardImageUrl],
                                           placeholder: (context,url) => SpinKitWave(
                                             itemBuilder: (_, int index) {
                                               return DecoratedBox(
@@ -234,314 +146,251 @@ class _CardDetailsState extends State<CardDetails> {
 
                                           errorWidget: (context,url,error) =>Icon(Icons.error),
                                         ),
-
                                       ),
+
+                                ),
+                            ),
+                          ],
+                        ),
+
+
+ Container(
+                          padding: EdgeInsets.only(top: 20.0,left: 10.0),
+                          child: Row(
+
+
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+
+                                      padding: const EdgeInsets.only(bottom:10.0),
+                                      child: Text("POSITION", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+
                                     ),
-
-                                  Positioned(
-                                      top: 30.0,
-                                      left: size.width/60,
-                                      child: RotatedBox(quarterTurns: 1,child:
-                                          Container(
-                                            margin: EdgeInsets.only(top: 10.0,left: 2.0),
-                                            child: Row(
-
-                                              children: <Widget>[
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text("HEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(2),
-                                                  child: Text(document.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text("WEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text(document.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                              ],
-                                            ),
-
-
-                                      ),)
-                                  ),
-
-                                  Positioned(
-                                    top: isSmallScreen ? size.height/2.8 :isMediumScreen ? size.height/3.3 : size.height/4.3,
-                                    left: size.width/7,
-                                      child:
-                                          Container(
-                                            width: isSmallScreen ? 140 :isMediumScreen ? 150 : 150,
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
-                                          ),
-
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20.0,left: 10.0),
-                        child: Row(
-
-
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-
-                                    padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("POSITION", style: TextStyle(
-
+                                    Text(document.data[Config.position]??"", style: TextStyle(
                                         fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
+                                        color: Colors.grey,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-
-                                  ),
-                                  Text(document.data[Config.position]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
+                                        fontSize: 16.0)),
 
 
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("HEIGHT", style: TextStyle(
-
-                                        fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-
-                                  ),
-                                  Text(document.data[Config.height]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-
-
-
-
-                                ],
-                              ),
-                            )
-
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20.0,left: 10.0),
-                        child: Row(
-
-
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-
-                                    padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("WEIGHT", style: TextStyle(
-
-                                        fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-
-                                  ),
-                                  Text(document.data[Config.weight]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-
-
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("CLASS", style: TextStyle(
-
-                                        fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-
-                                  ),
-                                  Text(document.data[Config.CLASS]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-
-
-
-
-                                ],
-                              ),
-                            )
-
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.only(top: 20.0,left: 10.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom:10.0,right: 5.0),
-                                    child: Text("HOMETOWN", style: TextStyle(
-
-                                        fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-                                  ),
-
-
-                                  Text(document.data[Config.location]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-
-
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("HIGH SCHOOL", style: TextStyle(
-
-                                        fontFamily: 'Montserrat',
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0)),
-
-                                  ),
-                                  Text(document.data[Config.schoolOrOrg]??"", style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-
-
-
-
-                                ],
-                              ),
-                            )
-
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text("BIO",style: TextStyle(
-
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0)),
-                    ),),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(document.data[Config.shortBio]??""),
-                      )
-                    ),
-
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.all(10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-
-                            userType == Config.fan ? Container() :
-                            userId == document.data[Config.cardCreatorId] ? Container(
-                              padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
-
-                              width: size.width / 2.3,
-                              //  color: Theme.of(context).primaryColor,
-
-                              child: RaisedButton(
-                                elevation: 0.0,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => TradeScreen(userId: userId,cardName: widget.cardName,cardId: document.data[Config.cardId],)),
-                                  );
-                                },
-                                color: Theme.of(context).primaryColorLight,
-                                child: new Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: new Text("Trade Card",
-                                      style: new TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w600)),
+                                  ],
                                 ),
                               ),
-                            ) :Container(),
-                            userId == document.data[Config.cardCreatorId]? Container() :  StreamBuilder<DocumentSnapshot>(
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom:10.0),
+                                      child: Text("HEIGHT", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+
+                                    ),
+                                    Text(document.data[Config.height]??"", style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+
+
+
+
+                                  ],
+                                ),
+                              )
+
+                            ],
+                          ),
+                        ),
+                     Container(
+                          padding: EdgeInsets.only(top: 20.0,left: 10.0),
+                          child: Row(
+
+
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+
+                                      padding: const EdgeInsets.only(bottom:10.0),
+                                      child: Text("WEIGHT", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+
+                                    ),
+                                    Text(document.data[Config.weight]??"", style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+
+
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom:10.0),
+                                      child: Text("CLASS", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+
+                                    ),
+                                    Text(document.data[Config.CLASS]??"", style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+
+
+
+
+                                  ],
+                                ),
+                              )
+
+                            ],
+                          ),
+                        ),
+                       Container(
+                          padding: EdgeInsets.only(top: 20.0,left: 10.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom:10.0,right: 5.0),
+                                      child: Text("HOMETOWN", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+                                    ),
+
+
+                                    Text(document.data[Config.location]??"", style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+
+
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom:10.0),
+                                      child: Text("HIGH SCHOOL", style: TextStyle(
+
+                                          fontFamily: 'Montserrat',
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0)),
+
+                                    ),
+                                    Text(document.data[Config.schoolOrOrg]??"", style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0)),
+
+
+
+
+                                  ],
+                                ),
+                              )
+
+                            ],
+                          ),
+                        ),
+
+                       Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text("BIO",style: TextStyle(
+
+                            fontFamily: 'Montserrat',
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0)),
+                      ),
+                         Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(document.data[Config.shortBio]??""),
+                        ),
+                     Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+
+                              userType == Config.fan ? Container() :
+                              userId == document.data[Config.cardCreatorId] ? Container(
+                                padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+
+                                width: size.width / 2.3,
+                                //  color: Theme.of(context).primaryColor,
+
+                                child: RaisedButton(
+                                  elevation: 0.0,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TradeScreen(userId: userId,cardName: widget.cardName,cardId: document.data[Config.cardId],)),
+                                    );
+                                  },
+                                  color: Theme.of(context).primaryColorLight,
+                                  child: new Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: new Text("Trade Card",
+                                        style: new TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ),
+                              ) :Container(),
+                              userId == document.data[Config.cardCreatorId]? Container() :  StreamBuilder<DocumentSnapshot>(
     stream: Firestore.instance
         .collection(Config.users)
         .document(userId)
@@ -563,12 +412,12 @@ class _CardDetailsState extends State<CardDetails> {
 
             int count = document.data[Config.collectedCount] +1;
             Firestore.instance.collection(Config.cards).document(document.data[Config.cardId])
-                .updateData({
+                  .updateData({
               Config.collectedCount:count
             }).then((_){
               Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
-                  .document(document.data[Config.cardId])
-                  .delete();
+                    .document(document.data[Config.cardId])
+                    .delete();
             });
 
 
@@ -578,10 +427,10 @@ class _CardDetailsState extends State<CardDetails> {
           child: new Padding(
             padding: const EdgeInsets.all(12.0),
             child: new Text("UnCollect Card",
-                style: new TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w600)),
+                  style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600)),
           ),
         ),
       );
@@ -600,18 +449,18 @@ class _CardDetailsState extends State<CardDetails> {
 
               int count = document.data[Config.collectedCount] +1;
               Firestore.instance.collection(Config.cards).document(document.data[Config.cardId])
-                  .updateData({
-                Config.collectedCount:count
+                    .updateData({
+                  Config.collectedCount:count
               }).then((_){
-                Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
-                    .document(document.data[Config.cardId])
-                    .setData({
-                  Config.cardCreatorId: document.data[Config.cardCreatorId],
-                  Config.cardId:document.data[Config.cardId],
+                  Firestore.instance.collection(Config.users).document(userId).collection(Config.myCards)
+                      .document(document.data[Config.cardId])
+                      .setData({
+                    Config.cardCreatorId: document.data[Config.cardCreatorId],
+                    Config.cardId:document.data[Config.cardId],
 
 
 
-                });
+                  });
               });
 
 
@@ -625,10 +474,10 @@ class _CardDetailsState extends State<CardDetails> {
               notific[Config.notificationText] = Config.collectedText;
 
               Firestore.instance.collection(Config.notifications).add(notific).then((DocumentReference docRef){
-                Firestore.instance.collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID}).then((_){
+                  Firestore.instance.collection(Config.notifications).document(docRef.documentID).updateData({Config.notificationId:docRef.documentID}).then((_){
 
 
-                });
+                  });
 
               });
 
@@ -638,10 +487,10 @@ class _CardDetailsState extends State<CardDetails> {
             child: new Padding(
               padding: const EdgeInsets.all(12.0),
               child: new Text("Collect Card",
-                  style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w600)),
+                    style: new TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w600)),
             ),
           ),
         );
@@ -649,15 +498,16 @@ class _CardDetailsState extends State<CardDetails> {
     })
 
 
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    )
 
 
 
 
-                  ],
+
+                    ],
+                  ),
                 );
               }
 

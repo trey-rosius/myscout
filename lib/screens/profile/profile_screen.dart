@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
 import 'package:myscout/screens/cards/create_card.dart';
 
@@ -450,7 +451,7 @@ bool isLargeScreen = false;
                     SliverToBoxAdapter(
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20.0),
-                        height: ScreenUtil.getInstance().setHeight(620),
+                        height: ScreenUtil.instance.setHeight(620),
                         child: CardScreenScroller(userId: widget.userId,),
                       ),
                     )

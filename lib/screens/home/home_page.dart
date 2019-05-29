@@ -12,8 +12,7 @@ import 'package:myscout/screens/chats/chat_screen.dart';
 import 'package:myscout/screens/notifications/full_notification_screen.dart';
 import 'package:myscout/screens/players/player_item.dart';
 import 'package:myscout/utils/Config.dart';
-import 'package:myscout/utils/error_screen.dart';
-import 'package:myscout/utils/loading_screen.dart';
+
 class HomePage extends StatefulWidget {
   HomePage({this.userId});
   final String userId;
@@ -135,7 +134,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Container(
               margin: EdgeInsets.only(bottom: 20.0),
-              height: ScreenUtil.getInstance().setHeight(620),
+              height: ScreenUtil.instance.setHeight(620),
               child: PopularCardScroller(userId: widget.userId,),
             ),
           ),
@@ -202,7 +201,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: Container(
           margin: EdgeInsets.only(bottom: 20.0),
-          height: ScreenUtil.getInstance().setHeight(620),
+          height: ScreenUtil.instance.setHeight(620),
           child: NewCardScroller(userId: widget.userId,),
         ),
       ),
@@ -237,7 +236,7 @@ class _HomePageState extends State<HomePage> {
       SliverToBoxAdapter(
         child: Container(
           margin: EdgeInsets.only(bottom: 20.0),
-          height: ScreenUtil.getInstance().setHeight(620),
+          height: ScreenUtil.instance.setHeight(620),
           child: CardScreenScroller(userId: widget.userId,),
         ),
       )

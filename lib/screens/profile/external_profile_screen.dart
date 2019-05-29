@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myscout/screens/cards/card_screen_scroller.dart';
+import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/chats/chat_screen.dart';
 import 'package:myscout/screens/gallery/photo_item.dart';
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
@@ -11,9 +14,9 @@ import 'package:myscout/utils/loading_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ExternalProfileScreen extends StatefulWidget {
-  ExternalProfileScreen({this.userId});
+  ExternalProfileScreen({this.userId,this.userType});
   final String userId;
-
+  final String userType;
 
 
   @override
@@ -401,6 +404,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0)),
                     ),),
+
                     SliverToBoxAdapter(child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
@@ -408,20 +412,75 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                         children: <Widget>[
                           Text("MY CARDS",style: TextStyle(
 
-                              fontFamily: 'Montserrat',
+
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.0)),
-                          widget.userId != userId ? Container() :
-                          Text("CREATE NEW",style: TextStyle(
 
-                              fontFamily: 'Montserrat',
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0)),
+
+                          widget.userType == Config.fan || widget.userId != userId ? Container() :
+                          StreamBuilder<DocumentSnapshot>(
+                              stream: Firestore.instance
+                                  .collection(Config.users)
+                                  .document(widget.userId)
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<DocumentSnapshot> docSnap) {
+                                if (docSnap.hasData && docSnap.data.exists) {
+                                  return docSnap.data[Config.cardId] != null ? FlatButton(
+                                    onPressed: (){
+
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>  CreateCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],userType: widget.userType)));
+                                    },
+                                    child: Text("EDIT CARD",style: TextStyle(
+
+
+                                        color: Theme.of(context).accentColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0),
+                                    ),
+                                  ) :
+                                  FlatButton(
+                                    onPressed: (){
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>  CreateCard(userId: widget.userId,userType: widget.userType,)));
+
+                                    },
+                                    child: Text("CREATE CARD",style: TextStyle(
+
+
+                                        color: Theme.of(context).accentColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0),
+                                    ),
+                                  );
+
+                                }else
+                                {
+                                  return Container();
+                                }
+
+
+                              })
+
                         ],
                       ),
                     ),),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 20.0),
+                        height: ScreenUtil.instance.setHeight(620),
+                        child: CardScreenScroller(userId: widget.userId,),
+                      ),
+                    ),
+
+
+
 
 
 

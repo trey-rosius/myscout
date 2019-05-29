@@ -320,7 +320,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Form(
+                    Form(
                       key: formKey,
                       autovalidate: autovalidate,
                       child: new Column(

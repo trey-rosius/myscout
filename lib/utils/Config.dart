@@ -110,6 +110,7 @@ class Config{
   static final String jerseyNumber= "jerseyNumber";
   static final String userType= "userType";
   static final String cardCreatorId= "cardCreatorId";
+  static final String cardImageUrl= "cardImageUrl";
 
   static final String cards= "cards";
   static final String cardId= "cardId";

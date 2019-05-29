@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.2.0+3
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -23,21 +23,23 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  #flutter_facebook_login: ^2.0.0
+
   flutter_facebook_login:
     git: https://github.com/lequanghiep74/flutter_facebook_login
-  #cloud_firestore: ^0.9.0
-  cloud_firestore: ^0.12.0
- # firebase_auth: ^0.8.0+1
-  firebase_auth: ^0.11.1
-  #firebase_core: '^0.3.0'
-  firebase_core: ^0.4.0+1
-  firebase_storage: ^3.0.0
+
+  cloud_firestore: ^0.9.0
+  firebase_auth: ^0.8.0+1
+
+
+
+  firebase_core: '^0.3.0'
+  firebase_storage: ^2.1.0+1
+  flutter_screenutil: ^0.5.2
   http: ^0.12.0+2
   url_launcher: ^5.0.2
-  google_sign_in: ^4.0.1+1
+  #google_sign_in: ^4.0.1+1
   image_picker: ^0.5.3
-  video_player: ^0.10.0+4
+  video_player: ^0.10.1
   path_drawing: ^0.4.0
   timeago: ^2.0.14
   datetime_picker_formfield: ^0.1.8
@@ -47,7 +49,7 @@ dependencies:
   intl: ^0.15.7
   flutter_spinkit: "^3.1.0"
   streaming_shared_preferences: ^1.0.0
-  flutter_screenutil: ^0.5.2
+
 
 
 

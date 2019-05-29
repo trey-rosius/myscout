@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:myscout/screens/home/home_screen.dart';
 import 'package:myscout/screens/login_register/login_screen.dart';
 import 'package:myscout/utils/app_inherited_widget.dart';

@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/cards/card_item.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CardScreen extends StatefulWidget {
   CardScreen({this.userId,this.cardType});
   final String userId;
@@ -52,11 +53,12 @@ class _CardScreenState extends State<CardScreen> {
             return LoadingScreen();
           } else if (snapshot.hasData) {
             return GridView.builder(
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(370)/ScreenUtil.instance.setHeight(650)) :
-                    (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(600))
-                        :(ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(980))
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(370)/ScreenUtil.instance.setHeight(650)) :
+                (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(600))
+                    :(ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(980))
                     ,crossAxisCount:ScreenUtil.screenWidthDp>1023 ? 3 : 2),
+
+
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (_, int index)
                 {

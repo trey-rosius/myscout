@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 final auth = FirebaseAuth.instance;
 
@@ -49,6 +49,7 @@ class UserAuth {
 }
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+/*
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
 Future<FirebaseUser> signInWithGoogle() async {
@@ -72,6 +73,8 @@ Future<FirebaseUser> signInWithGoogle() async {
   return  user;
 
 }
+*/
+/*
 
 Future<Null> signOutWithGoogle() async {
   // Sign out with firebase
@@ -79,3 +82,4 @@ Future<Null> signOutWithGoogle() async {
   // Sign out with google
   await _googleSignIn.signOut();
 }
+*/
