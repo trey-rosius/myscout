@@ -48,21 +48,14 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
   }
 
 
-  bool isLargeScreen = false;
+
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery
         .of(context)
         .size;
-    if(size.width < 412)
-    {
-      isLargeScreen = false;
-    }
-    else
-    {
-      isLargeScreen = true;
-    }
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
     return Scaffold(
         appBar:
         AppBar(
@@ -100,7 +93,9 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                     SliverToBoxAdapter(
 
                         child: Container(
-                          height: isLargeScreen ? size.height/4.5 : size.height/3.2,
+                          height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(470) :
+                          (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(420) :
+                          ScreenUtil.instance.setHeight(300),
                           width: size.width,
                           color: Theme.of(context).primaryColor,
 
@@ -314,7 +309,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("HIGH SCHOOL", style: TextStyle(
+                                    child: Text("SCHOOL/ORGANISATION", style: TextStyle(
 
                                         fontFamily: 'Montserrat',
                                         color: Theme.of(context).primaryColor,

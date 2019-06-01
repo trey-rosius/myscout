@@ -53,8 +53,8 @@ class _CardScreenState extends State<CardScreen> {
             return LoadingScreen();
           } else if (snapshot.hasData) {
             return GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(370)/ScreenUtil.instance.setHeight(650)) :
-                (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(600))
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: ScreenUtil.screenWidthDp < 413 ?(ScreenUtil.instance.setWidth(430)/ScreenUtil.instance.setHeight(600)) :
+                (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? (ScreenUtil.instance.setWidth(440)/ScreenUtil.instance.setHeight(600))
                     :(ScreenUtil.instance.setWidth(450)/ScreenUtil.instance.setHeight(980))
                     ,crossAxisCount:ScreenUtil.screenWidthDp>1023 ? 3 : 2),
 

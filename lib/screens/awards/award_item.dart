@@ -16,27 +16,35 @@ class AwardItem extends StatelessWidget {
     return Container(
       child: Column(
         children: <Widget>[
-          ListTile(
-            leading: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ClipRRect(
-                borderRadius: new BorderRadius.circular(50),
-                child: CachedNetworkImage(
-                  width: 60.0,
-                  height: 60.0,
-                  fit: BoxFit.cover,
-                  imageUrl: document[Config.postImageUrl],
-                  placeholder: (context, url) =>
-                  new CircularProgressIndicator(),
-                  errorWidget: (context, url, ex) => new Icon(Icons.error),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ClipRRect(
+
+                  borderRadius: BorderRadius.circular(50),
+                  child: CachedNetworkImage(
+                    width: 60.0,
+                    height: 60.0,
+                    fit: BoxFit.cover,
+                    imageUrl: document[Config.postImageUrl],
+                    placeholder: (context, url) =>
+                    new CircularProgressIndicator(),
+                    errorWidget: (context, url, ex) => new Icon(Icons.error),
+                  ),
                 ),
               ),
-            ),
-            title: Text(document[Config.postText]),
-            subtitle: Text(document[Config.awardYear],
-            ),
+              Column(
+               mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+               Text(document[Config.postText]),
+     Text(document[Config.awardYear]),
+                ],
+              ),
 
 
+            ],
           ),
           Padding(
             padding: EdgeInsets.only(left:size.width/3.5),

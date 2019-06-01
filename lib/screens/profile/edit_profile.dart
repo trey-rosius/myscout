@@ -655,6 +655,7 @@ class _EditProfileState extends State<EditProfile> {
                                           items: <String>[
                                             "Basketball",
                                             "Football",
+                                            "Volleyball",
                                             "Soccer",
                                             "Tennis",
                                             "Baseball"
@@ -702,7 +703,7 @@ class _EditProfileState extends State<EditProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: heightController,
-                                    keyboardType: TextInputType.number,
+                                  //  keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Height";
@@ -724,7 +725,7 @@ class _EditProfileState extends State<EditProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: weightController,
-                                    keyboardType: TextInputType.number,
+                                 //   keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Weight";

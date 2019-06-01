@@ -22,7 +22,7 @@ class CardItemScroller extends StatelessWidget {
           builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
             if(docs.data !=null)
               {
-                return InkWell(
+                return docs.data[Config.cardImageUrl] ==null ?Container(): InkWell(
                     onTap: (){
                       Navigator.push(
                           context,
@@ -38,7 +38,7 @@ class CardItemScroller extends StatelessWidget {
                                 child: CachedNetworkImage(
 
                                   fit: BoxFit.cover,
-                                  imageUrl: docs.data[Config.cardImageUrl],
+                                  imageUrl: docs.data[Config.cardImageUrl]??"",
                                   placeholder: (context,url) => SpinKitWave(
                                     itemBuilder: (_, int index) {
                                       return DecoratedBox(

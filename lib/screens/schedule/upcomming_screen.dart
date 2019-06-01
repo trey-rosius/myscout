@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myscout/screens/notifications/notification_item.dart';
 import 'package:myscout/screens/schedule/schedule_item.dart';
+import 'package:myscout/screens/schedule/upcomming_schedule_item.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
@@ -38,7 +39,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       body: Container(
 
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).where(Config.scheduleDay,isGreaterThan: presentDate.day).snapshots(),
+          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();
@@ -51,7 +52,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
                   {
                     final DocumentSnapshot document = snapshot.data.documents[
                     index];
-                    return ScheduleItem(document: document,userId:userId);
+                    return UpcommingScheduleItem(document: document,userId:userId,dateTime:presentDate);
                   });
 
 

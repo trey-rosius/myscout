@@ -49,21 +49,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
-bool isLargeScreen = false;
+
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery
         .of(context)
         .size;
-    if(size.width < 412)
-    {
-      isLargeScreen = false;
-    }
-    else
-    {
-      isLargeScreen = true;
-    }
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
+
     return Scaffold(
         body: StreamBuilder<DocumentSnapshot>(
             stream: Firestore.instance
@@ -78,7 +72,10 @@ bool isLargeScreen = false;
                     SliverToBoxAdapter(
 
                       child: Container(
-                         height: isLargeScreen ? size.height/4.5 : size.height/3.2,
+                         height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(470) :
+                         (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(420) :
+                             ScreenUtil.instance.setHeight(300),
+
                         width: size.width,
                         color: Theme.of(context).primaryColor,
 
@@ -290,7 +287,7 @@ bool isLargeScreen = false;
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("HIGH SCHOOL", style: TextStyle(
+                                    child: Text("SCHOOL/ORGANISATION", style: TextStyle(
 
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,

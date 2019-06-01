@@ -81,7 +81,7 @@ class NotificationItem extends StatelessWidget {
                         width: 60.0,
                         height: 60.0,
                         fit: BoxFit.cover,
-                        imageUrl: docSnap.data[Config.profilePicUrl],
+                        imageUrl: docSnap.data[Config.profilePicUrl] ?? "",
                         placeholder: (context, url) =>
                         new CircularProgressIndicator(),
                         errorWidget: (context, url, ex) => new Icon(Icons.error),

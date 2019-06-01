@@ -1212,6 +1212,9 @@ class _CreateCardState extends State<CreateCard> {
                                             "BasketBall",
                                             "FootBall",
                                             "VolleyBall",
+                                            "Soccer",
+                                            "Tennis",
+                                            "BaseBall"
 
                                           ].map((String value) {
                                             return new DropdownMenuItem(
@@ -1259,7 +1262,7 @@ class _CreateCardState extends State<CreateCard> {
                                 Container(
                                   child: new TextFormField(
                                     controller: heightController,
-                                    keyboardType: TextInputType.number,
+                                  //  keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Height";
@@ -1281,7 +1284,7 @@ class _CreateCardState extends State<CreateCard> {
                                 Container(
                                   child: new TextFormField(
                                     controller: weightController,
-                                    keyboardType: TextInputType.number,
+                                   // keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Weight";
@@ -1322,14 +1325,15 @@ class _CreateCardState extends State<CreateCard> {
                                 elevation: 0.0,
                                 onPressed: () {
                                   if (formKey.currentState.validate()) {
-                                   if(profilePic != null)
+                                   if(_imageFile != null)
                                      {
-                                       saveCardDetailsWithImageUrl();
+                                       saveCardDetailsWithImage();
 
                                      }
                                      else
                                        {
-                                         saveCardDetailsWithImage();
+
+                                         saveCardDetailsWithImageUrl();
                                        }
                                   }
                                 },

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myscout/comments/comments_screen.dart';
 import 'package:myscout/post/aspect_ratio.dart';
@@ -88,6 +89,7 @@ class PostItem extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
     return document[Config.isVideoPost]==true ?  InkWell(
       onLongPress: (){
         if(userId == document[Config.postAdminId])
@@ -101,7 +103,9 @@ class PostItem extends StatelessWidget {
       },
       child: Container(
         width: size.width,
-        height: 420,
+        height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(980) :
+        (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(820) :
+        ScreenUtil.instance.setHeight(950),
         margin: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
@@ -168,7 +172,7 @@ class PostItem extends StatelessWidget {
                                       width: 40.0,
                                       height: 40.0,
                                       fit: BoxFit.cover,
-                                      imageUrl: docSnap.data[Config.profilePicUrl],
+                                      imageUrl: docSnap.data[Config.profilePicUrl]??"",
                                       placeholder: (context, url) =>
                                       new CircularProgressIndicator(),
                                       errorWidget: (context, url, ex) =>
@@ -430,8 +434,11 @@ class PostItem extends StatelessWidget {
       },
       child: Container(
         width: size.width,
-        height: isLargeScreen ? size.height / 2.0 : size.height / 1.7,
+        height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(880) :
+        (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(820) :
+        ScreenUtil.instance.setHeight(950),
         margin: EdgeInsets.all(10.0),
+
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(10.0)),
         child: Column(

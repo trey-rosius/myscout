@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/profile_model.dart';
 import 'package:myscout/screens/home/home_screen.dart';
@@ -308,39 +309,21 @@ class _CreateProfileState extends State<CreateProfile> {
           }
         });
   }
-  bool isLargeScreen = false;
-  bool isMediumScreen = false;
-  bool isSmallScreen = false;
+
 
   @override
   Widget build(BuildContext context) {
-   
+    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
     Size size = MediaQuery.of(context).size;
 
-    if(size.width < 400)
-    {
-      isMediumScreen = false;
-      isLargeScreen = false;
-      isSmallScreen = true;
 
-    }
-    else if(size.width >400 && size.width <412)
-    {
-      isMediumScreen = true;
-      isLargeScreen = false;
-      isSmallScreen = false;
-    } else{
-      isMediumScreen = false;
-      isLargeScreen = true;
-      isSmallScreen = false;
-    }
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: isSmallScreen ? size.height / 3.8 : isMediumScreen ?size.height / 4.5 : size.height / 3.8,
+            height:ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(300) :ScreenUtil.screenWidthDp > 413 || ScreenUtil.screenWidthDp < 650 ? ScreenUtil.instance.setHeight(500) : ScreenUtil.instance.setHeight(300) ,
             alignment: Alignment.center,
             child: Text(
               "Create Profile",
@@ -349,7 +332,8 @@ class _CreateProfileState extends State<CreateProfile> {
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: isLargeScreen ? 160 :100),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:
+              ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(200) :ScreenUtil.screenWidthDp > 413 || ScreenUtil.screenWidthDp < 650 ? ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(200)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -646,6 +630,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                           items: <String>[
                                             "Basketball",
                                             "Football",
+                                            "Volleyball",
                                             "Soccer",
                                             "Tennis",
                                             "Baseball"
@@ -693,7 +678,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: heightController,
-                                    keyboardType: TextInputType.number,
+                                  // keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Height";
@@ -715,7 +700,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: weightController,
-                                    keyboardType: TextInputType.number,
+                                  //  keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Weight";

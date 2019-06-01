@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _segmentChildren = [PlayerScreen(), CoachScreen()];
+
 
   final Map<int, Widget> children = <int, Widget>{
     0: Container(
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     print("user Id value is" + settings.userId.getValue());
     Size size = MediaQuery.of(context).size;
-
+    final List<Widget> _segmentChildren = [PlayerScreen(userId:settings.userId.getValue() ,), CoachScreen(userId: settings.userId.getValue(),)];
     return WillPopScope(
         onWillPop: () => Future<bool>.value(false),
         child: PreferenceBuilder<String>(
