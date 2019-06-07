@@ -31,7 +31,7 @@ class SportsItem extends StatelessWidget {
                   width: 60.0,
                   height: 60.0,
                   fit: BoxFit.cover,
-                  imageUrl: document[Config.profilePicUrl],
+                  imageUrl: document[Config.profilePicUrl]??"",
                   placeholder: (context, url) =>
                   new CircularProgressIndicator(),
                   errorWidget: (context, url, ex) => new Icon(Icons.error),

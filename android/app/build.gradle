@@ -54,6 +54,11 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+    // Reduce your application size with this configuration
+    aaptOptions {
+        ignoreAssetsPattern "!x86:!*ffprobe"
+    }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -62,6 +67,12 @@ android {
             useProguard true
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.appcompat:appcompat:1.0.2'
         }
     }
 }

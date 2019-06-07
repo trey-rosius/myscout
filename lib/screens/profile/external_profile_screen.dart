@@ -119,11 +119,11 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                                       new CircularProgressIndicator(),
                                       errorWidget: (context, url, ex) => CircleAvatar(
                                           backgroundColor: Theme.of(context).accentColor,
-                                          radius: 100.0,
+                                          radius: 50.0,
                                           child: Icon(
                                             Icons.account_circle,
                                             color: Colors.white,
-                                            size: 100.0,
+                                            size: 50.0,
 
                                           )),
                                     )),
@@ -309,7 +309,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("SCHOOL/ORGANISATION", style: TextStyle(
+                                    child: Text("SCHOOL/ORGANIZATION", style: TextStyle(
 
                                         fontFamily: 'Montserrat',
                                         color: Theme.of(context).primaryColor,

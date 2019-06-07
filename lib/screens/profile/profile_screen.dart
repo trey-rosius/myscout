@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SliverToBoxAdapter(
 
                       child: Container(
-                         height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(470) :
+                         height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(500) :
                          (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(420) :
                              ScreenUtil.instance.setHeight(300),
 
@@ -287,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("SCHOOL/ORGANISATION", style: TextStyle(
+                                    child: Text("SCHOOL/ORGANIZATION", style: TextStyle(
 
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,

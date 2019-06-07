@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("notification token"+widget.token);
+    print("notification token"+widget.token??"no token");
   }
 
   final GlobalKey<FormState> formKey =  GlobalKey<FormState>();

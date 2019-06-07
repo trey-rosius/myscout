@@ -40,7 +40,7 @@ class Config{
   static final String postText = "postText";
   static final String isVideoPost = "isVideoPost";
   static final String postVideoUrl = "postVideoUrl";
-  static final String postVideoThumbUrl = "postVideoUrl";
+  static final String postVideoThumbUrl = "postVideoThumbUrl";
   static final String postImageUrl = "postImageUrl";
   static final String postAdminId = "postAdminId";
   static final String userPosts = "userPosts";
