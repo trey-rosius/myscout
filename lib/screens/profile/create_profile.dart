@@ -82,6 +82,7 @@ class _CreateProfileState extends State<CreateProfile> {
     userInfo[Config.weight]= weightController.text;
     userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
 
+    _saveSports(pModel.sports ?? "Basketball");
     Firestore.instance
         .collection(Config.users)
         .document(widget.userId)
@@ -111,6 +112,12 @@ class _CreateProfileState extends State<CreateProfile> {
     print("user id is saved"+uid);
   }
 
+  _saveSports(String sport) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    print("saved sport to preferences"+sport);
+    prefs.setString(Config.sport, sport);
+  }
   saveProfileDetailsWithImage(){
 
     final FirebaseStorage storage = FirebaseStorage.instance;
@@ -132,6 +139,7 @@ class _CreateProfileState extends State<CreateProfile> {
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= pModel.sports;
 
+      _saveSports(pModel.sports ?? "Basketball");
       Firestore.instance
           .collection(Config.users)
           .document(widget.userId)

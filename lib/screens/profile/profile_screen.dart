@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
 import 'package:myscout/screens/cards/create_card.dart';
+import 'package:myscout/screens/cards/edit_card.dart';
 
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
 import 'package:myscout/utils/Config.dart';
@@ -287,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(bottom:10.0),
-                                    child: Text("SCHOOL/ORGANIZATION", style: TextStyle(
+                                    child: Text("ORGANIZATION", style: TextStyle(
 
                                         color: Theme.of(context).primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -407,7 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) =>  CreateCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],userType: userType)));
+                  builder: (context) =>  EditCard(userId: widget.userId,cardId:docSnap.data[Config.cardId],userType: userType)));
         },
         child: Text("EDIT CARD",style: TextStyle(
 

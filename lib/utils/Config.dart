@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 class Config{
 
@@ -24,6 +23,7 @@ class Config{
   static final String actSat = "act_sat";
   static final String CLASS = "class";
   static final String selectSport = "selectSport";
+  static final String sport = "sport";
   static final String position = "position";
   static final String height = "height";
   static final String weight = "weight";
@@ -146,6 +146,105 @@ class Config{
 
   static final String popularCards= "popularCards";
   static final String newCards= "newCards";
+
+
+
+
+  static final String highSchoolAndUnder= "High School And Under";
+  static final String college= "College";
+  static final String pro= "Pro";
+  static final String level= "level";
+  static final String levelText= "levelText";
+  static final String cardLogo= "cardLogo";
+
+
+
+
+
+  static final String solo= "SOLO";
+  static final String ast= "AST";
+  static final String total= "TOTAL";
+  static final String avg= "AVG";
+  static final String tfl= "TFL";
+  static final String sacks= "SACKS";
+  static final String pbu= "PBU'S";
+  static final String ints= "INT's";
+  static final String ff= "FF";
+  static final String rec= "REC";
+  static final String defense= "DEFENSE";
+  static final String tackles= "TACKLES";
+  static final String fumbles= "FUMBLES";
+  static final String rushing= "RUSHING";
+  static final String att= "ATT";
+  static final String yds= "YDS";
+  static final String lng= "LNG";
+  static final String td= "TD";
+  static final String ydsg= "YDS/G";
+  static final String receiving= "RECEIVING";
+  static final String passing= "PASSING";
+  static final String returns= "RETURNS";
+  static final String kickoffs= "KICKOFFS";
+  static final String punts= "PUNTS";
+  static final String kicking= "KICKING";
+  static final String fieldGoals= "FIELD GOALS";
+  static final String extraPoints= "EXTRA POINTS";
+
+  static final String comp= "COMP";
+  static final String pct= "PCT";
+  static final String fgm= "FGM";
+  static final String fga= "FGA";
+  static final String xpm= "XPM";
+  static final String xpa= "XPA";
+  static final String punting= "PUNTING";
+
+
+
+  static final String basketball= "BASKETBALL";
+
+
+  static final String ppg= "PPG";
+  static final String rpg= "RPG";
+  static final String apg= "APG";
+  static final String spg= "SPG";
+  static final String bpg= "BPG";
+  static final String fgPercentage= "FG%";
+  static final String ftPercentage= "FT%";
+
+
+
+  static final String baseball= "BASEBALL";
+
+
+
+
+  static final String rbis= "RBI's";
+  static final String hr= "HR";
+
+  static final String soccer= "SOCCER";
+
+  static final String goals= "GOALS";
+  static final String assist= "ASSISTS";
+  static final String saves= "saves";
+
+  static final String tennis= "TENNIS";
+
+  static final String wins= "WINS";
+  static final String losses= "LOSSES";
+
+  static final String percentage= "%";
+
+
+  static final String coaching= "COACHING";
+
+
+  static final String games= "GAMES";
+  static final String aphigh= "AP HIGH";
+  static final String appost= "AP POST";
+  static final String appre= "AP PRE";
+
+
+
+  static final String defenseId= "defenseId";
 
 
 

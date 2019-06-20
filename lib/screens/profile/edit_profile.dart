@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/profile_model.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -80,7 +80,7 @@ class _EditProfileState extends State<EditProfile> {
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
     userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
-
+    _saveSports(pModel.sports ?? "Basketball");
     Firestore.instance
         .collection(Config.users)
         .document(widget.userId)
@@ -104,7 +104,12 @@ class _EditProfileState extends State<EditProfile> {
 
   }
 
+  _saveSports(String sport) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    print("saved sport to preferences"+sport);
+    prefs.setString(Config.sport, sport);
+  }
 
   saveProfileDetailsWithImage(){
 
@@ -127,6 +132,7 @@ class _EditProfileState extends State<EditProfile> {
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= pModel.sports;
 
+      _saveSports(pModel.sports);
       Firestore.instance
           .collection(Config.users)
           .document(widget.userId)

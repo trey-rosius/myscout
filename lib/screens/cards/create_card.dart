@@ -88,9 +88,20 @@ class _CreateCardState extends State<CreateCard> {
     return downloadUrl;
   }
 
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
 
 
   String sports = "BasketBall";
+  String level = Config.highSchoolAndUnder;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
@@ -100,6 +111,7 @@ class _CreateCardState extends State<CreateCard> {
   final shortBioController = TextEditingController();
   final titleController = TextEditingController();
   final jerseyNumController = TextEditingController();
+  final levelsController = TextEditingController();
   final schoolOrganisationController = TextEditingController();
 
 
@@ -131,22 +143,30 @@ class _CreateCardState extends State<CreateCard> {
   CardModel pModel = CardModel();
 
   File file;
+  File fileLogo;
 
   String _error;
 
   Future<File> _imageFile;
+  Future<File> _imageLogo;
   String profilePic;
+  String logo;
   String userType;
 
   @override
   void initState() {
-    loadCardDetails();
+   // loadCardDetails();
     _getUserType();
     super.initState();
   }
   void _onImageButtonPressed(ImageSource source, int numberOfItems) {
     setState(() {
       _imageFile = ImagePicker.pickImage(source: source);
+    });
+  }
+  void _onImageLogoPressed(ImageSource source, int numberOfItems) {
+    setState(() {
+      _imageLogo= ImagePicker.pickImage(source: source);
     });
   }
 
@@ -167,10 +187,13 @@ class _CreateCardState extends State<CreateCard> {
         .then((DocumentSnapshot snapshot) {
       setState(() {
         profilePic = snapshot[Config.profilePicUrl];
+        logo = snapshot[Config.cardLogo];
         fullNamesController.text = snapshot[Config.fullNames];
         dobController.text = snapshot[Config.dob];
         locationController.text = snapshot[Config.location];
         shortBioController.text = snapshot[Config.shortBio];
+
+
         if(userType==Config.coachScout){
           titleController.text = snapshot[Config.schoolOrOrg];
         }
@@ -178,6 +201,8 @@ class _CreateCardState extends State<CreateCard> {
         {
           jerseyNumController.text = snapshot[Config.jerseyNumber];
           positionController.text = snapshot[Config.position];
+          levelsController.text = snapshot[Config.levelText];
+          level = snapshot[Config.level];
         }
 
         schoolOrganisationController.text = snapshot[Config.schoolOrOrg];
@@ -218,7 +243,10 @@ class _CreateCardState extends State<CreateCard> {
 
 
 
+
+
      userInfo[Config.profilePicUrl] = profilePic;
+     userInfo[Config.cardLogo] = logo;
      userInfo[Config.cardColor] = colorCodes[currentColorIndex];
      userInfo[Config.cardColorIndex] = currentColorIndex;
      userInfo[Config.userType] = userType;
@@ -229,8 +257,10 @@ class _CreateCardState extends State<CreateCard> {
      }
      else
      {
+       userInfo[Config.level]= level;
        userInfo[Config.position]= positionController.text;
        userInfo[Config.jerseyNumber]= jerseyNumController.text;
+       userInfo[Config.levelText]= levelsController.text;
 
      }
 
@@ -298,6 +328,8 @@ class _CreateCardState extends State<CreateCard> {
       }
       else
         {
+          userInfo[Config.levelText]= levelsController.text;
+          userInfo[Config.level]= level;
           userInfo[Config.position]= positionController.text;
           userInfo[Config.jerseyNumber]= jerseyNumController.text;
 
@@ -330,11 +362,35 @@ class _CreateCardState extends State<CreateCard> {
                 Config.cardId:docRef.documentID,
 
               });
-              setState(() {
-                loading = false;
-                cardId = docRef.documentID;
-                fullScreenCard = true;
-              });
+
+              if(fileLogo == null)
+                {
+                  setState(() {
+                    loading = false;
+                    cardId = docRef.documentID;
+                    fullScreenCard = true;
+                  });
+                }
+                else
+                  {
+                    uploadImage(fileLogo, storage).then((String data){
+                      Firestore.instance.collection(Config.cards).document(docRef.documentID)
+                          .updateData({
+                        Config.cardLogo:data,
+
+                      }).then((_){
+                        setState(() {
+                          loading = false;
+                          cardId = docRef.documentID;
+                          fullScreenCard = true;
+                        });
+                      });
+                    });
+
+                  }
+
+
+
               /*
               Navigator.push(
                   context,
@@ -481,6 +537,78 @@ class _CreateCardState extends State<CreateCard> {
         });
   }
 
+  Widget _previewLogo() {
+    return FutureBuilder<File>(
+        future: _imageLogo,
+        builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
+            fileLogo = snapshot.data;
+
+            return InkWell(
+              onTap: () => _onImageLogoPressed(ImageSource.gallery, 1),
+              child:Container(
+               // padding: EdgeInsets.all(10),
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Image.file(snapshot.data,width: 50,height: 50,fit: BoxFit.cover,),
+              ),
+            );
+          } else if (snapshot.error != null) {
+            // showInSnackBar("Error Picking Image");
+            return InkWell(
+              onTap: () {
+                _onImageLogoPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                height: 80,
+                width: 80,
+               // padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 35.0,
+                ),
+
+              ),
+            );
+          } else {
+            // showInSnackBar("You have not yet picked an image.");
+            return InkWell(
+              onTap: () {
+                _onImageLogoPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                height: 80,
+                width: 80,
+              //  padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 35.0,
+                ),
+
+              ),
+            );
+          }
+        });
+  }
+
 
 
   @override
@@ -494,7 +622,7 @@ class _CreateCardState extends State<CreateCard> {
     titleController.dispose();
     schoolOrganisationController.dispose();
     jerseyNumController.dispose();
-
+    levelsController.dispose();
 
     actSatController.dispose();
     classController.dispose();
@@ -509,6 +637,7 @@ class _CreateCardState extends State<CreateCard> {
   Widget build(BuildContext context) {
      Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
@@ -543,32 +672,36 @@ class _CreateCardState extends State<CreateCard> {
                                   child: Stack(
                                     children: <Widget>[
                                       Positioned(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 5.0, right: 5.0),
-                                          child: AspectRatio(
-                                            aspectRatio: 2 / 2.3,
-                                            child: CachedNetworkImage(
-                                              fit: BoxFit.cover,
-                                              imageUrl:
-                                              docs.data[Config.profilePicUrl],
-                                              placeholder: (context, url) =>
-                                                  SpinKitWave(
-                                                    itemBuilder: (_, int index) {
-                                                      return DecoratedBox(
-                                                        decoration: BoxDecoration(
-                                                          color: Theme.of(context)
-                                                              .accentColor,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                              errorWidget: (context, url, error) =>
-                                                  Icon(Icons.error),
+                                        child:
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5.0, right: 5.0),
+                                              child: AspectRatio(
+                                                aspectRatio: 2 / 2.3,
+                                                child: CachedNetworkImage(
+                                                  fit: BoxFit.cover,
+                                                  imageUrl:
+                                                  docs.data[Config.profilePicUrl],
+                                                  placeholder: (context, url) =>
+                                                      SpinKitWave(
+                                                        itemBuilder: (_, int index) {
+                                                          return DecoratedBox(
+                                                            decoration: BoxDecoration(
+                                                              color: Theme.of(context)
+                                                                  .accentColor,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                  errorWidget: (context, url, error) =>
+                                                      Icon(Icons.error),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
+
                                       ),
+
+
                                       Container(
                                         width: 330,
                                         height: 100,
@@ -672,19 +805,11 @@ class _CreateCardState extends State<CreateCard> {
                                           margin: EdgeInsets.fromLTRB(80, 0, 0, 10),
                                           child: Row(
                                             children: <Widget>[
+
                                               Container(
                                                 padding: EdgeInsets.all(5),
                                                 child: Text(
-                                                  "HEIGHT",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(
-                                                  docs.data[Config.height],
+                                                  docs.data[Config.height]+"\"",
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
@@ -693,14 +818,17 @@ class _CreateCardState extends State<CreateCard> {
                                                 ),
                                               ),
                                               Container(
-                                                padding: EdgeInsets.all(5),
+                                                padding: EdgeInsets.only(bottom: 10),
                                                 child: Text(
-                                                  "WEIGHT",
+                                                  ".",
+
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
                                                       color: Colors.white),
                                                 ),
                                               ),
+
                                               Container(
                                                 padding: EdgeInsets.all(5),
                                                 child: Text(
@@ -716,6 +844,28 @@ class _CreateCardState extends State<CreateCard> {
 
                                                 child: Text(
                                                   "lbs",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                 level == Config.highSchoolAndUnder? "Class of :" : level == Config.college ? "Year :" :"Year :",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.levelText],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.white),
@@ -801,17 +951,28 @@ class _CreateCardState extends State<CreateCard> {
                                             width: 300,
                                           )),
                                       Container(
-                                        margin: EdgeInsets.only(left:10,top: 340),
-                                        child:
-                                        Text(
 
-                                          docs.data[Config.CLASS].toLowerCase() == Config.freshMan ? "FR":docs.data[Config.CLASS].toLowerCase() == Config.senior ? "SR" : "JR" ,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontSize: 40,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF998e6f)),
+                                        margin: EdgeInsets.only(left:10,top: 335),
+                                        child:
+                                        CachedNetworkImage(
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
+                                          imageUrl:
+                                          docs.data[Config.cardLogo]??"",
+                                          placeholder: (context, url) =>
+                                              SpinKitWave(
+                                                itemBuilder: (_, int index) {
+                                                  return DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .accentColor,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
                                         ),
                                       ),
                                     ],
@@ -874,56 +1035,112 @@ class _CreateCardState extends State<CreateCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
 
-                  InkWell(
-                      onTap: () {
-                        _onImageButtonPressed(ImageSource.gallery, 1);
-                      },
-                      child: _imageFile == null
-                          ? Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child:Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              border:Border.all(color: Theme.of(context).accentColor,width: 4),
-                              borderRadius:
-                               BorderRadius.circular(10),
-                            ),
-                            child: profilePic != null
-                                  ?
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      InkWell(
+                          onTap: () {
+                            _onImageLogoPressed(ImageSource.gallery, 1);
+                          },
+                          child: _imageLogo == null
+                              ? Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child:Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                child: logo != null
+                                    ?
                                 CachedNetworkImage(
-                                  width: 150.0,
-                                  height: 150.0,
+                                  width: 80.0,
+                                  height: 80.0,
                                   fit: BoxFit.cover,
-                                  imageUrl: profilePic,
+                                  imageUrl: logo,
                                   placeholder: (context, url) =>
                                   new CircularProgressIndicator(),
                                   errorWidget: (context, url, ex) =>
                                   new Icon(Icons.error),
                                 )
 
-                                  :
-                            Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                border:Border.all(color: Theme.of(context).accentColor,width: 4),
-                                borderRadius:
-                                BorderRadius.circular(10),
-                              ),
-                              child:
-                             Icon(
-                                  Icons.card_membership,
-                                  color: Theme.of(context).accentColor,
-                                  size:70.0,
+                                    :
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  child:
+                                  Icon(
+                                    Icons.add,
+                                    color: Theme.of(context).accentColor,
+                                    size:35.0,
 
-                              ),
-                            ),
+                                  ),
+                                ),
+                              )
                           )
-                          )
-                          : _previewImage()
-                    // child: _prev,
+                              : _previewLogo()
+                        // child: _prev,
 
+                      ),
+                      InkWell(
+                          onTap: () {
+                            _onImageButtonPressed(ImageSource.gallery, 1);
+                          },
+                          child: _imageFile == null
+                              ? Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child:Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                  borderRadius:
+                                   BorderRadius.circular(10),
+                                ),
+                                child: profilePic != null
+                                      ?
+                                    CachedNetworkImage(
+                                      width: 150.0,
+                                      height: 150.0,
+                                      fit: BoxFit.cover,
+                                      imageUrl: profilePic,
+                                      placeholder: (context, url) =>
+                                      new CircularProgressIndicator(),
+                                      errorWidget: (context, url, ex) =>
+                                      new Icon(Icons.error),
+                                    )
+
+                                      :
+                                Container(
+                                  height: 150,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  child:
+                                 Icon(
+                                      Icons.card_membership,
+                                      color: Theme.of(context).accentColor,
+                                      size:70.0,
+
+                                  ),
+                                ),
+                              )
+                              )
+                              : _previewImage()
+                        // child: _prev,
+
+                      ),
+                    ],
                   ),
                   Form(
                     key: formKey,
@@ -944,6 +1161,73 @@ class _CreateCardState extends State<CreateCard> {
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.white),
                                 ),
+                              ),
+
+                              userType == Config.coachScout ? Container(): Padding(
+                                padding: const EdgeInsets.only(left: 8.0, top: 10.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text("Level"),
+
+                                        DropdownButton(
+                                            value: level ??
+                                                Config.highSchoolAndUnder,
+                                            items: <String>[
+                                              Config.highSchoolAndUnder,
+                                              Config.college,
+                                              Config.pro
+
+
+                                            ].map((String value) {
+                                              return new DropdownMenuItem(
+                                                  value: value,
+                                                  child: new Text(
+                                                    '${value}',
+                                                    style: TextStyle(fontSize: 16.0),
+                                                  ));
+                                            }).toList(),
+
+                                            onChanged: (String value) {
+                                              setState(() {
+                                                level = value.trim();
+                                              });
+                                            }),
+
+                                      ],
+                                    ),
+
+                                    Container(
+                                      child: new TextFormField(
+                                        controller: levelsController,
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            return level==Config.highSchoolAndUnder ?
+                                            "Type In Year" : level==Config.college ?
+                                            "Type in Freshman, Sophomore, Junior, Senior" : "Type in 1st, 2nd, ...";
+                                          }
+                                        },
+                                        onSaved: ((String value){
+                                          pModel.fullNames = value.trim();
+                                        }),
+
+                                        // enabled: false,
+                                        // keyboardType: TextInputType.number,
+                                        decoration: new InputDecoration(
+                                          labelText: level==Config.highSchoolAndUnder ?
+                                          "Type In Year" : level==Config.college ?
+                                              "Type in Fr, So, Jr, Sr" : "Type in 1st, 2nd, ..."
+                                          ,
+                                          contentPadding: new EdgeInsets.all(10.0),
+                                          filled: false,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
                               ),
                               Container(
                                 child: new TextFormField(
@@ -1325,16 +1609,23 @@ class _CreateCardState extends State<CreateCard> {
                                 elevation: 0.0,
                                 onPressed: () {
                                   if (formKey.currentState.validate()) {
-                                   if(_imageFile != null)
+                                   if(_imageFile != null && fileLogo != null)
                                      {
                                        saveCardDetailsWithImage();
 
                                      }
-                                     else
+                                     else if(_imageFile == null && fileLogo != null)
                                        {
+                                           showInSnackBar("Please Select Main Picture");
 
-                                         saveCardDetailsWithImageUrl();
-                                       }
+                                       } else  if(_imageFile != null && fileLogo == null)
+                                         {
+                                           showInSnackBar("Please Select Add A Logo");
+                                         }
+                                         else
+                                           {
+                                             showInSnackBar("Please Select Add A Logo and  a Main Picture");
+                                           }
                                   }
                                 },
                                 color: Theme.of(context).primaryColorLight,

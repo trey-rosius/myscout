@@ -169,6 +169,7 @@ class _CreatePostState extends State<CreatePost> {
 
         final MediaInfo info = await _flutterVideoCompress.startCompress(
           mainFile.path,
+          quality: VideoQuality.MediumQuality,
           deleteOrigin: false,
         );
         print(info.toJson());

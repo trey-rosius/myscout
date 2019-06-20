@@ -20,6 +20,11 @@ import 'package:myscout/screens/profile/edit_profile.dart';
 import 'package:myscout/screens/profile/profile_screen.dart';
 import 'package:myscout/screens/schedule/schedule_screen.dart';
 import 'package:myscout/screens/search/search_screen.dart';
+import 'package:myscout/screens/stats/baseball_screen.dart';
+import 'package:myscout/screens/stats/basketball_screen.dart';
+import 'package:myscout/screens/stats/soccer_screen.dart';
+import 'package:myscout/screens/stats/stats_screen.dart';
+import 'package:myscout/screens/stats/tennis_screen.dart';
 import 'package:myscout/settings_screen.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/app_settings.dart';
@@ -220,10 +225,91 @@ class _HomeScreenState extends State<HomeScreen> {
                         Divider(
                           color: Colors.white,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("STATS",
-                              style: TextStyle(color: Colors.white)),
+                        InkWell(
+                          onTap: (){
+
+                            if(settings.userType.getValue() == Config.athleteOrParent)
+                              {
+                                if(settings.sport.getValue() == "Basketball")
+                                  {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (context) =>  BasketBallScreen(
+                                            userId: userId,
+                                          ),
+                                        ));
+
+
+                                  } else if((settings.sport.getValue() == "Football"))
+                                    {
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                            builder: (context) =>  StatScreen(
+                                              userId: userId,
+                                            ),
+                                          ));
+
+                                    } else if((settings.sport.getValue() == "Soccer")){
+
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                        builder: (context) =>  SoccerScreen(
+                                          userId: userId,
+                                        ),
+                                      ));
+
+                                } else if((settings.sport.getValue() == "Tennis"))
+                                  {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                          builder: (context) =>  TennisScreen(
+                                            userId: userId,
+                                          ),
+                                        ));
+
+                                  }else{
+
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                        builder: (context) =>  BaseBallScreen(
+                                          userId: userId,
+                                        ),
+                                      ));
+
+                                }
+
+
+                              } else
+                                {
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                        builder: (context) =>  CoachScreen(
+                                          userId: userId,
+                                        ),
+                                      ));
+
+                                }
+
+
+
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("STATS",
+                                style: TextStyle(color: Colors.white)),
+                          ),
                         ),
                         Divider(
                           color: Colors.white,

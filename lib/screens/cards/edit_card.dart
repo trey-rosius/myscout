@@ -4,25 +4,94 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:myscout/models/card_model.dart';
 import 'package:myscout/screens/cards/card_color.dart';
+import 'package:myscout/screens/cards/full_screen_card.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'data.dart';
-import 'package:myscout/models/profile_model.dart';
+
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/rendering.dart';
+
+
+import 'dart:ui' as ui;
+
 class EditCard extends StatefulWidget {
-  EditCard({this.userId,this.cardId});
+  EditCard({this.userId,this.cardId,this.userType});
   final String userId;
   final String cardId;
+  final String userType;
   @override
   _EditCardState createState() => _EditCardState();
 }
 
 class _EditCardState extends State<EditCard> {
 
+  GlobalKey _globalKey = new GlobalKey();
+
+
+  void  _capturePng() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+      RenderRepaintBoundary boundary =
+      _globalKey.currentContext.findRenderObject();
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+      var pngBytes = byteData.buffer.asUint8List();
+
+      var bs64 = base64Encode(pngBytes);
+      print(pngBytes);
+      print(bs64);
+      setState(() {});
+      final FirebaseStorage storage = FirebaseStorage.instance;
+      uploadImageBytes(pngBytes, storage).then((String data) {
+
+        Firestore.instance.collection(Config.cards).document(cardId).updateData({
+          Config.cardImageUrl:data
+        }).then((_){
+          print("image url"+ data);
+          setState(() {
+            loading = false;
+          });
+          Navigator.of(context).pop();
+        });
+      });
+
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future<String> uploadImageBytes(var pngBytes, FirebaseStorage storage) async {
+    var uuid = new Uuid().v1();
+    StorageReference ref = storage
+        .ref()
+        .child(Config.cards)
+        .child(widget.userId)
+        .child("$uuid.png");
+
+
+    StorageUploadTask uploadTask = ref.putData(pngBytes);
+    StorageTaskSnapshot storageTask = await uploadTask.onComplete;
+    String downloadUrl = await storageTask.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+
+
   String sports = "BasketBall";
+  String level = Config.highSchoolAndUnder;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
@@ -30,6 +99,10 @@ class _EditCardState extends State<EditCard> {
   final dobController = TextEditingController();
   final locationController = TextEditingController();
   final shortBioController = TextEditingController();
+  final titleController = TextEditingController();
+  final jerseyNumController = TextEditingController();
+  final levelsController = TextEditingController();
+  final schoolOrganisationController = TextEditingController();
 
 
   final actSatController = TextEditingController();
@@ -53,15 +126,21 @@ class _EditCardState extends State<EditCard> {
   static DateTime dateTime = DateTime.now();
   static DateTime dateTime1 = DateTime.now();
   String cardPic;
+  bool fullScreenCard = false;
+  String cardId;
 
-  ProfileModel pModel = ProfileModel();
+  // ProfileModel pModel = ProfileModel();
+  CardModel pModel = CardModel();
 
   File file;
+  File fileLogo;
 
   String _error;
 
   Future<File> _imageFile;
+  Future<File> _imageLogo;
   String profilePic;
+  String logo;
   String userType;
 
   @override
@@ -73,6 +152,11 @@ class _EditCardState extends State<EditCard> {
   void _onImageButtonPressed(ImageSource source, int numberOfItems) {
     setState(() {
       _imageFile = ImagePicker.pickImage(source: source);
+    });
+  }
+  void _onImageLogoPressed(ImageSource source, int numberOfItems) {
+    setState(() {
+      _imageLogo= ImagePicker.pickImage(source: source);
     });
   }
 
@@ -93,17 +177,32 @@ class _EditCardState extends State<EditCard> {
         .then((DocumentSnapshot snapshot) {
       setState(() {
         profilePic = snapshot[Config.profilePicUrl];
+        logo = snapshot[Config.cardLogo];
         fullNamesController.text = snapshot[Config.fullNames];
         dobController.text = snapshot[Config.dob];
         locationController.text = snapshot[Config.location];
         shortBioController.text = snapshot[Config.shortBio];
+
+
+        if(userType==Config.coachScout){
+          titleController.text = snapshot[Config.schoolOrOrg];
+        }
+        else
+        {
+          jerseyNumController.text = snapshot[Config.jerseyNumber];
+          positionController.text = snapshot[Config.position];
+          levelsController.text = snapshot[Config.levelText];
+          level = snapshot[Config.level];
+        }
+
+        schoolOrganisationController.text = snapshot[Config.schoolOrOrg];
 
         currentColorIndex = snapshot[Config.cardColorIndex];
 
         actSatController.text = snapshot[Config.actSat];
         classController.text = snapshot[Config.CLASS];
         sports = snapshot[Config.selectSport];
-        positionController.text = snapshot[Config.position];
+
         heightController.text = snapshot[Config.height];
         weightController.text = snapshot[Config.weight];
       });
@@ -116,7 +215,78 @@ class _EditCardState extends State<EditCard> {
 
 
 
+  saveCardDetailsWithImageUrl(){
 
+    print(pModel.sports);
+
+    setState(() {
+      loading = true;
+    });
+
+
+    Map userInfo = new Map<String, dynamic>();
+    userInfo[Config.fullNames]= fullNamesController.text;
+    userInfo[Config.dob]= dobController.text;
+    userInfo[Config.location]= locationController.text;
+    userInfo[Config.shortBio]= shortBioController.text;
+    userInfo[Config.collectedCount]= 0;
+
+
+
+
+
+    userInfo[Config.profilePicUrl] = profilePic;
+    userInfo[Config.cardLogo] = logo;
+    userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+    userInfo[Config.cardColorIndex] = currentColorIndex;
+    userInfo[Config.userType] = userType;
+    userInfo[Config.cardCreatorId] = widget.userId;
+    userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+    if(userType==Config.coachScout){
+      userInfo[Config.title] = titleController.text;
+    }
+    else
+    {
+      userInfo[Config.level]= level;
+      userInfo[Config.position]= positionController.text;
+      userInfo[Config.jerseyNumber]= jerseyNumController.text;
+      userInfo[Config.levelText]= levelsController.text;
+
+    }
+
+
+
+    userInfo[Config.actSat]= actSatController.text;
+    userInfo[Config.CLASS]= classController.text;
+
+    userInfo[Config.height]= heightController.text;
+    userInfo[Config.weight]= weightController.text;
+    userInfo[Config.selectSport]= sports;
+    userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+
+
+
+    Firestore.instance.collection(Config.cards).document(widget.cardId).updateData(userInfo).then((_){
+
+      setState(() {
+        loading = false;
+        cardId = widget.cardId;
+        fullScreenCard = true;
+      });
+      /*
+         Navigator.push(
+             context,
+             new MaterialPageRoute(
+               builder: (context) => FullScreenCard(cardId:widget.cardId,userId: widget.userId,),
+             ));
+             */
+      // Navigator.of(context).pop();
+    });
+
+
+
+
+  }
   saveCardDetailsWithImage(){
 
     print(pModel.sports);
@@ -142,31 +312,126 @@ class _EditCardState extends State<EditCard> {
       userInfo[Config.cardColorIndex] = currentColorIndex;
       userInfo[Config.userType] = userType;
       userInfo[Config.cardCreatorId] = widget.userId;
+      userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+      if(userType==Config.coachScout){
+        userInfo[Config.title] = titleController.text;
+      }
+      else
+      {
+        userInfo[Config.levelText]= levelsController.text;
+        userInfo[Config.level]= level;
+        userInfo[Config.position]= positionController.text;
+        userInfo[Config.jerseyNumber]= jerseyNumController.text;
+
+      }
+
 
 
       userInfo[Config.actSat]= actSatController.text;
       userInfo[Config.CLASS]= classController.text;
-      userInfo[Config.position]= positionController.text;
+
       userInfo[Config.height]= heightController.text;
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= sports;
+      userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+
 
       Firestore.instance
-          .collection(Config.cards).add(userInfo).then((DocumentReference docRef){
+          .collection(Config.cards).document(widget.cardId).updateData(userInfo).then((_){
 
-        Firestore.instance.collection(Config.cards).document(docRef.documentID).updateData({
-          Config.cardId:docRef.documentID
-        }).then((_){
-          Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).document(docRef.documentID)
-              .setData({
-            Config.cardId:docRef.documentID,
-            Config.cardCreatorId:widget.userId
-          });
+
+        if(fileLogo == null)
+        {
           setState(() {
             loading = false;
+            cardId =widget.cardId;
+            fullScreenCard = true;
           });
-          Navigator.of(context).pop();
+        }
+        else
+        {
+          uploadImage(fileLogo, storage).then((String data){
+            Firestore.instance.collection(Config.cards).document(widget.cardId)
+                .updateData({
+              Config.cardLogo:data,
+
+            }).then((_){
+              setState(() {
+                loading = false;
+                cardId =widget.cardId;
+                fullScreenCard = true;
+              });
+            });
+          });
+
+        }
+
+
+
+      });
+
+    });
+
+
+  }
+  saveCardDetailsWithLogo(){
+
+    print(pModel.sports);
+
+    setState(() {
+      loading = true;
+    });
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    uploadImage(fileLogo, storage).then((String data) {
+
+
+      Map userInfo = new Map<String, dynamic>();
+      userInfo[Config.fullNames]= fullNamesController.text;
+      userInfo[Config.dob]= dobController.text;
+      userInfo[Config.location]= locationController.text;
+      userInfo[Config.shortBio]= shortBioController.text;
+      userInfo[Config.collectedCount]= 0;
+      userInfo[Config.cardLogo] = data;
+
+
+      userInfo[Config.profilePicUrl] = profilePic;
+      userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+      userInfo[Config.cardColorIndex] = currentColorIndex;
+      userInfo[Config.userType] = userType;
+      userInfo[Config.cardCreatorId] = widget.userId;
+      userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+      if(userType==Config.coachScout){
+        userInfo[Config.title] = titleController.text;
+      }
+      else
+      {
+        userInfo[Config.levelText]= levelsController.text;
+        userInfo[Config.level]= level;
+        userInfo[Config.position]= positionController.text;
+        userInfo[Config.jerseyNumber]= jerseyNumController.text;
+
+      }
+
+
+
+      userInfo[Config.actSat]= actSatController.text;
+      userInfo[Config.CLASS]= classController.text;
+
+      userInfo[Config.height]= heightController.text;
+      userInfo[Config.weight]= weightController.text;
+      userInfo[Config.selectSport]= sports;
+      userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+
+
+      Firestore.instance
+          .collection(Config.cards).document(widget.cardId).updateData(userInfo).then((_){
+
+        setState(() {
+          loading = false;
+          cardId =widget.cardId;
+          fullScreenCard = true;
         });
+
       });
 
     });
@@ -184,6 +449,8 @@ class _EditCardState extends State<EditCard> {
         .child(Config.cards)
         .child(widget.userId)
         .child("$uuid.jpg");
+
+
     StorageUploadTask uploadTask = ref.putFile(imageFile);
     StorageTaskSnapshot storageTask = await uploadTask.onComplete;
     String downloadUrl = await storageTask.ref.getDownloadURL();
@@ -302,6 +569,78 @@ class _EditCardState extends State<EditCard> {
         });
   }
 
+  Widget _previewLogo() {
+    return FutureBuilder<File>(
+        future: _imageLogo,
+        builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
+            fileLogo = snapshot.data;
+
+            return InkWell(
+              onTap: () => _onImageLogoPressed(ImageSource.gallery, 1),
+              child:Container(
+                // padding: EdgeInsets.all(10),
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Image.file(snapshot.data,width: 50,height: 50,fit: BoxFit.cover,),
+              ),
+            );
+          } else if (snapshot.error != null) {
+            // showInSnackBar("Error Picking Image");
+            return InkWell(
+              onTap: () {
+                _onImageLogoPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                height: 80,
+                width: 80,
+                // padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 35.0,
+                ),
+
+              ),
+            );
+          } else {
+            // showInSnackBar("You have not yet picked an image.");
+            return InkWell(
+              onTap: () {
+                _onImageLogoPressed(ImageSource.gallery, 1);
+              },
+              child: Container(
+                height: 80,
+                width: 80,
+                //  padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 35.0,
+                ),
+
+              ),
+            );
+          }
+        });
+  }
+
 
 
   @override
@@ -312,7 +651,10 @@ class _EditCardState extends State<EditCard> {
     dobController.dispose();
     locationController.dispose();
     shortBioController.dispose();
-
+    titleController.dispose();
+    schoolOrganisationController.dispose();
+    jerseyNumController.dispose();
+    levelsController.dispose();
 
     actSatController.dispose();
     classController.dispose();
@@ -330,18 +672,390 @@ class _EditCardState extends State<EditCard> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
-          "Create Card",
+          "Edit Card",
           style: TextStyle(fontSize: 20.0, color: Colors.white),
         ),
         centerTitle: true,
 
       ),
-      body: Stack(
+      body: fullScreenCard ?
+      Center(
+        child:SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              RepaintBoundary(
+                key: _globalKey,
+
+                child:  Container(
+                    child: StreamBuilder<DocumentSnapshot>(
+                        stream: Firestore.instance
+                            .collection(Config.cards)
+                            .document(cardId)
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot<DocumentSnapshot> docs) {
+                          if (docs.data != null) {
+                            return docs.data[Config.userType] == Config.coachScout
+                                ? InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height: 400,
+                                  width: 300,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Positioned(
+                                        child:
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5.0, right: 5.0),
+                                          child: AspectRatio(
+                                            aspectRatio: 2 / 2.3,
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                              docs.data[Config.profilePicUrl],
+                                              placeholder: (context, url) =>
+                                                  SpinKitWave(
+                                                    itemBuilder: (_, int index) {
+                                                      return DecoratedBox(
+                                                        decoration: BoxDecoration(
+                                                          color: Theme.of(context)
+                                                              .accentColor,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ),
+
+                                      ),
+
+
+                                      Container(
+                                        width: 330,
+                                        height: 100,
+                                        margin: EdgeInsets.fromLTRB(10, 330, 10, 0),
+                                        color: Color(
+                                            int.parse(docs.data[Config.cardColor])),
+                                      ),
+                                      Center(
+                                        child: Container(
+                                          margin:
+                                          EdgeInsets.fromLTRB(10, 330, 10, 0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(docs.data[Config.fullNames],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white)),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                      docs.data[Config.schoolOrOrg],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white)),
+                                                  Text(
+                                                      " - " +
+                                                          docs.data[Config.title],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white))
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                          child: Image.asset(
+                                            'assets/images/card_coach.png',
+                                            height: 400,
+                                            width: 300,
+                                          )),
+                                    ],
+                                  ),
+                                ))
+                                : InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  color: Color(
+                                      int.parse(docs.data[Config.cardColor])),
+
+                                  height: 400,
+                                  width: 290  ,
+
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 40),
+                                        child: AspectRatio(
+                                          aspectRatio: 1.4 / 1.82,
+                                          child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            imageUrl:
+                                            docs.data[Config.profilePicUrl],
+                                            placeholder: (context, url) =>
+                                                SpinKitWave(
+                                                  itemBuilder: (_, int index) {
+                                                    return DecoratedBox(
+                                                      decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .accentColor,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                          ),
+                                        ),
+                                      ),
+                                      RotatedBox(
+                                        quarterTurns: 1,
+                                        child: Container(
+                                          margin: EdgeInsets.fromLTRB(80, 0, 0, 10),
+                                          child: Row(
+                                            children: <Widget>[
+
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.height]+"\"",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.only(bottom: 10),
+                                                child: Text(
+                                                  ".",
+
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.weight],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+
+                                                child: Text(
+                                                  "lbs",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  level == Config.highSchoolAndUnder? "Class of :" : level == Config.college ? "Year :" :"Year :",
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(
+                                                  docs.data[Config.levelText],
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        margin: EdgeInsets.only(left:90,top: 340),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                                          children: <Widget>[
+                                            Text(
+                                              docs.data[Config.fullNames],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                            ),
+                                            Container(
+
+                                              margin: EdgeInsets.only(top: 5,right: 20),
+                                              child: Row(
+
+                                                children: <Widget>[
+                                                  Flexible(
+                                                    child: Text(
+                                                      docs.data[
+                                                      Config.schoolOrOrg],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    " . #" +
+                                                        docs.data[
+                                                        Config.jerseyNumber],
+                                                    maxLines: 1,
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: 10,
+                                                        color: Colors.white),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left:5.0),
+                                                    child: Text(
+                                                      docs.data[Config.position],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+
+                                      Container(
+
+
+
+
+                                          child: Image.asset(
+                                            'assets/images/card_athlete.png',
+                                            height: 400,
+                                            width: 300,
+                                          )),
+                                      Container(
+                                        height: 50,
+                                        width: 50,
+                                        margin: EdgeInsets.only(left:10,top: 340,bottom: 10),
+                                        child:
+                                        CachedNetworkImage(
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
+                                          imageUrl:
+                                          docs.data[Config.cardLogo]??"",
+                                          placeholder: (context, url) =>
+                                              SpinKitWave(
+                                                itemBuilder: (_, int index) {
+                                                  return DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .accentColor,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          } else {
+                            return Container();
+                          }
+                        })),
+              ),
+              Column(
+                children: <Widget>[
+                  loading == true
+                      ?  Container(
+                    padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+                    child: CircularProgressIndicator(),
+                  )
+                      : Container(
+                    padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+
+                    width: size.width / 1.3,
+                    //  color: Theme.of(context).primaryColor,
+
+                    child: RaisedButton(
+                      elevation: 0.0,
+                      onPressed: () =>_capturePng(),
+
+
+                      color: Theme.of(context).primaryColorLight,
+                      child: new Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: new Text("Save Card",
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ) :
+      Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height: size.height / 10,
+            height: 300,
             alignment: Alignment.center,
 
           ),
@@ -353,56 +1067,112 @@ class _EditCardState extends State<EditCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
 
-                  InkWell(
-                      onTap: () {
-                        _onImageButtonPressed(ImageSource.gallery, 1);
-                      },
-                      child: _imageFile == null
-                          ? Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child:Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              border:Border.all(color: Theme.of(context).accentColor,width: 4),
-                              borderRadius:
-                              BorderRadius.circular(10),
-                            ),
-                            child: profilePic != null
-                                ?
-                            CachedNetworkImage(
-                              width: 150.0,
-                              height: 150.0,
-                              fit: BoxFit.cover,
-                              imageUrl: profilePic,
-                              placeholder: (context, url) =>
-                              new CircularProgressIndicator(),
-                              errorWidget: (context, url, ex) =>
-                              new Icon(Icons.error),
-                            )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      InkWell(
+                          onTap: () {
+                            _onImageLogoPressed(ImageSource.gallery, 1);
+                          },
+                          child: _imageLogo == null
+                              ? Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child:Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                child: logo != null
+                                    ?
+                                CachedNetworkImage(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  fit: BoxFit.cover,
+                                  imageUrl: logo,
+                                  placeholder: (context, url) =>
+                                  new CircularProgressIndicator(),
+                                  errorWidget: (context, url, ex) =>
+                                  new Icon(Icons.error),
+                                )
 
-                                :
-                            Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                border:Border.all(color: Theme.of(context).accentColor,width: 4),
-                                borderRadius:
-                                BorderRadius.circular(10),
-                              ),
-                              child:
-                              Icon(
-                                Icons.card_membership,
-                                color: Theme.of(context).accentColor,
-                                size:70.0,
+                                    :
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  child:
+                                  Icon(
+                                    Icons.add,
+                                    color: Theme.of(context).accentColor,
+                                    size:35.0,
 
-                              ),
-                            ),
+                                  ),
+                                ),
+                              )
                           )
-                      )
-                          : _previewImage()
-                    // child: _prev,
+                              : _previewLogo()
+                        // child: _prev,
 
+                      ),
+                      InkWell(
+                          onTap: () {
+                            _onImageButtonPressed(ImageSource.gallery, 1);
+                          },
+                          child: _imageFile == null
+                              ? Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child:Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                child: profilePic != null
+                                    ?
+                                CachedNetworkImage(
+                                  width: 150.0,
+                                  height: 150.0,
+                                  fit: BoxFit.cover,
+                                  imageUrl: profilePic,
+                                  placeholder: (context, url) =>
+                                  new CircularProgressIndicator(),
+                                  errorWidget: (context, url, ex) =>
+                                  new Icon(Icons.error),
+                                )
+
+                                    :
+                                Container(
+                                  height: 150,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    border:Border.all(color: Theme.of(context).accentColor,width: 4),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
+                                  ),
+                                  child:
+                                  Icon(
+                                    Icons.card_membership,
+                                    color: Theme.of(context).accentColor,
+                                    size:70.0,
+
+                                  ),
+                                ),
+                              )
+                          )
+                              : _previewImage()
+                        // child: _prev,
+
+                      ),
+                    ],
                   ),
                   Form(
                     key: formKey,
@@ -423,6 +1193,73 @@ class _EditCardState extends State<EditCard> {
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.white),
                                 ),
+                              ),
+
+                              userType == Config.coachScout ? Container(): Padding(
+                                padding: const EdgeInsets.only(left: 8.0, top: 10.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text("Level"),
+
+                                        DropdownButton(
+                                            value: level ??
+                                                Config.highSchoolAndUnder,
+                                            items: <String>[
+                                              Config.highSchoolAndUnder,
+                                              Config.college,
+                                              Config.pro
+
+
+                                            ].map((String value) {
+                                              return new DropdownMenuItem(
+                                                  value: value,
+                                                  child: new Text(
+                                                    '${value}',
+                                                    style: TextStyle(fontSize: 16.0),
+                                                  ));
+                                            }).toList(),
+
+                                            onChanged: (String value) {
+                                              setState(() {
+                                                level = value.trim();
+                                              });
+                                            }),
+
+                                      ],
+                                    ),
+
+                                    Container(
+                                      child: new TextFormField(
+                                        controller: levelsController,
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            return level==Config.highSchoolAndUnder ?
+                                            "Type In Year" : level==Config.college ?
+                                            "Type in Freshman, Sophomore, Junior, Senior" : "Type in 1st, 2nd, ...";
+                                          }
+                                        },
+                                        onSaved: ((String value){
+                                          pModel.fullNames = value.trim();
+                                        }),
+
+                                        // enabled: false,
+                                        // keyboardType: TextInputType.number,
+                                        decoration: new InputDecoration(
+                                          labelText: level==Config.highSchoolAndUnder ?
+                                          "Type In Year" : level==Config.college ?
+                                          "Type in Fr, So, Jr, Sr" : "Type in 1st, 2nd, ..."
+                                          ,
+                                          contentPadding: new EdgeInsets.all(10.0),
+                                          filled: false,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
                               ),
                               Container(
                                 child: new TextFormField(
@@ -445,6 +1282,28 @@ class _EditCardState extends State<EditCard> {
                                   ),
                                 ),
                               ),
+                              userType == Config.coachScout ?
+                              Container(
+                                child: new TextFormField(
+                                  controller: titleController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "Title";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.title = value.trim();
+                                  }),
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Title",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ) :Container(),
                               Container(
                                 child:  InkWell(
                                   onTap: ()=>_selectTodayDate1(context),
@@ -487,6 +1346,49 @@ class _EditCardState extends State<EditCard> {
                                   // keyboardType: TextInputType.number,
                                   decoration: new InputDecoration(
                                     labelText: "Location",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ),
+                              userType == Config.coachScout ? Container():  Container(
+                                child: new TextFormField(
+                                  controller: jerseyNumController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "Jersey Number";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.jerseyNumber = value.trim();
+                                  }),
+
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Jersey Number",
+                                    contentPadding: new EdgeInsets.all(10.0),
+                                    filled: false,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: new TextFormField(
+                                  controller: schoolOrganisationController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return "School Or Organisation";
+                                    }
+                                  },
+                                  onSaved: ((String value){
+                                    pModel.school = value.trim();
+                                  }),
+
+                                  // enabled: false,
+                                  // keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "School Or Organisation",
                                     contentPadding: new EdgeInsets.all(10.0),
                                     filled: false,
                                   ),
@@ -547,7 +1449,7 @@ class _EditCardState extends State<EditCard> {
                                   ),
                                 ),
 
-                                Container(
+                                userType == Config.coachScout ? Container():    Container(
                                   padding: EdgeInsets.only(top: 20.0),
                                   child: new TextFormField(
                                     controller: actSatController,
@@ -569,7 +1471,7 @@ class _EditCardState extends State<EditCard> {
                                     ),
                                   ),
                                 ),
-                                Container(
+                                userType == Config.coachScout ? Container():      Container(
                                   child: new TextFormField(
                                     controller: classController,
                                     validator: (value) {
@@ -626,6 +1528,9 @@ class _EditCardState extends State<EditCard> {
                                             "BasketBall",
                                             "FootBall",
                                             "VolleyBall",
+                                            "Soccer",
+                                            "Tennis",
+                                            "BaseBall"
 
                                           ].map((String value) {
                                             return new DropdownMenuItem(
@@ -647,6 +1552,8 @@ class _EditCardState extends State<EditCard> {
 
                                 ),
                                 Divider(color: Theme.of(context).primaryColor,),
+
+                                userType == Config.coachScout ? Container() :
                                 Container(
                                   child: new TextFormField(
                                     controller: positionController,
@@ -671,7 +1578,7 @@ class _EditCardState extends State<EditCard> {
                                 Container(
                                   child: new TextFormField(
                                     controller: heightController,
-                                    keyboardType: TextInputType.number,
+                                    //  keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Height";
@@ -693,7 +1600,7 @@ class _EditCardState extends State<EditCard> {
                                 Container(
                                   child: new TextFormField(
                                     controller: weightController,
-                                    keyboardType: TextInputType.number,
+                                    // keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Weight";
@@ -720,7 +1627,10 @@ class _EditCardState extends State<EditCard> {
                         Column(
                           children: <Widget>[
                             loading == true
-                                ? new CircularProgressIndicator()
+                                ?  Padding(
+                              padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+                              child: CircularProgressIndicator(),
+                            )
                                 : Container(
                               padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
@@ -731,7 +1641,23 @@ class _EditCardState extends State<EditCard> {
                                 elevation: 0.0,
                                 onPressed: () {
                                   if (formKey.currentState.validate()) {
-                                    saveCardDetailsWithImage();
+                                    if(_imageFile != null && fileLogo != null)
+                                    {
+                                      saveCardDetailsWithImage();
+
+                                    }
+                                    else if(_imageFile == null && fileLogo != null)
+                                    {
+                                      saveCardDetailsWithLogo();
+
+                                    } else  if(_imageFile != null && fileLogo == null)
+                                    {
+                                      saveCardDetailsWithImage();
+                                    }
+                                    else
+                                    {
+                                      saveCardDetailsWithImageUrl();
+                                    }
                                   }
                                 },
                                 color: Theme.of(context).primaryColorLight,

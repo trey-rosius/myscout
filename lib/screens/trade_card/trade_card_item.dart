@@ -42,10 +42,12 @@ class TradeCardItem extends StatelessWidget {
                 errorWidget: (context, url, error) =>
                     Material(
                       child: Image.asset(
-                        'images/img_not_available.jpeg',
-                        width: 50.0,
-                        height: 50.0,
+
+                       "assets/images/user_profile.png",
                         fit: BoxFit.cover,
+                        width: 50,
+                          height: 50,
+
                       ),
                       borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
@@ -53,7 +55,7 @@ class TradeCardItem extends StatelessWidget {
                       clipBehavior: Clip.hardEdge,
                     ),
                 imageUrl: document[
-                Config.profilePicUrl],
+                Config.profilePicUrl] ??"",
                 width: 50.0,
                 height: 50.0,
                 fit: BoxFit.cover,
@@ -62,7 +64,7 @@ class TradeCardItem extends StatelessWidget {
                   Radius.circular(30.0)),
               clipBehavior: Clip.hardEdge,
             ),
-            title: Text(document[Config.fullNames],style: TextStyle(fontSize: 18),),
+            title: Text(document[Config.fullNames]??"",style: TextStyle(fontSize: 18),),
             trailing:
     StreamBuilder<DocumentSnapshot>(
     stream: Firestore.instance

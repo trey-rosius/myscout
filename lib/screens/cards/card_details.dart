@@ -319,7 +319,7 @@ class _CardDetailsState extends State<CardDetails> {
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.only(bottom:10.0),
-                                      child: Text("SCHOOL/ORGANISATION", style: TextStyle(
+                                      child: Text("ORGANIZATION", style: TextStyle(
 
                                           fontFamily: 'Montserrat',
                                           color: Theme.of(context).primaryColor,
