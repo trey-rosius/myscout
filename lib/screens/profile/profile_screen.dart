@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SliverToBoxAdapter(
 
                       child: Container(
-                         height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(500) :
+                         height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(560) :
                          (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(420) :
                              ScreenUtil.instance.setHeight(300),
 

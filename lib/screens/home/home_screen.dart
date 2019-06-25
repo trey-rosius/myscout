@@ -22,6 +22,7 @@ import 'package:myscout/screens/schedule/schedule_screen.dart';
 import 'package:myscout/screens/search/search_screen.dart';
 import 'package:myscout/screens/stats/baseball_screen.dart';
 import 'package:myscout/screens/stats/basketball_screen.dart';
+import 'package:myscout/screens/stats/coaching_screen.dart';
 import 'package:myscout/screens/stats/soccer_screen.dart';
 import 'package:myscout/screens/stats/stats_screen.dart';
 import 'package:myscout/screens/stats/tennis_screen.dart';
@@ -291,11 +292,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               } else
                                 {
+                                  print("Here");
                                   Navigator.of(context).pop();
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
-                                        builder: (context) =>  CoachScreen(
+                                        builder: (context) =>  CoachingScreen(
                                           userId: userId,
                                         ),
                                       ));

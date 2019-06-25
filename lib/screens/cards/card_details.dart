@@ -84,17 +84,45 @@ class _CardDetailsState extends State<CardDetails> {
         title: Text(widget.cardName,maxLines: 1,style: TextStyle(fontSize: 20.0,color: Colors.white),),
         centerTitle: true,
         actions: <Widget>[
-          userId == widget.cardCreator ? Container():
-          InkWell(
-            onTap: (){
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (context) => ChatScreen(senderId: userId,receiverId: widget.cardCreator,),
-                  ));
+
+          StreamBuilder(
+            stream: Firestore.instance.collection(Config.users).document(widget.cardCreator).collection(Config.followers).document(userId).snapshots(),
+            builder: (context,AsyncSnapshot<DocumentSnapshot>snapshot){
+              if(snapshot.hasData && snapshot.data.exists)
+                {
+                   return StreamBuilder(
+                       stream: Firestore.instance.collection(Config.users).document(widget.cardCreator).collection(Config.following).document(userId).snapshots(),
+                       builder: (context,AsyncSnapshot<DocumentSnapshot>snapshot){
+                         if(snapshot.hasData && snapshot.data.exists){
+                           return InkWell(
+                             onTap: (){
+                               Navigator.push(
+                                   context,
+                                   new MaterialPageRoute(
+                                     builder: (context) => ChatScreen(senderId: userId,receiverId: widget.cardCreator,),
+                                   ));
+                             },
+                             child: Image.asset('assets/images/chat.png'),
+                           );
+                         } else
+                         {
+
+                           return Container();
+
+                         }
+                       });
+                }
+                else
+                  {
+                    return Container();
+                  }
+
+
             },
-            child: Image.asset('assets/images/chat.png'),
           )
+
+
+
         ],
 
       ),

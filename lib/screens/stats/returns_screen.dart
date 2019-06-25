@@ -66,7 +66,16 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
 
   bool autovalidate = false;
   bool loading = false;
-
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   void handleSubmitInfo()
   {
     setState(() {
@@ -91,10 +100,10 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
 
 
 
-    Firestore.instance.collection(Config.returns).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.returns).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+showInSnackBar("Saved");
       setState(() {
         loading= false;
       });

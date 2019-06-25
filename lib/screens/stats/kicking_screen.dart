@@ -40,7 +40,16 @@ class _KickingScreenState extends State<KickingScreen> {
 
     });
   }
-  
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
 
   final fgmController = TextEditingController();
   final fgaController = TextEditingController();
@@ -74,10 +83,10 @@ class _KickingScreenState extends State<KickingScreen> {
 
 
 
-    Firestore.instance.collection(Config.kicking).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.kicking).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+showInSnackBar("Saved");
       setState(() {
         loading= false;
       });

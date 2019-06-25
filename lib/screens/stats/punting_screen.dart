@@ -69,10 +69,10 @@ class _PuntingScreenState extends State<PuntingScreen> {
 
 
 
-    Firestore.instance.collection(Config.punting).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.punting).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+showInSnackBar("Saved");
       setState(() {
         loading= false;
       });
@@ -108,6 +108,17 @@ class _PuntingScreenState extends State<PuntingScreen> {
 
 
 
+  }
+
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
   }
   @override
   Widget build(BuildContext context) {

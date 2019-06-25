@@ -63,10 +63,10 @@ class _BaseBallScreenState extends State<BaseBallScreen> {
 
 
 
-    Firestore.instance.collection(Config.baseball).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.baseball).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+     showInSnackBar("Saved");
       setState(() {
         loading= false;
       });
@@ -76,7 +76,16 @@ class _BaseBallScreenState extends State<BaseBallScreen> {
 
 
   }
-
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   @override
   void initState() {
     // TODO: implement initState

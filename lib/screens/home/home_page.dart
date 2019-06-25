@@ -36,8 +36,9 @@ class _HomePageState extends State<HomePage> {
         //  _showItemDialog(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
 
+        print("onLaunch: $message");
+/*
         if(message['data']['receiverId'] != null)
           {
 
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             }
-
+*/
         //  _navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {

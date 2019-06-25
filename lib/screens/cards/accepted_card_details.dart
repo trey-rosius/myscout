@@ -74,120 +74,41 @@ class _AcceptedCardDetailsState extends State<AcceptedCardDetails> {
                   slivers: <Widget>[
 
                     SliverToBoxAdapter(
-                      child: Stack(
+                      child:  Stack(
 
                         children: <Widget>[
                           Container(
-                            height: isLargeScreen ? size.height/4.5 : size.height/5,
-                            width: size.width,
-                            color: Theme.of(context).primaryColor,
-
-
-
+                            height: size.height/5,
+                            color:Theme.of(context).primaryColor ,
                           ),
                           Center(
                             child: Container(
-                              margin: EdgeInsets.only(top: size.height/20),
-                              child: Stack(
-                                children: <Widget>[
-                                  Container(
-                                      color: Color(int.parse(document.data[Config.cardColor])),
-                                      child: Image.asset('assets/images/card_athlete.png',height: 255,)),
-                                  Positioned(
-                                    top: 8,
-                                    left: 40,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left:5.0,right:5.0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                        child: CachedNetworkImage(
-                                          height: 200,
-                                          width: 135,
-                                          fit: BoxFit.cover,
-                                          imageUrl: document.data[Config.profilePicUrl],
-                                          placeholder: (context,url) => SpinKitWave(
-                                            itemBuilder: (_, int index) {
-                                              return DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context).accentColor,
-                                                ),
-                                              );
-                                            },
-                                          ),
+
+                              height: 400,
+                              width: 300,
 
 
-                                          errorWidget: (context,url,error) =>Icon(Icons.error),
+                              child:AspectRatio(
+
+                                aspectRatio: 2/2.7,
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: document.data[Config.cardImageUrl],
+                                  placeholder: (context,url) => SpinKitWave(
+                                    itemBuilder: (_, int index) {
+                                      return DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).accentColor,
                                         ),
-
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      top: 30.0,
-                                      left: size.width/60,
-                                      child: RotatedBox(quarterTurns: 1,child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 38.0,
-                                            width: 175.0,
-                                            padding: EdgeInsets.all(10),
-                                            color: Color(int.parse(document.data[Config.cardColor])),
-                                            // child: Text(document[Config.cardColor]),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(top: 10.0,left: 2.0),
-                                            child: Row(
-
-                                              children: <Widget>[
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text("HEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(2),
-                                                  child: Text(document.data[Config.height],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text("WEIGHT",style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                                Container(
-
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text(document.data[Config.weight],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 12.0,color: Colors.white),),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),)
+                                      );
+                                    },
                                   ),
 
-                                  Positioned(
-                                      top: isLargeScreen ? size.height/4.3: size.height/3.3,
-                                      left: size.width/8.1,
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 45.0,
-                                            width: 128.0,
-                                            padding: EdgeInsets.all(10),
-                                            color: Color(int.parse(document.data[Config.cardColor])),
-                                            // child: Text(document[Config.cardColor]),
-                                          ),
-                                          Container(
-                                            width: 150.0,
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(document.data[Config.fullNames],maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0,color: Colors.white),),
-                                          ),
-                                        ],
-                                      )
-                                  )
-                                ],
+
+                                  errorWidget: (context,url,error) =>Icon(Icons.error),
+                                ),
                               ),
+
                             ),
                           ),
                         ],

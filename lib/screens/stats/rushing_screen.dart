@@ -71,10 +71,10 @@ class _RushingScreenState extends State<RushingScreen> {
 
 
 
-    Firestore.instance.collection(Config.rushing).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.rushing).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+showInSnackBar("Saved");
       setState(() {
         loading= false;
       });
@@ -94,7 +94,16 @@ class _RushingScreenState extends State<RushingScreen> {
 
     loadingInfomation();
   }
-
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   @override
   void dispose() {
     // TODO: implement dispose

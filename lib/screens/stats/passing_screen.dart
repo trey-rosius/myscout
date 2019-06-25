@@ -71,9 +71,9 @@ class _PassingScreenState extends State<PassingScreen> {
 
 
 
-    Firestore.instance.collection(Config.passing).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.passing).document(widget.userId).setData(map,merge: true).then((_){
 
-
+     showInSnackBar("Saved");
 
       setState(() {
         loading= false;
@@ -85,6 +85,16 @@ class _PassingScreenState extends State<PassingScreen> {
 
   }
 
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   @override
   void initState() {
     // TODO: implement initState

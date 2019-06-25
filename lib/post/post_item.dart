@@ -104,7 +104,7 @@ class PostItem extends StatelessWidget {
       },
       child: Container(
         width: size.width,
-        height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(1040) :
+        height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(1100) :
         (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(820) :
         ScreenUtil.instance.setHeight(950),
         margin: EdgeInsets.all(10.0),
@@ -475,7 +475,7 @@ class PostItem extends StatelessWidget {
       },
       child: Container(
         width: size.width,
-      height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(1040) :
+      height: ScreenUtil.screenWidthDp < 413 ? ScreenUtil.instance.setHeight(1100) :
         (ScreenUtil.screenWidthDp>413 && ScreenUtil.screenWidthDp <650) ? ScreenUtil.instance.setHeight(820) :
     ScreenUtil.instance.setHeight(950),
         margin: EdgeInsets.all(10.0),

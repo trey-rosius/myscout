@@ -40,7 +40,7 @@ class _CoachingScreenState extends State<CoachingScreen> {
 
     });
   }
-  
+
 
   final gamesController = TextEditingController();
   final winsController = TextEditingController();
@@ -74,10 +74,10 @@ class _CoachingScreenState extends State<CoachingScreen> {
 
 
 
-    Firestore.instance.collection(Config.coaching).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.coaching).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+     showInSnackBar("Saved");
       setState(() {
         loading= false;
       });
@@ -87,6 +87,18 @@ class _CoachingScreenState extends State<CoachingScreen> {
 
 
   }
+
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
+
 
   @override
   void initState() {
@@ -124,7 +136,7 @@ class _CoachingScreenState extends State<CoachingScreen> {
         centerTitle: true,
         elevation: 0.0,
 
-        title:Text("BasketBall",style: TextStyle(fontSize: 20.0),),
+        title:Text("Coach",style: TextStyle(fontSize: 20.0),),
 
       ),
       body: SingleChildScrollView(

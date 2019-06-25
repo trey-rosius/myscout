@@ -16,7 +16,16 @@ class _BasketBallScreenState extends State<BasketBallScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
 
-
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   loadingInfomation(){
 
     Firestore.instance
@@ -74,10 +83,10 @@ class _BasketBallScreenState extends State<BasketBallScreen> {
 
 
 
-    Firestore.instance.collection(Config.basketball).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.basketball).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+  showInSnackBar("Saved");
       setState(() {
         loading= false;
       });

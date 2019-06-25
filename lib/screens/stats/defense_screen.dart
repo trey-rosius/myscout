@@ -77,10 +77,10 @@ class _DefenseScreenState extends State<DefenseScreen> {
 
 
 
-    Firestore.instance.collection(Config.defense).document(widget.userId).setData(map).then((_){
+    Firestore.instance.collection(Config.defense).document(widget.userId).setData(map,merge: true).then((_){
 
 
-
+showInSnackBar("Saved");
       setState(() {
         loading= false;
       });
@@ -91,6 +91,16 @@ class _DefenseScreenState extends State<DefenseScreen> {
 
   }
 
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content:  Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Theme.of(context).accentColor,
+    ));
+  }
   @override
   void initState() {
     // TODO: implement initState
