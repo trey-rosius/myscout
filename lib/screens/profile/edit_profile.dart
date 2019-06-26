@@ -79,8 +79,8 @@ class _EditProfileState extends State<EditProfile> {
     userInfo[Config.position]= positionController.text;
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
-    userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
-    _saveSports(pModel.sports ?? "Basketball");
+    userInfo[Config.selectSport]= pModel.sports ?? "BasketBall";
+    _saveSports(pModel.sports ?? "BasketBall");
     Firestore.instance
         .collection(Config.users)
         .document(widget.userId)
@@ -657,14 +657,14 @@ class _EditProfileState extends State<EditProfile> {
 
                                       DropdownButton(
                                           value: pModel.sports ??
-                                              "Basketball",
+                                              "BasketBall",
                                           items: <String>[
-                                            "Basketball",
-                                            "Football",
-                                            "Volleyball",
+                                            "BasketBall",
+                                            "FootBall",
+                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
-                                            "Baseball"
+                                            "BaseBall"
 
                                           ].map((String value) {
                                             return new DropdownMenuItem(

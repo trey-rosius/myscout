@@ -2,10 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:myscout/post/user_external_post_screen.dart';
+import 'package:myscout/post/user_post_screen.dart';
 import 'package:myscout/screens/chats/chat_screen.dart';
+import 'package:myscout/screens/followers/followers_item.dart';
+import 'package:myscout/screens/following/following_item.dart';
+import 'package:myscout/screens/stats/soccer_screen.dart';
+import 'package:myscout/screens/stats_external/baseball__external_screen.dart';
+import 'package:myscout/screens/stats_external/basketball_external_screen.dart';
+import 'package:myscout/screens/stats_external/coaching_external_screen.dart';
+import 'package:myscout/screens/stats_external/soccer_external_screen.dart';
+import 'package:myscout/screens/stats_external/stats_external_screen.dart';
+import 'package:myscout/screens/stats_external/tennis_external_screen.dart';
 
 import 'package:myscout/screens/trade_card/trade_screen.dart';
 import 'package:myscout/utils/Config.dart';
+import 'package:myscout/utils/error_screen.dart';
+import 'package:myscout/utils/loading_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -180,6 +193,129 @@ class _CardDetailsState extends State<CardDetails> {
                             ),
                           ],
                         ),
+
+ Container(
+   padding: EdgeInsets.all(10),
+   child: Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+     children: <Widget>[
+       Container(
+       width: size.width/3.5,
+         height: size.height/10,
+         child: RaisedButton(
+
+           onPressed: (){
+             if(document.data[Config.userType] == Config.athleteOrParent)
+             {
+               if(document.data[Config.selectSport]  == "BasketBall")
+               {
+
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) =>  BasketBallExternalScreen(
+                         userId: document.data[Config.cardCreatorId],
+                       ),
+                     ));
+
+
+               } else if((document.data[Config.selectSport] == "FootBall"))
+               {
+
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) =>  StatExternalScreen(
+                         userId: document.data[Config.cardCreatorId],
+                       ),
+                     ));
+
+               } else if((document.data[Config.selectSport] == "Soccer")){
+
+
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) =>  SoccerExternalScreen(
+                         userId: document.data[Config.cardCreatorId],
+                       ),
+                     ));
+
+               } else if((document.data[Config.selectSport] == "Tennis"))
+               {
+
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) =>  TennisExternalScreen(
+                         userId: document.data[Config.cardCreatorId],
+                       ),
+                     ));
+
+               }else{
+
+
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) =>  BaseBallExternalScreen(
+                         userId: document.data[Config.cardCreatorId],
+                       ),
+                     ));
+
+               }
+
+
+             } else
+             {
+
+
+               Navigator.push(
+                   context,
+                   new MaterialPageRoute(
+                     builder: (context) =>  CoachingExternalScreen(
+                       userId: document.data[Config.cardCreatorId],
+                     ),
+                   ));
+
+             }
+           },
+           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+           color: Theme.of(context).accentColor,
+           child: Text("Stats",style: TextStyle(fontSize: 20,color: Colors.white),),
+         ),
+       ),
+       Container(
+
+         width: size.width/3,
+         height: size.height/10,
+         child: RaisedButton(
+           shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+           onPressed: (){
+             userId == document.data[Config.cardCreatorId] ?
+             Navigator.push(
+                 context,
+                 new MaterialPageRoute(
+                   builder: (context) =>  UserPostScreen(
+                     userId: document.data[Config.cardCreatorId],
+                   ),
+                 )) : Navigator.push(
+                 context,
+                 new MaterialPageRoute(
+                   builder: (context) =>  UserExternalPostScreen(
+                     userId: document.data[Config.cardCreatorId],
+                      visitorId: userId,
+                   ),
+                 ));
+         },
+           color: Theme.of(context).accentColor,
+          child: Text("Posts",style: TextStyle(fontSize: 20,color: Colors.white),),
+       )
+
+   ),
+   ]
+   )
+ ),
 
 
  Container(
@@ -385,6 +521,74 @@ class _CardDetailsState extends State<CardDetails> {
                           padding: const EdgeInsets.all(10.0),
                           child: Text(document.data[Config.shortBio]??""),
                         ),
+                     Padding(
+                       padding:  EdgeInsets.all(10.0),
+                       child: Text("TRADED WITH",style: TextStyle(
+
+                           fontFamily: 'Montserrat',
+                           color: Theme.of(context).primaryColor,
+                           fontWeight: FontWeight.bold,
+                           fontSize: 18.0)),
+
+                     ),
+                     StreamBuilder(
+                       stream: Firestore.instance.collection(Config.users).document(document.data[Config.cardCreatorId]).collection(Config.following).snapshots(),
+                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                         if (!snapshot.hasData) {
+                           return LoadingScreen();
+                         } else if (snapshot.hasData) {
+                           return Container(
+                             height: size.height/6,
+                             child: ListView.builder(
+                                 scrollDirection: Axis.horizontal,
+                                 itemCount: snapshot.data.documents.length,
+                                 itemBuilder: (_, int index)
+                                 {
+                                   final DocumentSnapshot document = snapshot.data.documents[
+                                   index];
+                                   return FollowingItem(document: document,userId: document[Config.userId]);
+                                 }),
+                           );
+
+                         } else {
+                           return ErrorScreen(error: snapshot.error.toString());
+                         }
+                       },
+                     ),
+                     Padding(
+                       padding:  EdgeInsets.all(10.0),
+                       child: Text("ACCEPTED TRADE",style: TextStyle(
+
+                           fontFamily: 'Montserrat',
+                           color: Theme.of(context).primaryColor,
+                           fontWeight: FontWeight.bold,
+                           fontSize: 18.0)),
+
+                     ),
+                     StreamBuilder(
+                       stream: Firestore.instance.collection(Config.users).document(document.data[Config.cardCreatorId]).collection(Config.followers).snapshots(),
+                       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                         if (!snapshot.hasData) {
+                           return LoadingScreen();
+                         } else if (snapshot.hasData) {
+                           return Container(
+                             height: size.height/6,
+                             child: ListView.builder(
+                                 scrollDirection: Axis.horizontal,
+                                 itemCount: snapshot.data.documents.length,
+                                 itemBuilder: (_, int index)
+                                 {
+                                   final DocumentSnapshot document = snapshot.data.documents[
+                                   index];
+                                   return FollowersItem(document: document,userId: document[Config.userId]);
+                                 }),
+                           );
+
+                         } else {
+                           return ErrorScreen(error: snapshot.error.toString());
+                         }
+                       },
+                     ),
                      Container(
                           padding: EdgeInsets.all(10.0),
                           child: Row(

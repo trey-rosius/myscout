@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             if(settings.userType.getValue() == Config.athleteOrParent)
                               {
-                                if(settings.sport.getValue() == "Basketball")
+                                if(settings.sport.getValue() == "BasketBall")
                                   {
                                     Navigator.of(context).pop();
                                     Navigator.push(
@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ));
 
 
-                                  } else if((settings.sport.getValue() == "Football"))
+                                  } else if((settings.sport.getValue() == "FootBall"))
                                     {
                                       Navigator.of(context).pop();
                                       Navigator.push(
@@ -292,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               } else
                                 {
-                                  print("Here");
+
                                   Navigator.of(context).pop();
                                   Navigator.push(
                                       context,
@@ -307,10 +307,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("STATS",
-                                style: TextStyle(color: Colors.white)),
+                          child: Container(
+                            width: size.width,
+                            padding: EdgeInsets.all(8.0),
+
+                            child: Center(
+                              child: Text("STATS",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
                           ),
                         ),
                         Divider(

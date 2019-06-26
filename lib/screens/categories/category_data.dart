@@ -14,12 +14,12 @@ class Category{
 final List<Category> categories = [
    Category(
        id: 1,
-       name: 'Football',
+       name: 'FootBall',
        image: 'football'
    ),
    Category(
        id: 2,
-       name: 'Basketball',
+       name: 'BasketBall',
        image: 'basketball'
    ),
    Category(
@@ -29,7 +29,7 @@ final List<Category> categories = [
    ),
    Category(
        id: 4,
-       name: 'Baseball',
+       name: 'BaseBall',
        image: 'baseball'
    ),
    Category(

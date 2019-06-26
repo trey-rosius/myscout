@@ -80,6 +80,8 @@ class TradeCardItem extends StatelessWidget {
         color: Theme.of(context).accentColor,
 
         onPressed: (){
+
+
           /*
           Firestore.instance.collection(Config.users).document(userId).collection(Config.following).document(document[Config.userId])
               .setData({Config.userId:document[Config.userId] }).then((_){

@@ -80,9 +80,9 @@ class _CreateProfileState extends State<CreateProfile> {
     userInfo[Config.position]= positionController.text;
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
-    userInfo[Config.selectSport]= pModel.sports ?? "Basketball";
+    userInfo[Config.selectSport]= pModel.sports ?? "BasketBall";
 
-    _saveSports(pModel.sports ?? "Basketball");
+    _saveSports(pModel.sports ?? "BasketBall");
     Firestore.instance
         .collection(Config.users)
         .document(widget.userId)
@@ -139,7 +139,7 @@ class _CreateProfileState extends State<CreateProfile> {
       userInfo[Config.weight]= weightController.text;
       userInfo[Config.selectSport]= pModel.sports;
 
-      _saveSports(pModel.sports ?? "Basketball");
+      _saveSports(pModel.sports ?? "BasketBall");
       Firestore.instance
           .collection(Config.users)
           .document(widget.userId)
@@ -634,14 +634,14 @@ class _CreateProfileState extends State<CreateProfile> {
 
                                       DropdownButton(
                                           value: pModel.sports ??
-                                              "Basketball",
+                                              "BasketBall",
                                           items: <String>[
-                                            "Basketball",
-                                            "Football",
-                                            "Volleyball",
+                                            "BasketBall",
+                                            "FootBall",
+                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
-                                            "Baseball"
+                                            "BaseBall"
 
                                           ].map((String value) {
                                             return new DropdownMenuItem(
