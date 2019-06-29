@@ -26,8 +26,8 @@ class _CoachScreenState extends State<CoachScreen> {
 
       body:  StreamBuilder(
         stream:
-        Firestore.instance.collection(Config.cards).where(Config.userType,isEqualTo: Config.coachScout).where(Config.cardCreatorId,isEqualTo: widget.userId).snapshots(),
-
+        //Firestore.instance.collection(Config.cards).where(Config.userType,isEqualTo: Config.coachScout).where(Config.cardCreatorId,isEqualTo: widget.userId).snapshots(),
+        Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).snapshots(),
 
 
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

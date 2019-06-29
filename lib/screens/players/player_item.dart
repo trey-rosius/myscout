@@ -19,7 +19,9 @@ class PlayerItem extends StatelessWidget {
         builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
           if(docs.data !=null)
           {
-            return docs.data[Config.cardImageUrl]==null ? Container(): InkWell(
+            return docs.data[Config.athleteOrParent] !=Config.athleteOrParent ? Container() :
+
+              docs.data[Config.cardImageUrl]==null ? Container(): InkWell(
                 onTap: (){
                   Navigator.push(
                       context,

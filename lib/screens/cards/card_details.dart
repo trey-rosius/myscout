@@ -523,7 +523,7 @@ class _CardDetailsState extends State<CardDetails> {
                         ),
                      Padding(
                        padding:  EdgeInsets.all(10.0),
-                       child: Text("TRADED WITH",style: TextStyle(
+                       child: Text("TRADED CARDS",style: TextStyle(
 
                            fontFamily: 'Montserrat',
                            color: Theme.of(context).primaryColor,
@@ -557,7 +557,7 @@ class _CardDetailsState extends State<CardDetails> {
                      ),
                      Padding(
                        padding:  EdgeInsets.all(10.0),
-                       child: Text("ACCEPTED TRADE",style: TextStyle(
+                       child: Text("COLLECTED CARDS",style: TextStyle(
 
                            fontFamily: 'Montserrat',
                            color: Theme.of(context).primaryColor,
@@ -566,7 +566,7 @@ class _CardDetailsState extends State<CardDetails> {
 
                      ),
                      StreamBuilder(
-                       stream: Firestore.instance.collection(Config.users).document(document.data[Config.cardCreatorId]).collection(Config.followers).snapshots(),
+                       stream: Firestore.instance.collection(Config.users).document(document.data[Config.cardCreatorId]).collection(Config.myCards).where(Config.collected,isEqualTo: true).snapshots(),
                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                          if (!snapshot.hasData) {
                            return LoadingScreen();
@@ -580,7 +580,7 @@ class _CardDetailsState extends State<CardDetails> {
                                  {
                                    final DocumentSnapshot document = snapshot.data.documents[
                                    index];
-                                   return FollowersItem(document: document,userId: document[Config.userId]);
+                                   return FollowersItem(document: document,userId: document[Config.cardCreatorId]);
                                  }),
                            );
 
@@ -642,7 +642,7 @@ class _CardDetailsState extends State<CardDetails> {
           elevation: 0.0,
           onPressed: () {
 
-            int count = document.data[Config.collectedCount] +1;
+            int count = document.data[Config.collectedCount] -1;
             Firestore.instance.collection(Config.cards).document(document.data[Config.cardId])
                   .updateData({
               Config.collectedCount:count
@@ -689,6 +689,7 @@ class _CardDetailsState extends State<CardDetails> {
                       .setData({
                     Config.cardCreatorId: document.data[Config.cardCreatorId],
                     Config.cardId:document.data[Config.cardId],
+                    Config.collected:true
 
 
 

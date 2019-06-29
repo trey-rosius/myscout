@@ -241,6 +241,8 @@ class Config{
   static final String aphigh= "AP HIGH";
   static final String appost= "AP POST";
   static final String appre= "AP PRE";
+  static final String collected= "collected";
+
 
 
 
