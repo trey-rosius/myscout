@@ -21,7 +21,7 @@ class CoachItem extends StatelessWidget {
         builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
           if(docs.data !=null)
           {
-            return docs.data[Config.coachScout] != Config.coachScout ? Container() :
+            return docs.data[Config.userType] != Config.coachScout ? Container() :
 
               docs.data[Config.cardImageUrl] ==null ?Container(): InkWell(
                 onTap: (){
