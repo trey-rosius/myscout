@@ -42,7 +42,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context,index){
                     DocumentSnapshot documentSnapshot = snapshot.data.documents[index];
-                    return documentSnapshot[Config.fullNames]
+                    return documentSnapshot[Config.fullNames]==null ? Container() : documentSnapshot[Config.fullNames]
                         .toLowerCase()
                         .contains(widget.searchString.toLowerCase()) ?
 

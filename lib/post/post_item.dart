@@ -571,7 +571,7 @@ class PostItem extends StatelessWidget {
                                               width: 40.0,
                                               height: 40.0,
                                               fit: BoxFit.cover,
-                                              imageUrl: docSnap.data[Config.profilePicUrl],
+                                              imageUrl: docSnap.data[Config.profilePicUrl] ?? "",
                                               placeholder: (context, url) =>
                                               new CircularProgressIndicator(),
                                               errorWidget: (context, url, ex) =>

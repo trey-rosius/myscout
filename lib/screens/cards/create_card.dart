@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +17,9 @@ import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'data.dart';
-
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -177,6 +180,24 @@ class _CreateCardState extends State<CreateCard> {
   print("userType is"+userType);
   }
 
+  // 2. compress file and get file.
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 88,
+
+    );
+
+    print(file.path);
+    print(result.path);
+
+    print(file.lengthSync());
+    print(result.lengthSync());
+
+    return result;
+  }
+
+
 
   loadCardDetails(){
 
@@ -297,111 +318,102 @@ class _CreateCardState extends State<CreateCard> {
 
 
  }
-  saveCardDetailsWithImage(){
+  saveCardDetailsWithImage() async{
 
     print(pModel.sports);
 
     setState(() {
       loading = true;
     });
+    var dir = await path_provider.getTemporaryDirectory();
+    var targetPath = dir.absolute.path + "/temp.png";
     final FirebaseStorage storage = FirebaseStorage.instance;
-    uploadImage(file, storage).then((String data) {
+
+    print("file image is"+file.path);
+
+    compressAndGetFile(file, targetPath).then((File result) {
+      print("result is" + result.path);
+
+      uploadImage(result, storage).then((String data) {
+        Map userInfo = new Map<String, dynamic>();
+        userInfo[Config.fullNames] = fullNamesController.text;
+        userInfo[Config.dob] = dobController.text;
+        userInfo[Config.location] = locationController.text;
+        userInfo[Config.shortBio] = shortBioController.text;
+        userInfo[Config.collectedCount] = 0;
 
 
-      Map userInfo = new Map<String, dynamic>();
-      userInfo[Config.fullNames]= fullNamesController.text;
-      userInfo[Config.dob]= dobController.text;
-      userInfo[Config.location]= locationController.text;
-      userInfo[Config.shortBio]= shortBioController.text;
-      userInfo[Config.collectedCount]= 0;
-
-
-
-      userInfo[Config.profilePicUrl] = data;
-      userInfo[Config.cardColor] = colorCodes[currentColorIndex];
-      userInfo[Config.cardColorIndex] = currentColorIndex;
-      userInfo[Config.userType] = userType;
-      userInfo[Config.cardCreatorId] = widget.userId;
-      userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
-      if(userType==Config.coachScout){
-        userInfo[Config.title] = titleController.text;
-      }
-      else
-        {
-          userInfo[Config.levelText]= levelsController.text;
-          userInfo[Config.level]= level;
-          userInfo[Config.position]= positionController.text;
-          userInfo[Config.jerseyNumber]= jerseyNumController.text;
-
+        userInfo[Config.profilePicUrl] = data;
+        userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+        userInfo[Config.cardColorIndex] = currentColorIndex;
+        userInfo[Config.userType] = userType;
+        userInfo[Config.cardCreatorId] = widget.userId;
+        userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+        if (userType == Config.coachScout) {
+          userInfo[Config.title] = titleController.text;
+        }
+        else {
+          userInfo[Config.levelText] = levelsController.text;
+          userInfo[Config.level] = level;
+          userInfo[Config.position] = positionController.text;
+          userInfo[Config.jerseyNumber] = jerseyNumController.text;
         }
 
 
+        userInfo[Config.actSat] = actSatController.text;
+        userInfo[Config.CLASS] = classController.text;
 
-      userInfo[Config.actSat]= actSatController.text;
-      userInfo[Config.CLASS]= classController.text;
-
-      userInfo[Config.height]= heightController.text;
-      userInfo[Config.weight]= weightController.text;
-      userInfo[Config.selectSport]= sports;
-      userInfo[Config.createdOn]= FieldValue.serverTimestamp();
+        userInfo[Config.height] = heightController.text;
+        userInfo[Config.weight] = weightController.text;
+        userInfo[Config.selectSport] = sports;
+        userInfo[Config.createdOn] = FieldValue.serverTimestamp();
 
 
-      Firestore.instance
-          .collection(Config.cards).add(userInfo).then((DocumentReference docRef){
+        Firestore.instance
+            .collection(Config.cards).add(userInfo).then((
+            DocumentReference docRef) {
+          Firestore.instance.collection(Config.cards).document(
+              docRef.documentID).updateData({
+            Config.cardId: docRef.documentID
+          }).then((_) {
+            Firestore.instance.collection(Config.users).document(widget.userId)
+                .collection(Config.myCards).document(docRef.documentID)
+                .setData({
+              Config.cardId: docRef.documentID,
+              Config.cardCreatorId: widget.userId
+            });
+            Firestore.instance.collection(Config.users).document(widget.userId)
+                .updateData({
+              Config.cardId: docRef.documentID,
 
-            Firestore.instance.collection(Config.cards).document(docRef.documentID).updateData({
-              Config.cardId:docRef.documentID
-            }).then((_){
-              Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).document(docRef.documentID)
-                  .setData({
-                Config.cardId:docRef.documentID,
-                Config.cardCreatorId:widget.userId
+            });
+
+            if (fileLogo == null) {
+              setState(() {
+                loading = false;
+                cardId = docRef.documentID;
+                fullScreenCard = true;
               });
-              Firestore.instance.collection(Config.users).document(widget.userId)
-                  .updateData({
-                Config.cardId:docRef.documentID,
+            }
+            else {
+              uploadImage(fileLogo, storage).then((String data) {
+                Firestore.instance.collection(Config.cards).document(
+                    docRef.documentID)
+                    .updateData({
+                  Config.cardLogo: data,
 
-              });
-
-              if(fileLogo == null)
-                {
+                }).then((_) {
                   setState(() {
                     loading = false;
                     cardId = docRef.documentID;
                     fullScreenCard = true;
                   });
-                }
-                else
-                  {
-                    uploadImage(fileLogo, storage).then((String data){
-                      Firestore.instance.collection(Config.cards).document(docRef.documentID)
-                          .updateData({
-                        Config.cardLogo:data,
-
-                      }).then((_){
-                        setState(() {
-                          loading = false;
-                          cardId = docRef.documentID;
-                          fullScreenCard = true;
-                        });
-                      });
-                    });
-
-                  }
-
-
-
-              /*
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                       builder: (context) => FullScreenCard(cardId:docRef.documentID,userId: widget.userId,),
-                  ));
-                  */
-             // Navigator.of(context).pop();
-            });
+                });
+              });
+            }
+          });
+        });
       });
-
     });
 
 
@@ -723,7 +735,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white)),
                                               Row(
                                                 mainAxisAlignment:
@@ -737,7 +749,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white)),
                                                   Text(
                                                       " - " +
@@ -746,7 +758,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white))
                                                 ],
                                               ),
@@ -813,7 +825,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -823,7 +835,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   ".",
 
                                                   style: TextStyle(
-                                                      fontSize: 20,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.white),
                                                 ),
@@ -836,7 +848,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -845,7 +857,7 @@ class _CreateCardState extends State<CreateCard> {
                                                 child: Text(
                                                   "lbs",
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -856,7 +868,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -867,7 +879,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -888,7 +900,7 @@ class _CreateCardState extends State<CreateCard> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                   color: Colors.white),
                                             ),
                                             Container(
@@ -905,7 +917,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 10,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white),
                                                     ),
                                                   ),
@@ -917,7 +929,7 @@ class _CreateCardState extends State<CreateCard> {
                                                     overflow:
                                                     TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                         color: Colors.white),
                                                   ),
                                                   Padding(
@@ -928,7 +940,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 10,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white),
                                                     ),
                                                   ),

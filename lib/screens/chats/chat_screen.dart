@@ -249,8 +249,7 @@ class ChatScreenState extends State<ChatScreen> {
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
-      //show snackbar instead
-      // Fluttertoast.showToast(msg: 'Nothing to send');
+
     }
   }
 

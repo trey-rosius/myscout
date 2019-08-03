@@ -8,7 +8,9 @@ import 'package:myscout/models/profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 class EditProfile extends StatefulWidget {
@@ -63,6 +65,23 @@ class _EditProfileState extends State<EditProfile> {
 
   }
 
+  // 2. compress file and get file.
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 88,
+
+    );
+
+    print(file.path);
+    print(result.path);
+
+    print(file.lengthSync());
+    print(result.lengthSync());
+
+    return result;
+  }
+
   saveProfileDetailsWithoutImage(){
     setState(() {
       loading  = true;
@@ -111,40 +130,41 @@ class _EditProfileState extends State<EditProfile> {
     prefs.setString(Config.sport, sport);
   }
 
-  saveProfileDetailsWithImage(){
+  saveProfileDetailsWithImage() async{
+    var dir = await path_provider.getTemporaryDirectory();
+    var targetPath = dir.absolute.path + "/temp.png";
+    compressAndGetFile(file, targetPath).then((File result) {
+      print("result is" + result.path);
+      final FirebaseStorage storage = FirebaseStorage.instance;
+      uploadImage(file, storage).then((String data) {
+        Map userInfo = new Map<String, dynamic>();
+        userInfo[Config.fullNames] = fullNamesController.text;
+        userInfo[Config.dob] = dobController.text;
+        userInfo[Config.location] = locationController.text;
+        userInfo[Config.shortBio] = shortBioController.text;
+        userInfo[Config.schoolOrOrg] = schoolController.text;
+        userInfo[Config.gpa] = gpaController.text;
+        userInfo[Config.profilePicUrl] = data;
+        userInfo[Config.actSat] = actSatController.text;
+        userInfo[Config.CLASS] = classController.text;
+        userInfo[Config.position] = positionController.text;
+        userInfo[Config.height] = heightController.text;
+        userInfo[Config.weight] = weightController.text;
+        userInfo[Config.selectSport] = pModel.sports;
 
-    final FirebaseStorage storage = FirebaseStorage.instance;
-    uploadImage(file, storage).then((String data) {
+        _saveSports(pModel.sports);
+        Firestore.instance
+            .collection(Config.users)
+            .document(widget.userId)
+            .updateData(userInfo)
+            .then((_) {
+          setState(() {
+            loading = false;
+          });
 
+          print("completed");
 
-      Map userInfo = new Map<String, dynamic>();
-      userInfo[Config.fullNames]= fullNamesController.text;
-      userInfo[Config.dob]= dobController.text;
-      userInfo[Config.location]= locationController.text;
-      userInfo[Config.shortBio]= shortBioController.text;
-      userInfo[Config.schoolOrOrg]= schoolController.text;
-      userInfo[Config.gpa]= gpaController.text;
-      userInfo[Config.profilePicUrl] = data;
-      userInfo[Config.actSat]= actSatController.text;
-      userInfo[Config.CLASS]= classController.text;
-      userInfo[Config.position]= positionController.text;
-      userInfo[Config.height]= heightController.text;
-      userInfo[Config.weight]= weightController.text;
-      userInfo[Config.selectSport]= pModel.sports;
-
-      _saveSports(pModel.sports);
-      Firestore.instance
-          .collection(Config.users)
-          .document(widget.userId)
-          .updateData(userInfo)
-          .then((_) {
-        setState(() {
-          loading = false;
-        });
-
-        print("completed");
-
-        Navigator.of(context).pop();
+          Navigator.of(context).pop();
 
 
 /*
@@ -155,8 +175,8 @@ class _EditProfileState extends State<EditProfile> {
         );
         */
 
+        });
       });
-
     });
 
 

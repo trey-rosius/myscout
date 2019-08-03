@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,9 @@ import 'data.dart';
 
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter/rendering.dart';
 
 
@@ -72,6 +75,23 @@ class _EditCardState extends State<EditCard> {
     } catch (e) {
       print(e);
     }
+  }
+
+  // 2. compress file and get file.
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 88,
+
+    );
+
+    print(file.path);
+    print(result.path);
+
+    print(file.lengthSync());
+    print(result.lengthSync());
+
+    return result;
   }
   Future<String> uploadImageBytes(var pngBytes, FirebaseStorage storage) async {
     var uuid = new Uuid().v1();
@@ -287,91 +307,83 @@ class _EditCardState extends State<EditCard> {
 
 
   }
-  saveCardDetailsWithImage(){
+  saveCardDetailsWithImage() async{
 
     print(pModel.sports);
 
     setState(() {
       loading = true;
     });
+    var dir = await path_provider.getTemporaryDirectory();
+    var targetPath = dir.absolute.path + "/temp.png";
     final FirebaseStorage storage = FirebaseStorage.instance;
-    uploadImage(file, storage).then((String data) {
+
+    compressAndGetFile(file, targetPath).then((File result) {
+      print("result is" + result.path);
+      uploadImage(file, storage).then((String data) {
+        Map userInfo = new Map<String, dynamic>();
+        userInfo[Config.fullNames] = fullNamesController.text;
+        userInfo[Config.dob] = dobController.text;
+        userInfo[Config.location] = locationController.text;
+        userInfo[Config.shortBio] = shortBioController.text;
+        userInfo[Config.collectedCount] = 0;
 
 
-      Map userInfo = new Map<String, dynamic>();
-      userInfo[Config.fullNames]= fullNamesController.text;
-      userInfo[Config.dob]= dobController.text;
-      userInfo[Config.location]= locationController.text;
-      userInfo[Config.shortBio]= shortBioController.text;
-      userInfo[Config.collectedCount]= 0;
-
-
-
-      userInfo[Config.profilePicUrl] = data;
-      userInfo[Config.cardColor] = colorCodes[currentColorIndex];
-      userInfo[Config.cardColorIndex] = currentColorIndex;
-      userInfo[Config.userType] = userType;
-      userInfo[Config.cardCreatorId] = widget.userId;
-      userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
-      if(userType==Config.coachScout){
-        userInfo[Config.title] = titleController.text;
-      }
-      else
-      {
-        userInfo[Config.levelText]= levelsController.text;
-        userInfo[Config.level]= level;
-        userInfo[Config.position]= positionController.text;
-        userInfo[Config.jerseyNumber]= jerseyNumController.text;
-
-      }
-
-
-
-      userInfo[Config.actSat]= actSatController.text;
-      userInfo[Config.CLASS]= classController.text;
-
-      userInfo[Config.height]= heightController.text;
-      userInfo[Config.weight]= weightController.text;
-      userInfo[Config.selectSport]= sports;
-      userInfo[Config.createdOn]= FieldValue.serverTimestamp();
-
-
-      Firestore.instance
-          .collection(Config.cards).document(widget.cardId).updateData(userInfo).then((_){
-
-
-        if(fileLogo == null)
-        {
-          setState(() {
-            loading = false;
-            cardId =widget.cardId;
-            fullScreenCard = true;
-          });
+        userInfo[Config.profilePicUrl] = data;
+        userInfo[Config.cardColor] = colorCodes[currentColorIndex];
+        userInfo[Config.cardColorIndex] = currentColorIndex;
+        userInfo[Config.userType] = userType;
+        userInfo[Config.cardCreatorId] = widget.userId;
+        userInfo[Config.schoolOrOrg] = schoolOrganisationController.text;
+        if (userType == Config.coachScout) {
+          userInfo[Config.title] = titleController.text;
         }
-        else
-        {
-          uploadImage(fileLogo, storage).then((String data){
-            Firestore.instance.collection(Config.cards).document(widget.cardId)
-                .updateData({
-              Config.cardLogo:data,
+        else {
+          userInfo[Config.levelText] = levelsController.text;
+          userInfo[Config.level] = level;
+          userInfo[Config.position] = positionController.text;
+          userInfo[Config.jerseyNumber] = jerseyNumController.text;
+        }
 
-            }).then((_){
-              setState(() {
-                loading = false;
-                cardId =widget.cardId;
-                fullScreenCard = true;
+
+        userInfo[Config.actSat] = actSatController.text;
+        userInfo[Config.CLASS] = classController.text;
+
+        userInfo[Config.height] = heightController.text;
+        userInfo[Config.weight] = weightController.text;
+        userInfo[Config.selectSport] = sports;
+        userInfo[Config.createdOn] = FieldValue.serverTimestamp();
+
+
+        Firestore.instance
+            .collection(Config.cards).document(widget.cardId).updateData(
+            userInfo).then((_) {
+          if (fileLogo == null) {
+            setState(() {
+              loading = false;
+              cardId = widget.cardId;
+              fullScreenCard = true;
+            });
+          }
+          else {
+            uploadImage(fileLogo, storage).then((String data) {
+              Firestore.instance.collection(Config.cards).document(
+                  widget.cardId)
+                  .updateData({
+                Config.cardLogo: data,
+
+              }).then((_) {
+                setState(() {
+                  loading = false;
+                  cardId = widget.cardId;
+                  fullScreenCard = true;
+                });
               });
             });
-          });
-
-        }
-
-
-
+          }
+        });
       });
-
     });
-
 
   }
   saveCardDetailsWithLogo(){
@@ -740,6 +752,7 @@ class _EditCardState extends State<EditCard> {
                                         color: Color(
                                             int.parse(docs.data[Config.cardColor])),
                                       ),
+
                                       Center(
                                         child: Container(
                                           margin:
@@ -754,7 +767,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white)),
                                               Row(
                                                 mainAxisAlignment:
@@ -768,7 +781,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white)),
                                                   Text(
                                                       " - " +
@@ -777,7 +790,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white))
                                                 ],
                                               ),
@@ -785,6 +798,7 @@ class _EditCardState extends State<EditCard> {
                                           ),
                                         ),
                                       ),
+
                                       Container(
                                           child: Image.asset(
                                             'assets/images/card_coach.png',
@@ -813,7 +827,7 @@ class _EditCardState extends State<EditCard> {
                                           child: CachedNetworkImage(
                                             fit: BoxFit.cover,
                                             imageUrl:
-                                            docs.data[Config.profilePicUrl],
+                                            docs.data[Config.profilePicUrl]??"",
                                             placeholder: (context, url) =>
                                                 SpinKitWave(
                                                   itemBuilder: (_, int index) {
@@ -844,7 +858,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -854,7 +868,7 @@ class _EditCardState extends State<EditCard> {
                                                   ".",
 
                                                   style: TextStyle(
-                                                      fontSize: 20,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(30),
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.white),
                                                 ),
@@ -867,7 +881,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -876,7 +890,7 @@ class _EditCardState extends State<EditCard> {
                                                 child: Text(
                                                   "lbs",
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -887,7 +901,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -898,7 +912,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -919,7 +933,7 @@ class _EditCardState extends State<EditCard> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: ScreenUtil(allowFontScaling: true).setSp(28),
                                                   color: Colors.white),
                                             ),
                                             Container(
@@ -936,7 +950,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 10,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white),
                                                     ),
                                                   ),
@@ -948,7 +962,7 @@ class _EditCardState extends State<EditCard> {
                                                     overflow:
                                                     TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                         color: Colors.white),
                                                   ),
                                                   Padding(
@@ -959,7 +973,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 10,
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
                                                           color: Colors.white),
                                                     ),
                                                   ),

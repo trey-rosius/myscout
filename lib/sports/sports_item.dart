@@ -42,7 +42,7 @@ class SportsItem extends StatelessWidget {
             Expanded(
               child:  Padding(
                 padding: const EdgeInsets.only(right:3.0),
-                child: Text(document[Config.fullNames],style: TextStyle(fontSize: 17.0,fontWeight:FontWeight.bold,color: Theme.of(context).primaryColor),),
+                child: Text(document[Config.fullNames]??"",style: TextStyle(fontSize: 17.0,fontWeight:FontWeight.bold,color: Theme.of(context).primaryColor),),
               ),
             )
           ],
