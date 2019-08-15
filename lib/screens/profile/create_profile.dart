@@ -12,12 +12,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 class CreateProfile extends StatefulWidget {
   CreateProfile({this.userId});
   final String userId;
   @override
   _CreateProfileState createState() => _CreateProfileState();
 }
+const String MIN_DATETIME = '1900-01-01';
+const String MAX_DATETIME = '2030-11-25';
+const String INIT_DATETIME = '2019-05-17';
 
 class _CreateProfileState extends State<CreateProfile> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -35,7 +39,11 @@ class _CreateProfileState extends State<CreateProfile> {
   final positionController = TextEditingController();
   final heightController = TextEditingController();
   final weightController = TextEditingController();
-
+  DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
+  String _format = 'dd-MMMM-yyyy';
+  String _timeFormat = 'HH:m';
+  DateTime _dateTime;
+  bool _showTitle = true;
   loadProfileDetails(){
 
     Firestore.instance
@@ -103,6 +111,40 @@ class _CreateProfileState extends State<CreateProfile> {
     });
 
   }
+
+  void _showDatePicker() {
+    DatePicker.showDatePicker(
+      context,
+      pickerTheme: DateTimePickerTheme(
+        showTitle: _showTitle,
+        confirm: Text('DONE', style: TextStyle(color: Theme.of(context).primaryColor,fontFamily: 'GothamRnd',fontWeight: FontWeight.bold)),
+        cancel: Text('CANCEL', style: TextStyle(color: Theme.of(context).accentColor,fontFamily: 'GothamRnd',fontWeight: FontWeight.w600)),
+      ),
+      minDateTime: DateTime.parse(MIN_DATETIME),
+      maxDateTime: DateTime.parse(MAX_DATETIME),
+      initialDateTime: _dateTime,
+      dateFormat: _format,
+      locale: _locale,
+      onCancel: () {
+        debugPrint('onCancel');
+      },
+      onChange: (dateTime, List<int> index) {
+        setState(() {
+          _dateTime = dateTime;
+          dobController.text = _dateTime.day.toString()+"/"+_dateTime.month.toString()+"/"+_dateTime.year.toString();
+
+        });
+      },
+      onConfirm: (dateTime, List<int> index) {
+        setState(() {
+          _dateTime = dateTime;
+          dobController.text = _dateTime.day.toString()+"/"+_dateTime.month.toString()+"/"+_dateTime.year.toString();
+
+        });
+      },
+    );
+  }
+
 
   _saveUserId(String uid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -430,7 +472,7 @@ class _CreateProfileState extends State<CreateProfile> {
                               ),
                               Container(
                                 child:  InkWell(
-                                  onTap: ()=>_selectTodayDate1(context),
+                                  onTap: ()=>_showDatePicker(),
                                   child: TextFormField(
                                     controller: dobController,
                                     validator: (value) {

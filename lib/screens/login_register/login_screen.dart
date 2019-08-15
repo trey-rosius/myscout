@@ -335,11 +335,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 validations.validateEmail(value);
                                 if (value.isEmpty) {
                                   return "Email";
-                                } else {
-                                  final RegExp nameExp =
-                                  new RegExp(r'^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$');
-                                  if (!nameExp.hasMatch(value))
-                                    return "InValid Email";
                                 }
                               },
                               onSaved: ((String value) {
