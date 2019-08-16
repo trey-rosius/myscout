@@ -391,15 +391,7 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
                         }
                       },
                     ),
-                    SliverToBoxAdapter(child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text("HIGHLIGHTS",style: TextStyle(
 
-                          fontFamily: 'Montserrat',
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0)),
-                    ),),
 
                     SliverToBoxAdapter(child: Padding(
                       padding: const EdgeInsets.all(10.0),

@@ -962,33 +962,39 @@ class _CreateCardState extends State<CreateCard> {
                                             height: 400,
                                             width: 300,
                                           )),
-                                      Container(
+                                      Positioned(
+                                        top: 328,
+                                        left: 10,
+                                        right: 228,
+                                        bottom: 10,
+                                        child: Container(
 
-                                        margin: EdgeInsets.only(left:10,top: 328,bottom: 2),
-                                        child:
-                                        ClipRRect(
-                                          borderRadius:BorderRadius.circular(5),
-                                          child: CachedNetworkImage(
-                                           height: 63 ,
-                                            width: 52,
-                                            fit: BoxFit.cover,
-                                            imageUrl:
-                                            docs.data[Config.cardLogo]??"",
-                                            placeholder: (context, url) =>
-                                                SpinKitWave(
-                                                  itemBuilder: (_, int index) {
-                                                    return DecoratedBox(
-                                                      decoration: BoxDecoration(
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                            errorWidget: (context, url, error) =>
-                                                Icon(Icons.error),
-                                          ),
-                                        )
+
+                                          child:
+                                          ClipRRect(
+                                            borderRadius:BorderRadius.circular(5),
+                                            child: CachedNetworkImage(
+                                             height: 63 ,
+                                              width: 52,
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                              docs.data[Config.cardLogo]??"",
+                                              placeholder: (context, url) =>
+                                                  SpinKitWave(
+                                                    itemBuilder: (_, int index) {
+                                                      return DecoratedBox(
+                                                        decoration: BoxDecoration(
+                                                          color: Theme.of(context)
+                                                              .accentColor,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          )
+                                        ),
                                       ),
                                     ],
                                   ),
