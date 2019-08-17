@@ -12,13 +12,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/card_model.dart';
 import 'package:myscout/screens/cards/card_color.dart';
-import 'package:myscout/screens/cards/full_screen_card.dart';
+
 import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'data.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:flutter/material.dart';
+
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -825,7 +825,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -848,7 +848,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -857,7 +857,7 @@ class _CreateCardState extends State<CreateCard> {
                                                 child: Text(
                                                   "lbs",
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -868,7 +868,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -879,7 +879,7 @@ class _CreateCardState extends State<CreateCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -900,7 +900,7 @@ class _CreateCardState extends State<CreateCard> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
+                                                  fontSize: ScreenUtil(allowFontScaling: false).setSp(35),
                                                   color: Colors.white),
                                             ),
                                             Container(
@@ -917,7 +917,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(29),
                                                           color: Colors.white),
                                                     ),
                                                   ),
@@ -929,7 +929,7 @@ class _CreateCardState extends State<CreateCard> {
                                                     overflow:
                                                     TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                        fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
+                                                        fontSize: ScreenUtil(allowFontScaling: false).setSp(30),
                                                         color: Colors.white),
                                                   ),
                                                   Padding(
@@ -940,7 +940,7 @@ class _CreateCardState extends State<CreateCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(29),
                                                           color: Colors.white),
                                                     ),
                                                   ),

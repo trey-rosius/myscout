@@ -781,7 +781,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                           color: Colors.white)),
                                                   Text(
                                                       " - " +
@@ -790,7 +790,7 @@ class _EditCardState extends State<EditCard> {
                                                       overflow:
                                                       TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                           color: Colors.white))
                                                 ],
                                               ),
@@ -858,7 +858,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(29),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -881,7 +881,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(29),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -890,7 +890,7 @@ class _EditCardState extends State<EditCard> {
                                                 child: Text(
                                                   "lbs",
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(29),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -901,7 +901,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(30),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -912,7 +912,7 @@ class _EditCardState extends State<EditCard> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
+                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
                                                       color: Colors.white),
                                                 ),
                                               ),
@@ -933,7 +933,7 @@ class _EditCardState extends State<EditCard> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontSize: ScreenUtil(allowFontScaling: true).setSp(28),
+                                                  fontSize: ScreenUtil(allowFontScaling: true).setSp(35),
                                                   color: Colors.white),
                                             ),
                                             Container(
