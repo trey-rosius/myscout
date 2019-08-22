@@ -22,7 +22,7 @@ class CardItem extends StatelessWidget {
         builder: (context,AsyncSnapshot<DocumentSnapshot> docs){
           if(docs.data !=null)
           {
-            return docs.data[Config.cardImageUrl] ==null ?Container(): InkWell(
+            return  InkWell(
                 onTap: (){
                   Navigator.push(
                       context,
@@ -32,11 +32,11 @@ class CardItem extends StatelessWidget {
                 },
                 child:Padding(
                           padding:  EdgeInsets.only(left:5.0,right:5.0,top: 10),
-                          child:AspectRatio(
+                          child:GridTile(child: AspectRatio(
 
-          aspectRatio: 2/2.7,
+                            aspectRatio: 2/2.7,
                             child: CachedNetworkImage(
-                               fit: BoxFit.cover,
+                              fit: BoxFit.cover,
                               imageUrl: docs.data[Config.cardImageUrl]??"",
                               placeholder: (context,url) => SpinKitWave(
                                 itemBuilder: (_, int index) {
@@ -49,9 +49,9 @@ class CardItem extends StatelessWidget {
                               ),
 
 
-                              errorWidget: (context,url,error) =>Icon(Icons.error),
+                              errorWidget: (context,url,error) =>Icon(Icons.broken_image),
                             ),
-                          ),
+                          ),)
 
                         ),
 

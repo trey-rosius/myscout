@@ -731,36 +731,42 @@ class _CreateCardState extends State<CreateCard> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                             children: <Widget>[
-                                              Text(docs.data[Config.fullNames],
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: ScreenUtil(allowFontScaling: false).setSp(28),
-                                                      color: Colors.white)),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                      docs.data[Config.schoolOrOrg],
-                                                      maxLines: 1,
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
-                                                          color: Colors.white)),
-                                                  Text(
-                                                      " - " +
-                                                          docs.data[Config.title],
-                                                      maxLines: 1,
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: ScreenUtil(allowFontScaling: false).setSp(24),
-                                                          color: Colors.white))
-                                                ],
+                                              Padding(
+                                                padding:  EdgeInsets.only(left:10.0,right: 5),
+                                                child: Text(docs.data[Config.fullNames],
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontSize: ScreenUtil(allowFontScaling: false).setSp(34),
+                                                        color: Colors.white)),
+                                              ),
+                                              Padding(
+                                                padding:  EdgeInsets.only(left:10.0,right: 5),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                        docs.data[Config.schoolOrOrg],
+                                                        maxLines: 1,
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: ScreenUtil(allowFontScaling: false).setSp(30),
+                                                            color: Colors.white)),
+                                                    Text(
+                                                        " - " +
+                                                            docs.data[Config.title],
+                                                        maxLines: 1,
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: ScreenUtil(allowFontScaling: false).setSp(30),
+                                                            color: Colors.white))
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),

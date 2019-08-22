@@ -33,8 +33,8 @@ class CoachItem extends StatelessWidget {
                 },
                 child:
                 Padding(
-                  padding:  EdgeInsets.only(left:5.0,right:5.0),
-                  child:AspectRatio(
+                  padding:  EdgeInsets.all(10),
+                  child:GridTile(child: AspectRatio(
 
                     aspectRatio: 2/2.7,
                     child: CachedNetworkImage(
@@ -53,7 +53,7 @@ class CoachItem extends StatelessWidget {
 
                       errorWidget: (context,url,error) =>Icon(Icons.error),
                     ),
-                  ),
+                  ),)
 
                 ),
             );
