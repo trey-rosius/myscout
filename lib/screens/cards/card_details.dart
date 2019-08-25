@@ -689,6 +689,7 @@ class _CardDetailsState extends State<CardDetails> {
                       .setData({
                     Config.cardCreatorId: document.data[Config.cardCreatorId],
                     Config.cardId:document.data[Config.cardId],
+                    Config.userType:document.data[Config.userType],
                     Config.collected:true
 
 

@@ -5,10 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myscout/screens/cards/card_screen_scroller.dart';
 import 'package:myscout/screens/cards/create_card.dart';
 import 'package:myscout/screens/cards/edit_card.dart';
-import 'package:myscout/screens/chats/chat_screen.dart';
-import 'package:myscout/screens/gallery/photo_item.dart';
+
 import 'package:myscout/screens/gallery/photo_item_scroller.dart';
-import 'package:myscout/screens/profile/edit_profile.dart';
+
+import 'package:myscout/screens/profile/edit_profile_athlete.dart';
+import 'package:myscout/screens/profile/edit_profile_coach.dart';
+import 'package:myscout/screens/profile/edit_profile_fan.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/error_screen.dart';
 import 'package:myscout/utils/loading_screen.dart';
@@ -68,11 +70,26 @@ class _ExternalProfileScreenState extends State<ExternalProfileScreen> {
         userId == widget.userId?
             InkWell(
               onTap: (){
+                widget.userType == Config.athleteOrParent ?
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
-                      builder: (context) => EditProfile(userId:widget.userId),
+                      builder: (context) =>
+                          EditProfileAthlete(userId: userId),
+                    )) : widget.userType == Config.coachScout?
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) =>
+                          EditProfileCoach(userId: userId),
+                    )) :
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) =>
+                          EditProfileFan(userId: userId),
                     ));
+
               },
               child:
               Image.asset('assets/images/edit.png'),

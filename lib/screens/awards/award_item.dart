@@ -34,13 +34,15 @@ class AwardItem extends StatelessWidget {
                   ),
                 ),
               ),
-              Column(
-               mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-               Text(document[Config.postText]),
+              Expanded(
+                child: Column(
+                 mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                  Text(document[Config.postText]),
      Text(document[Config.awardYear]),
-                ],
+                  ],
+                ),
               ),
 
 

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:myscout/screens/login_register/forgot_password.dart';
 import 'package:myscout/screens/login_register/sign_up.dart';
-import 'package:myscout/screens/profile/create_profile.dart';
+import 'package:myscout/screens/profile/create_profile_athlete.dart';
+import 'package:myscout/screens/profile/create_profile_coach.dart';
+import 'package:myscout/screens/profile/create_profile_fan.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/authentication.dart';
 import 'package:myscout/utils/validations.dart';
@@ -93,11 +95,26 @@ class _LoginScreenState extends State<LoginScreen> {
               loading = false;
 
 
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (context) => CreateProfile(userId: user.uid),
-                  ));
+             if(widget.userType == Config.athleteOrParent)
+               {
+                 Navigator.push(
+                     context,
+                     new MaterialPageRoute(
+                       builder: (context) => CreateProfileAthlete(userId: user.uid),
+                     ));
+               } else if(widget.userType == Config.coachScout){
+               Navigator.push(
+                   context,
+                   new MaterialPageRoute(
+                     builder: (context) => CreateProfileCoach(userId: user.uid),
+                   ));
+             } else{
+               Navigator.push(
+                   context,
+                   new MaterialPageRoute(
+                     builder: (context) => CreateProfileFan(userId: user.uid),
+                   ));
+             }
             });
           });
 
@@ -190,11 +207,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 loading = false;
 
 
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) => CreateProfile(userId: user.uid),
-                    ));
+                if(widget.userType == Config.athleteOrParent)
+                {
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => CreateProfileAthlete(userId: user.uid),
+                      ));
+                } else if(widget.userType == Config.coachScout){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => CreateProfileCoach(userId: user.uid),
+                      ));
+                } else{
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => CreateProfileFan(userId: user.uid),
+                      ));
+                }
               });
             });
 

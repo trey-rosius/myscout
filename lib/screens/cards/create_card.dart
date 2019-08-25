@@ -380,7 +380,8 @@ class _CreateCardState extends State<CreateCard> {
                 .collection(Config.myCards).document(docRef.documentID)
                 .setData({
               Config.cardId: docRef.documentID,
-              Config.cardCreatorId: widget.userId
+              Config.cardCreatorId: widget.userId,
+              Config.userType:userType,
             });
             Firestore.instance.collection(Config.users).document(widget.userId)
                 .updateData({

@@ -35,7 +35,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       body:  StreamBuilder(
         stream:
        // Firestore.instance.collection(Config.cards).where(Config.userType,isEqualTo: Config.athleteOrParent).where(Config.cardCreatorId,isEqualTo: widget.userId).snapshots(),
-        Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).snapshots(),
+        Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.myCards).where(Config.userType,isEqualTo: Config.athleteOrParent).snapshots(),
 
 
 

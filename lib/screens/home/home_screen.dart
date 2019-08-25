@@ -16,7 +16,10 @@ import 'package:myscout/screens/login_register/welcome_screen.dart';
 import 'package:myscout/screens/notifications/notification_screen.dart';
 import 'package:myscout/screens/players/players_screen.dart';
 
-import 'package:myscout/screens/profile/edit_profile.dart';
+
+import 'package:myscout/screens/profile/edit_profile_athlete.dart';
+import 'package:myscout/screens/profile/edit_profile_coach.dart';
+import 'package:myscout/screens/profile/edit_profile_fan.dart';
 import 'package:myscout/screens/profile/profile_screen.dart';
 import 'package:myscout/screens/schedule/schedule_screen.dart';
 import 'package:myscout/screens/search/search_screen.dart';
@@ -119,12 +122,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     actions: <Widget>[
                       InkWell(
                         onTap: () {
+
+                          settings.userType.getValue() == Config.athleteOrParent ?
                           Navigator.push(
                               context,
                               new MaterialPageRoute(
                                 builder: (context) =>
-                                    EditProfile(userId: userId),
+                                    EditProfileAthlete(userId: userId),
+                              )) : settings.userType.getValue() == Config.coachScout?
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfileCoach(userId: userId),
+                              )) :
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfileFan(userId: userId),
                               ));
+
+
                         },
                         child: _currentIndex == 4
                             ? Image.asset('assets/images/edit.png')

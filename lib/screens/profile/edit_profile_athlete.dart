@@ -3,27 +3,27 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/profile_model.dart';
-import 'package:myscout/screens/home/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
+
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
-class CreateProfile extends StatefulWidget {
-  CreateProfile({this.userId});
+class EditProfileAthlete extends StatefulWidget {
+  EditProfileAthlete({this.userId});
   final String userId;
   @override
-  _CreateProfileState createState() => _CreateProfileState();
+  _EditProfileAthleteState createState() => _EditProfileAthleteState();
 }
 const String MIN_DATETIME = '1900-01-01';
 const String MAX_DATETIME = '2030-11-25';
 const String INIT_DATETIME = '2019-05-17';
-
-class _CreateProfileState extends State<CreateProfile> {
+class _EditProfileAthleteState extends State<EditProfileAthlete> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
@@ -51,25 +51,42 @@ class _CreateProfileState extends State<CreateProfile> {
         .document(widget.userId)
         .get()
         .then((DocumentSnapshot snapshot) {
-         setState(() {
-           profilePic = snapshot[Config.profilePicUrl];
-           fullNamesController.text = snapshot[Config.fullNames];
-           dobController.text = snapshot[Config.dob];
-           locationController.text = snapshot[Config.location];
-           shortBioController.text = snapshot[Config.shortBio];
-           schoolController.text = snapshot[Config.schoolOrOrg];
-           gpaController.text = snapshot[Config.gpa];
-           actSatController.text = snapshot[Config.actSat];
-           classController.text = snapshot[Config.CLASS];
-           pModel.sports = snapshot[Config.selectSport];
-           positionController.text = snapshot[Config.position];
-           heightController.text = snapshot[Config.height];
-           weightController.text = snapshot[Config.weight];
-         });
+      setState(() {
+        profilePic = snapshot[Config.profilePicUrl];
+        fullNamesController.text = snapshot[Config.fullNames];
+        dobController.text = snapshot[Config.dob];
+        locationController.text = snapshot[Config.location];
+        shortBioController.text = snapshot[Config.shortBio];
+        schoolController.text = snapshot[Config.schoolOrOrg];
+        gpaController.text = snapshot[Config.gpa];
+        actSatController.text = snapshot[Config.actSat];
+        classController.text = snapshot[Config.CLASS];
+        pModel.sports = snapshot[Config.selectSport];
+        positionController.text = snapshot[Config.position];
+        heightController.text = snapshot[Config.height];
+        weightController.text = snapshot[Config.weight];
+      });
 
 
     });
 
+  }
+
+  // 2. compress file and get file.
+  Future<File> compressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 88,
+
+    );
+
+    print(file.path);
+    print(result.path);
+
+    print(file.lengthSync());
+    print(result.lengthSync());
+
+    return result;
   }
 
   saveProfileDetailsWithoutImage(){
@@ -89,7 +106,6 @@ class _CreateProfileState extends State<CreateProfile> {
     userInfo[Config.height]= heightController.text;
     userInfo[Config.weight]= weightController.text;
     userInfo[Config.selectSport]= pModel.sports ?? "BasketBall";
-
     _saveSports(pModel.sports ?? "BasketBall");
     Firestore.instance
         .collection(Config.users)
@@ -101,12 +117,14 @@ class _CreateProfileState extends State<CreateProfile> {
       });
 
       print("completed");
-
+      Navigator.of(context).pop();
+/*
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HomeScreen()),
+            builder: (context) => HomeScreen(userId:widget.userId)),
       );
+      */
 
     });
 
@@ -146,61 +164,60 @@ class _CreateProfileState extends State<CreateProfile> {
   }
 
 
-  _saveUserId(String uid) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    print("saved userId to preferences");
-    prefs.setString(Config.userId, uid);
-    print("user id is saved"+uid);
-  }
-
   _saveSports(String sport) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     print("saved sport to preferences"+sport);
     prefs.setString(Config.sport, sport);
   }
-  saveProfileDetailsWithImage(){
 
-    final FirebaseStorage storage = FirebaseStorage.instance;
-    uploadImage(file, storage).then((String data) {
+  saveProfileDetailsWithImage() async{
+    var dir = await path_provider.getTemporaryDirectory();
+    var targetPath = dir.absolute.path + "/temp.png";
+    compressAndGetFile(file, targetPath).then((File result) {
+      print("result is" + result.path);
+      final FirebaseStorage storage = FirebaseStorage.instance;
+      uploadImage(file, storage).then((String data) {
+        Map userInfo = new Map<String, dynamic>();
+        userInfo[Config.fullNames] = fullNamesController.text;
+        userInfo[Config.dob] = dobController.text;
+        userInfo[Config.location] = locationController.text;
+        userInfo[Config.shortBio] = shortBioController.text;
+        userInfo[Config.schoolOrOrg] = schoolController.text;
+        userInfo[Config.gpa] = gpaController.text;
+        userInfo[Config.profilePicUrl] = data;
+        userInfo[Config.actSat] = actSatController.text;
+        userInfo[Config.CLASS] = classController.text;
+        userInfo[Config.position] = positionController.text;
+        userInfo[Config.height] = heightController.text;
+        userInfo[Config.weight] = weightController.text;
+        userInfo[Config.selectSport] = pModel.sports;
+
+        _saveSports(pModel.sports);
+        Firestore.instance
+            .collection(Config.users)
+            .document(widget.userId)
+            .updateData(userInfo)
+            .then((_) {
+          setState(() {
+            loading = false;
+          });
+
+          print("completed");
+
+          Navigator.of(context).pop();
 
 
-      Map userInfo = new Map<String, dynamic>();
-      userInfo[Config.fullNames]= fullNamesController.text;
-      userInfo[Config.dob]= dobController.text;
-      userInfo[Config.location]= locationController.text;
-      userInfo[Config.shortBio]= shortBioController.text;
-      userInfo[Config.schoolOrOrg]= schoolController.text;
-      userInfo[Config.gpa]= gpaController.text;
-      userInfo[Config.profilePicUrl] = data;
-      userInfo[Config.actSat]= actSatController.text;
-      userInfo[Config.CLASS]= classController.text;
-      userInfo[Config.position]= positionController.text;
-      userInfo[Config.height]= heightController.text;
-      userInfo[Config.weight]= weightController.text;
-      userInfo[Config.selectSport]= pModel.sports;
-
-      _saveSports(pModel.sports ?? "BasketBall");
-      Firestore.instance
-          .collection(Config.users)
-          .document(widget.userId)
-          .updateData(userInfo)
-          .then((_) {
-        setState(() {
-          loading = false;
-        });
-
-        print("completed");
-
+/*
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen()),
         );
+        */
 
+        });
       });
-
     });
 
 
@@ -224,6 +241,7 @@ class _CreateProfileState extends State<CreateProfile> {
   void _onImageButtonPressed(ImageSource source, int numberOfItems) {
     setState(() {
       _imageFile = ImagePicker.pickImage(source: source);
+
     });
   }
 
@@ -254,9 +272,7 @@ class _CreateProfileState extends State<CreateProfile> {
   @override
   void initState() {
     // TODO: implement initState
-   loadProfileDetails();
-   _saveUserId(widget.userId);
-   print("user Id is"+widget.userId);
+    loadProfileDetails();
     super.initState();
   }
 
@@ -267,19 +283,19 @@ class _CreateProfileState extends State<CreateProfile> {
     // TODO: implement dispose
 
     fullNamesController.dispose();
-  dobController.dispose();
+    dobController.dispose();
     locationController.dispose();
     shortBioController.dispose();
     schoolController.dispose();
     gpaController.dispose();
-   actSatController.dispose();
+    actSatController.dispose();
     classController.dispose();
-   sportsController.dispose();
+    sportsController.dispose();
     positionController.dispose();
     heightController.dispose();
     weightController.dispose();
     super.dispose();
-    
+
   }
 
   /**
@@ -342,7 +358,7 @@ class _CreateProfileState extends State<CreateProfile> {
               onTap: () {
                 _onImageButtonPressed(ImageSource.gallery, 1);
               },
-              child: Container(
+              child: profilePic == null ? Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10.0),
                 child: CircleAvatar(
@@ -354,36 +370,62 @@ class _CreateProfileState extends State<CreateProfile> {
                     size: 70.0,
                   ),
                 ),
-              ),
+              ) : ClipRRect(
+                borderRadius:
+                new BorderRadius.circular(100),
+                child:
+
+                CachedNetworkImage(
+                  width: 120.0,
+                  height: 120.0,
+                  fit: BoxFit.cover,
+                  imageUrl: profilePic,
+                  placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+                  errorWidget: (context, url, ex) =>
+                  new Icon(Icons.error),
+                ),
+              )
             );
           }
         });
   }
-
+  bool isLargeScreen = false;
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil(width: 828, height: 1792)..init(context);
-    Size size = MediaQuery.of(context).size;
 
+    Size size = MediaQuery.of(context).size;
+    if(size.width < 412)
+    {
+      isLargeScreen = false;
+    }
+    else
+    {
+      isLargeScreen = true;
+    }
 
     return Scaffold(
+       appBar: AppBar(
+         elevation: 0.0,
+         title: Text(
+           "Edit Profile",
+           style: TextStyle(fontSize: 22.0, color: Colors.white),
+         ),
+         centerTitle: true,
+       ),
       body: Stack(
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
             width: size.width,
-            height:ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(300) :ScreenUtil.screenWidthDp > 413 || ScreenUtil.screenWidthDp < 650 ? ScreenUtil.instance.setHeight(500) : ScreenUtil.instance.setHeight(300) ,
+            height: isLargeScreen ?size.height / 8 :size.height / 5.0,
             alignment: Alignment.center,
-            child: Text(
-              "Create Profile",
-              style: TextStyle(fontSize: 22.0, color: Colors.white),
-            ),
+
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:
-              ScreenUtil.screenWidthDp > 650 ? ScreenUtil.instance.setHeight(200) :ScreenUtil.screenWidthDp > 413 || ScreenUtil.screenWidthDp < 650 ? ScreenUtil.instance.setHeight(300) : ScreenUtil.instance.setHeight(200)),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top: isLargeScreen ?30.0 : 50.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -399,20 +441,20 @@ class _CreateProfileState extends State<CreateProfile> {
                           child: ClipOval(
                             child: profilePic != null
                                 ?  ClipRRect(
-                                  borderRadius:
-                                  new BorderRadius.circular(30),
-                                  child:
+                              borderRadius:
+                              new BorderRadius.circular(30),
+                              child:
 
-                                  CachedNetworkImage(
-                                    width: 120.0,
-                                    height: 120.0,
-                                    fit: BoxFit.cover,
-                                    imageUrl: profilePic,
-                                    placeholder: (context, url) =>
-                                    new CircularProgressIndicator(),
-                                    errorWidget: (context, url, ex) =>
-                                    new Icon(Icons.error),
-                                  ),
+                              CachedNetworkImage(
+                                width: 120.0,
+                                height: 120.0,
+                                fit: BoxFit.cover,
+                                imageUrl: profilePic,
+                                placeholder: (context, url) =>
+                                new CircularProgressIndicator(),
+                                errorWidget: (context, url, ex) =>
+                                new Icon(Icons.error),
+                              ),
                             )
                                 : CircleAvatar(
                               backgroundColor:
@@ -485,7 +527,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                     }),
 
 
-                                     enabled: false,
+                                    enabled: false,
                                     // keyboardType: TextInputType.number,
                                     decoration: new InputDecoration(
                                       labelText: "Date Of Birth",
@@ -632,9 +674,9 @@ class _CreateProfileState extends State<CreateProfile> {
                                         return "Class";
                                       }
                                     },
-                                   onSaved: ((String value){
-                                     pModel.athleteClass = value.trim();
-                                   }),
+                                    onSaved: ((String value){
+                                      pModel.athleteClass = value.trim();
+                                    }),
 
                                     // enabled: false,
                                     // keyboardType: TextInputType.number,
@@ -728,7 +770,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: heightController,
-                                  // keyboardType: TextInputType.number,
+                                  //  keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Height";
@@ -750,7 +792,7 @@ class _CreateProfileState extends State<CreateProfile> {
                                 Container(
                                   child: new TextFormField(
                                     controller: weightController,
-                                  //  keyboardType: TextInputType.number,
+                                 //   keyboardType: TextInputType.number,
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return "Weight";
@@ -779,37 +821,37 @@ class _CreateProfileState extends State<CreateProfile> {
                             loading == true
                                 ? new CircularProgressIndicator()
                                 : Container(
-                                    padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
+                              padding: EdgeInsets.only(top: 20.0,bottom: 20.0),
 
-                                    width: size.width / 1.3,
-                                    //  color: Theme.of(context).primaryColor,
+                              width: size.width / 1.3,
+                              //  color: Theme.of(context).primaryColor,
 
-                                    child: RaisedButton(
-                                      elevation: 0.0,
-                                      onPressed: () {
-                                        if (formKey.currentState.validate()) {
-                                          if (_imageFile == null) {
+                              child: RaisedButton(
+                                elevation: 0.0,
+                                onPressed: () {
+                                  if (formKey.currentState.validate()) {
+                                    if (_imageFile == null) {
 
-                                            saveProfileDetailsWithoutImage();
-                                          } else {
-                                            setState(() {
-                                              loading  = true;
-                                            });
-                                            saveProfileDetailsWithImage();
-                                          }
-                                        }
-                                      },
-                                      color: Theme.of(context).primaryColorLight,
-                                      child: new Padding(
-                                        padding: const EdgeInsets.all(18.0),
-                                        child: new Text("Submit",
-                                            style: new TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w600)),
-                                      ),
-                                    ),
-                                  ),
+                                      saveProfileDetailsWithoutImage();
+                                    } else {
+                                      setState(() {
+                                        loading  = true;
+                                      });
+                                      saveProfileDetailsWithImage();
+                                    }
+                                  }
+                                },
+                                color: Theme.of(context).primaryColorLight,
+                                child: new Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: new Text("Submit",
+                                      style: new TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w600)),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],

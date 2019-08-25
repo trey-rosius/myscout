@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myscout/screens/profile/create_profile.dart';
+import 'package:myscout/screens/profile/create_profile_athlete.dart';
+import 'package:myscout/screens/profile/create_profile_coach.dart';
+import 'package:myscout/screens/profile/create_profile_fan.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/authentication.dart';
 import 'package:myscout/utils/validations.dart';
@@ -108,11 +110,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
             });
             print("User Successfully registered");
 
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (context) => CreateProfile(userId:firebaseUser.uid,),
-                ));
+
+            if(widget.userType == Config.athleteOrParent)
+            {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => CreateProfileAthlete(userId: firebaseUser.uid),
+                  ));
+            } else if(widget.userType == Config.coachScout){
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => CreateProfileCoach(userId: firebaseUser.uid),
+                  ));
+            } else{
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => CreateProfileFan(userId: firebaseUser.uid),
+                  ));
+            }
+
             // showInSnackBar("Successful");
           });
 
