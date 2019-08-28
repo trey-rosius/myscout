@@ -33,7 +33,7 @@ import 'package:myscout/settings_screen.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:myscout/utils/app_settings.dart';
 import 'package:myscout/utils/app_settings_inherited.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {

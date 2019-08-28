@@ -32,7 +32,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
   final locationController = TextEditingController();
   final shortBioController = TextEditingController();
   final schoolController = TextEditingController();
-
+  final positionController = TextEditingController();
   final sportsController = TextEditingController();
 
   DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
@@ -54,7 +54,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
         locationController.text = snapshot[Config.location];
         shortBioController.text = snapshot[Config.shortBio];
         schoolController.text = snapshot[Config.schoolOrOrg];
-
+        positionController.text = snapshot[Config.position];
         pModel.sports = snapshot[Config.selectSport];
 
 
@@ -92,7 +92,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
     userInfo[Config.location]= locationController.text;
     userInfo[Config.shortBio]= shortBioController.text;
     userInfo[Config.schoolOrOrg]= schoolController.text;
-
+    userInfo[Config.position]= positionController.text;
     userInfo[Config.selectSport]= pModel.sports ?? "BasketBall";
     _saveSports(pModel.sports ?? "BasketBall");
     Firestore.instance
@@ -172,7 +172,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
         userInfo[Config.location] = locationController.text;
         userInfo[Config.shortBio] = shortBioController.text;
         userInfo[Config.schoolOrOrg] = schoolController.text;
-
+        userInfo[Config.position]= positionController.text;
         userInfo[Config.profilePicUrl] = data;
 
         userInfo[Config.selectSport] = pModel.sports;
@@ -271,6 +271,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
     locationController.dispose();
     shortBioController.dispose();
     schoolController.dispose();
+    positionController.dispose();
 
     sportsController.dispose();
 
@@ -522,7 +523,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
                                   controller: locationController,
                                   validator: (value) {
                                     if (value.isEmpty) {
-                                      return "Location";
+                                      return "Hometown";
                                     }
                                   },
                                   onSaved: ((String value){
@@ -533,7 +534,7 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
                                   // enabled: false,
                                   // keyboardType: TextInputType.number,
                                   decoration: new InputDecoration(
-                                    labelText: "Location",
+                                    labelText: "Hometown",
                                     contentPadding: new EdgeInsets.all(10.0),
                                     filled: false,
                                   ),
@@ -604,7 +605,28 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
                                     ),
                                   ),
                                 ),
+                                Divider(color: Theme.of(context).primaryColor,),
+                                Container(
+                                  child: new TextFormField(
+                                    controller: positionController,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return "Title Or Position";
+                                      }
+                                    },
+                                    onSaved: ((String value){
+                                      pModel.position = value.trim();
+                                    }),
 
+                                    // enabled: false,
+                                    // keyboardType: TextInputType.number,
+                                    decoration: new InputDecoration(
+                                      labelText: "Title Or Position",
+                                      contentPadding: new EdgeInsets.all(10.0),
+                                      filled: false,
+                                    ),
+                                  ),
+                                ),
 
                               ],
                             ),
