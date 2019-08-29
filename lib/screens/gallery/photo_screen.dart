@@ -55,7 +55,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
                 {
                   final DocumentSnapshot document = snapshot.data.documents[
                   index];
-                  return PhotoItem(document: document);
+                  return PhotoItem(document: document,userId:widget.userId);
                 });
 
           } else {

@@ -52,7 +52,7 @@ class _VideoScreenState extends State<VideoScreen> {
                itemBuilder: (context,index){
                  final DocumentSnapshot document = snapshot.data.documents[
                  index];
-                 return VideoItem(document: document);
+                 return VideoItem(document: document,userId: widget.userId,);
 
                },
               itemCount: snapshot.data.documents.length,

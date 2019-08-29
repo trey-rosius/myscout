@@ -5,10 +5,85 @@ import 'package:myscout/post/video_player_screen.dart';
 import 'package:myscout/screens/gallery/view_image.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-class VideoItem extends StatelessWidget {
-  VideoItem ({this.document});
+class VideoItem extends StatefulWidget {
+  VideoItem ({this.document,this.userId});
   final DocumentSnapshot document;
+  final String userId;
 
+  @override
+  _VideoItemState createState() => _VideoItemState();
+}
+
+class _VideoItemState extends State<VideoItem> {
+  Future<Null> deleteConfirmation(BuildContext context,String postsId) async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return Container(
+
+          child: AlertDialog(
+            backgroundColor: Theme.of(context).primaryColor,
+
+            content: SingleChildScrollView(
+
+
+                child: Column(
+                  children: <Widget>[
+                    Image.asset('assets/images/myscout.png'),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("Are you sure you want to delete this Post?",style: TextStyle(
+                          color: Colors.white,fontSize: 18.0
+                      ),),
+                    )
+                  ],
+                )
+            ),
+            actions: <Widget>[
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  color: Theme.of(context).accentColor,
+                  child: new Text(
+                    "No",
+                    style: TextStyle(fontSize: 14.0,color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+
+                    // checkUserType();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  color: Theme.of(context).accentColor,
+                  child: new Text(
+                    "Yes",
+                    style: TextStyle(fontSize: 14.0,color: Colors.white),
+                  ),
+                  onPressed: () {
+
+                    Navigator.of(context).pop();
+                    Firestore.instance.collection(Config.posts).document(widget.document[Config.postId]).delete();
+                    Firestore.instance.collection(Config.users).document(widget.userId).collection(Config.userPosts).document(widget.document[Config.postId]).delete();
+
+
+                    // checkUserType();
+                  },
+                ),
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +95,11 @@ class VideoItem extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => VideoPlayerScreen(document[Config.postVideoUrl])),
+                builder: (context) => VideoPlayerScreen(widget.document[Config.postVideoUrl])),
           );
+        },
+        onLongPress: (){
+          deleteConfirmation(context, widget.document[Config.postId]);
         },
         child: Stack(
           alignment: Alignment.center,
@@ -33,7 +111,7 @@ class VideoItem extends StatelessWidget {
 
                   child: CachedNetworkImage(
                     fit: BoxFit.cover,
-                    imageUrl: document[Config.postVideoThumbUrl] ?? "",
+                    imageUrl: widget.document[Config.postVideoThumbUrl] ?? "",
                     placeholder: (context, url) => SpinKitWave(
                       itemBuilder: (_, int index) {
                         return DecoratedBox(
