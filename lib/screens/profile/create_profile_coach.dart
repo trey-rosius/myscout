@@ -619,7 +619,6 @@ class _CreateProfileCoachState extends State<CreateProfileCoach> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"

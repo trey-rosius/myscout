@@ -1523,7 +1523,6 @@ class _CreateCardState extends State<CreateCard> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"

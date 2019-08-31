@@ -663,7 +663,6 @@ class _EditProfileCoachState extends State<EditProfileCoach> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"

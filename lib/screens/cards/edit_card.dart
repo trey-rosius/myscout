@@ -1558,7 +1558,6 @@ class _EditCardState extends State<EditCard> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"

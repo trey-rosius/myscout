@@ -680,7 +680,6 @@ class _CreateProfileAthleteState extends State<CreateProfileAthlete> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"

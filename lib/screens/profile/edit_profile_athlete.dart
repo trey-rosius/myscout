@@ -722,7 +722,7 @@ class _EditProfileAthleteState extends State<EditProfileAthlete> {
                                           items: <String>[
                                             "BasketBall",
                                             "FootBall",
-                                            "VolleyBall",
+
                                             "Soccer",
                                             "Tennis",
                                             "BaseBall"
