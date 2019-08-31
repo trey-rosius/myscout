@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:myscout/models/card_model.dart';
 import 'package:myscout/screens/cards/card_color.dart';
-import 'package:myscout/screens/cards/full_screen_card.dart';
+
 import 'package:myscout/utils/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -131,15 +131,7 @@ class _EditCardState extends State<EditCard> {
   final positionController = TextEditingController();
   final heightController = TextEditingController();
   final weightController = TextEditingController();
-  List<String> colorCodes = [
-    "0xFF958d78",
-    "0xFF6c6c6c",
-    "0xFF11567b",
-    "0xFFa4241d",
-    "0xFF034f08",
-    "0xFF935d05",
-    "0xFF530673"
-  ];
+ 
   bool autovalidate = false;
   bool loading = false;
   int currentColorIndex = 0;

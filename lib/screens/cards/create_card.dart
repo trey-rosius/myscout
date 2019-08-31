@@ -124,15 +124,7 @@ class _CreateCardState extends State<CreateCard> {
   final positionController = TextEditingController();
   final heightController = TextEditingController();
   final weightController = TextEditingController();
-  List<String> colorCodes = [
-    "0xFF958d78",
-    "0xFF6c6c6c",
-    "0xFF11567b",
-    "0xFFa4241d",
-    "0xFF034f08",
-    "0xFF935d05",
-    "0xFF530673"
-  ];
+
   bool autovalidate = false;
   bool loading = false;
   int currentColorIndex = 0;
