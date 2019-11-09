@@ -4,7 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_compress/flutter_video_compress.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 import 'package:myscout/post/aspect_ratio.dart';
 import 'package:myscout/post/dash_path_border.dart';
@@ -12,11 +13,13 @@ import 'package:myscout/post/dash_path_border.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myscout/utils/Config.dart';
 import 'package:path_drawing/path_drawing.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-
+import 'dart:ui' as ui show Image;
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 class CreatePost extends StatefulWidget {
   CreatePost({this.userId});
   final String userId;
@@ -26,7 +29,7 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-  FlutterVideoCompress _flutterVideoCompress = FlutterVideoCompress();
+
   Future<File> _imageFile;
   bool isVideo = false;
   VideoPlayerController _controller;
@@ -36,8 +39,20 @@ class _CreatePostState extends State<CreatePost> {
   bool isAward = false;
   File thumbnailFile;
   double progress = 0;
-  Uint8List _image;
-  Subscription _subscription;
+  final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+  ImageFormat _format = ImageFormat.JPEG;
+  int _quality = 50;
+  int _size = 0;
+  int _timeMs = 0;
+
+
+
+  int _imageFileSize;
+
+
+  String _tempDir;
+
+
   void _onImageButtonPressed(ImageSource source) {
     setState(() {
       if (_controller != null) {
@@ -51,7 +66,8 @@ class _CreatePostState extends State<CreatePost> {
 
             setState(() {
               mainFile = file;
-
+              print("main file is"+mainFile.toString());
+             print("video file is "+file.path.substring(7));
               _controller = VideoPlayerController.file(file)
                 ..addListener(listener)
                 ..setVolume(1.0)
@@ -79,13 +95,12 @@ class _CreatePostState extends State<CreatePost> {
 
 
 
-
   //upload media
   Future<String> uploadMedia(var mediaFile, FirebaseStorage storage) async {
+
+    print("gotten"+mediaFile.toString());
     var uuid = new Uuid().v1();
 
-    if(isVideo)
-      {
         StorageReference ref = storage
             .ref()
             .child(Config.users)
@@ -98,21 +113,46 @@ class _CreatePostState extends State<CreatePost> {
         StorageTaskSnapshot storageTask = await uploadTask.onComplete;
         String downloadUrl = await storageTask.ref.getDownloadURL();
         return downloadUrl;
-      }
-      else
-        {
-          StorageReference ref = storage
-              .ref()
-              .child(Config.users)
-              .child(Config.posts)
-              .child(userId)
+
+
+  }
+
+  //upload media
+  Future<String> uploadImageMedia(var mediaFile, FirebaseStorage storage) async {
+    var uuid = new Uuid().v1();
+
+    StorageReference ref = storage
+        .ref()
+        .child(Config.users)
+        .child(Config.posts)
+        .child(userId)
+        .child("$uuid.mp4");
+
+
+    StorageUploadTask uploadTask = ref.putFile(mediaFile);
+    StorageTaskSnapshot storageTask = await uploadTask.onComplete;
+    String downloadUrl = await storageTask.ref.getDownloadURL();
+    return downloadUrl;
+
+
+  }
+
+  //upload media
+  Future<String> uploadThumbnailMedia(var mediaFile, FirebaseStorage storage) async {
+    var uuid = new Uuid().v1();
+
+      StorageReference ref = storage
+          .ref()
+          .child(Config.users)
+          .child(Config.posts)
+          .child(userId)
           .child("$uuid.jpg");
 
-          StorageUploadTask uploadTask = ref.putFile(mediaFile);
-          StorageTaskSnapshot storageTask = await uploadTask.onComplete;
-          String downloadUrl = await storageTask.ref.getDownloadURL();
-          return downloadUrl;
-        }
+      StorageUploadTask uploadTask = ref.putData(mediaFile);
+      StorageTaskSnapshot storageTask = await uploadTask.onComplete;
+      String downloadUrl = await storageTask.ref.getDownloadURL();
+      return downloadUrl;
+
 
   }
   @override
@@ -126,11 +166,15 @@ class _CreatePostState extends State<CreatePost> {
     super.deactivate();
   }
 
+  void logCallback(int level, String message) {
+    print("this is log message"+message);
+  }
+
   @override
   void dispose() {
     if (_controller != null) {
       _controller.dispose();
-      _subscription.unsubscribe();
+
     }
     super.dispose();
   }
@@ -138,95 +182,142 @@ class _CreatePostState extends State<CreatePost> {
   @override
   void initState() {
     super.initState();
+    getTemporaryDirectory().then((d) => _tempDir = d.path);
 
-    _subscription =
-        _flutterVideoCompress.compressProgress$.subscribe((progressPercent) {
-          print('progress: $progressPercent');
-          setState(() {
-            progress = progressPercent/100;
-          });
-        });
     getUserId();
     listener = () {
 
-      setState(() {});
+      if(!mounted){
+        return;
+      }else
+        {
+          setState(() {});
+        }
+
     };
   }
 
 
   savePost()async {
 
+
+
     if(isVideo)
       {
         setState(() {
           loading = true;
         });
-        final thumbnail = await _flutterVideoCompress.getThumbnailWithFile(
-          mainFile.path,
-          quality: 50,
-        );
-        print("original thumbnail"+thumbnail.toString());
 
-        final MediaInfo info = await _flutterVideoCompress.startCompress(
-          mainFile.path,
-          quality: VideoQuality.MediumQuality,
-          deleteOrigin: false,
-        );
-        print(info.toJson());
-        print("video path"+info.path);
+        final thumbnail = await VideoThumbnail.thumbnailData(
+            video: Platform.isIOS ? mainFile.path.substring(7) : mainFile.path,
+            imageFormat: _format,
+           // maxHeightOrWidth: _size,
+            timeMs: _timeMs,
+            quality: _quality);
+
+
+
 
         setState(() {
-          mainFile = File(info.path);
-          thumbnailFile = thumbnail;
+          /*
+          if(Platform.isIOS)
+            {
+              mainFile = File(mainFile.path.substring(7));
+
+            }else
+              {
+                mainFile = mainFile;
+              }
+              */
+
+         // thumbnailFile = file;
         });
-        print("thumbnail File"+thumbnailFile.toString());
-        final FirebaseStorage storage = FirebaseStorage.instance;
-        uploadMedia(mainFile, storage).then((String data) {
+     //   var dir = await path_provider.getApplicationDocumentsDirectory();
+     //   var uuid = new Uuid().v1();
+       // var targetPath = dir.absolute.path + "/temp.mp4";
+        Directory appDocDir = await getTemporaryDirectory();
+        String targetPath = appDocDir.path+"/temp.mp4";
+        _flutterFFmpeg.enableLogCallback(this.logCallback);
+        var arguments = ["-i", mainFile.path, "-c:v", "mpeg4", targetPath];
+        _flutterFFmpeg.executeWithArguments(arguments).then((rc){
+          if(rc == 0)
+            {
 
 
-          Map userInfo = new Map<String, dynamic>();
-          userInfo[Config.postText] = postController.text;
-          userInfo[Config.isVideoPost] = isVideo;
-          userInfo[Config.isAward] = isAward;
-           userInfo[Config.postVideoUrl] = data;
-          userInfo[Config.createdOn] =FieldValue.serverTimestamp();
-          userInfo[Config.postAdminId] = userId;
-          userInfo[Config.awardYear] = yearController.text;
+              final FirebaseStorage storage = FirebaseStorage.instance;
+              uploadMedia(File(targetPath), storage).then((String data) {
 
-          Firestore.instance.collection(Config.posts).add(userInfo).then((DocumentReference docRef){
-            String id = docRef.documentID;
-            print("post Id "+id);
-            Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
-              Config.postId:docRef.documentID
-            });
 
-            Firestore.instance.collection(Config.users).document(userId).collection(Config.userPosts).document(id).setData({
-              Config.postId:id
-            });
+                Map userInfo = new Map<String, dynamic>();
+                userInfo[Config.postText] = postController.text;
+                userInfo[Config.isVideoPost] = isVideo;
+                userInfo[Config.isAward] = isAward;
+                userInfo[Config.postVideoUrl] = data;
+                userInfo[Config.createdOn] =FieldValue.serverTimestamp();
+                userInfo[Config.postAdminId] = userId;
+                userInfo[Config.awardYear] = yearController.text;
 
-            uploadMedia(thumbnailFile, storage).then((String data) {
-              Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
-                Config.postVideoThumbUrl:data
+                Firestore.instance.collection(Config.posts).add(userInfo).then((DocumentReference docRef){
+                  String id = docRef.documentID;
+                  print("post Id "+id);
+                  Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
+                    Config.postId:docRef.documentID
+                  });
+
+                  Firestore.instance.collection(Config.users).document(userId).collection(Config.userPosts).document(id).setData({
+                    Config.postId:id
+                  });
+
+                  uploadThumbnailMedia(thumbnail, storage).then((String data) {
+                    Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
+                      Config.postVideoThumbUrl:data
+                    });
+
+                    setState(() {
+                      loading = false;
+                      mainFile = null;
+                      targetPath = null;
+                      _controller = null;
+                      _imageFile = null;
+                      progress = 0.0;
+
+                      postController.text = "";
+                      isAward = false;
+                    });
+                  });
+
+                });
+
+
+
+
               });
 
-              setState(() {
-                loading = false;
-                mainFile = null;
-                _controller = null;
-                _imageFile = null;
-                progress = 0.0;
-                _subscription = null;
-                postController.text = "";
-                isAward = false;
-              });
-            });
-
-          });
+            }else
+              {
+                print('ffmpeg finished with rc code $rc');
+              }
+        });
 
 
+
+        print("file is"+ mainFile.path);
+
+/*
+        _flutterFFmpeg.getMediaInformation(targetPath).then((info) {
+          print("Media Information");
+
+          print("Path: ${info['path']}");
+          print("Format: ${info['format']}");
+          print("Duration: ${info['duration']}");
+          print("Start time: ${info['startTime']}");
+          print("Bitrate: ${info['bitrate']}");
 
 
         });
+
+*/
+
 
       }
       else
@@ -235,7 +326,7 @@ class _CreatePostState extends State<CreatePost> {
             loading = true;
           });
           final FirebaseStorage storage = FirebaseStorage.instance;
-          uploadMedia(mainFile, storage).then((String data) {
+          uploadImageMedia(mainFile, storage).then((String data) {
 
 
             Map userInfo = new Map<String, dynamic>();
@@ -287,7 +378,7 @@ class _CreatePostState extends State<CreatePost> {
       );
     } else if (controller.value.initialized) {
 
-      return  AspectRatioVideo(controller);
+      return AspectRatioVideo(controller);
 
     } else {
       return const Text(
@@ -305,6 +396,7 @@ class _CreatePostState extends State<CreatePost> {
               snapshot.data != null) {
 
               mainFile = snapshot.data;
+
 
             return Image.file(snapshot.data);
           } else if (snapshot.error != null) {
@@ -364,6 +456,7 @@ class _CreatePostState extends State<CreatePost> {
              ),
 
            ),
+           /*
            isVideo ?SliverToBoxAdapter(
              child: Padding(padding: EdgeInsets.all(10),
              child: Column(
@@ -393,6 +486,7 @@ class _CreatePostState extends State<CreatePost> {
            ): SliverToBoxAdapter(
            child: Container(),
            ),
+           */
            SliverToBoxAdapter(
              child: Padding(
                padding: const EdgeInsets.only(top:20.0,left: 10.0),

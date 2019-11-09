@@ -39,7 +39,7 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       body: Container(
 
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).snapshots(),
+          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).orderBy(Config.scheduleDay,descending: false).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();

@@ -38,7 +38,7 @@ class _AllScreenState extends State<AllScreen> {
       body: Container(
 
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).orderBy(Config.scheduleDay,descending: false).snapshots(),
+          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).orderBy(Config.scheduleDay,descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();

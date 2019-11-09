@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.9.0+20
+version: 3.0.2+23
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -31,7 +31,7 @@ dependencies:
   firebase_auth: ^0.8.0+1
 
 
-
+  flutter_ffmpeg: ^0.2.8
   firebase_core: '^0.3.0'
   firebase_storage: ^2.1.0+1
   flutter_screenutil: ^0.5.2
@@ -40,9 +40,9 @@ dependencies:
   flutter_image_compress: ^0.6.0
   path_provider: ^0.5.0+1
   percent_indicator: ^2.1.0
-  flutter_video_compress: ^0.3.3+3
-  image_picker: ^0.5.3
-  video_player: ^0.10.1
+  video_thumbnail: ^0.1.6
+  image_picker: ^0.6.1+11
+  video_player: ^0.10.2+5
   path_drawing: ^0.4.0
   timeago: ^2.0.14
   datetime_picker_formfield: ^0.1.8

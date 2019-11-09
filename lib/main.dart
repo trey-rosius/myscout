@@ -8,6 +8,7 @@ import 'package:myscout/utils/app_settings.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 Future<void> main()async {
+  WidgetsFlutterBinding.ensureInitialized();
   final preferences = await StreamingSharedPreferences.instance;
   final settings = AppSettings(preferences);
   runApp(App(settings));

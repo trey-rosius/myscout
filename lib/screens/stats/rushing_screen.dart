@@ -129,7 +129,7 @@ showInSnackBar("Saved");
         centerTitle: true,
         elevation: 0.0,
 
-        title:Text("Defense",style: TextStyle(fontSize: 20.0),),
+        title:Text("Rushing",style: TextStyle(fontSize: 20.0),),
 
       ),
       body: SingleChildScrollView(
@@ -139,7 +139,7 @@ showInSnackBar("Saved");
 
             Container(
               padding: EdgeInsets.all(10),
-              child:Text("TACKLES",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+              child:Text("Rushing",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
             ),
 
 
