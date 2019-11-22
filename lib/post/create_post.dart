@@ -167,7 +167,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void logCallback(int level, String message) {
-    print("this is log message"+message);
+    print("message"+message);
   }
 
   @override
@@ -197,6 +197,17 @@ class _CreatePostState extends State<CreatePost> {
     };
   }
 
+ Future<String> getAndSaveThumbnail(String downloadUrl)async{
+
+    return await VideoThumbnail.thumbnailFile(
+      video: downloadUrl,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.JPEG,
+      maxHeightOrWidth: 0, // the original resolution of the video
+      quality: 75,
+    );
+  }
+
 
   savePost()async {
 
@@ -209,7 +220,7 @@ class _CreatePostState extends State<CreatePost> {
         });
 
         final thumbnail = await VideoThumbnail.thumbnailData(
-            video: Platform.isIOS ? mainFile.path.substring(7) : mainFile.path,
+            video:  mainFile.path,
             imageFormat: _format,
            // maxHeightOrWidth: _size,
             timeMs: _timeMs,
@@ -219,6 +230,8 @@ class _CreatePostState extends State<CreatePost> {
 
 
         setState(() {
+
+          print("thumbnail file is"+thumbnail.toString());
           /*
           if(Platform.isIOS)
             {
@@ -232,11 +245,11 @@ class _CreatePostState extends State<CreatePost> {
 
          // thumbnailFile = file;
         });
-     //   var dir = await path_provider.getApplicationDocumentsDirectory();
-     //   var uuid = new Uuid().v1();
+        var dir = await path_provider.getApplicationDocumentsDirectory();
+        var uuid = new Uuid().v1();
        // var targetPath = dir.absolute.path + "/temp.mp4";
-        Directory appDocDir = await getTemporaryDirectory();
-        String targetPath = appDocDir.path+"/temp.mp4";
+      //  Directory appDocDir = await getTemporaryDirectory();
+        String targetPath = dir.path+"/$uuid.mp4";
         _flutterFFmpeg.enableLogCallback(this.logCallback);
         var arguments = ["-i", mainFile.path, "-c:v", "mpeg4", targetPath];
         _flutterFFmpeg.executeWithArguments(arguments).then((rc){
@@ -268,23 +281,35 @@ class _CreatePostState extends State<CreatePost> {
                     Config.postId:id
                   });
 
-                  uploadThumbnailMedia(thumbnail, storage).then((String data) {
-                    Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
-                      Config.postVideoThumbUrl:data
+                  getAndSaveThumbnail(data).then((String thumbnailUrl){
+
+                    uploadThumbnailMedia(thumbnail, storage).then((String data) {
+
+
+
+
+                      Firestore.instance.collection(Config.posts).document(docRef.documentID).updateData({
+                        Config.postVideoThumbUrl:data
+                      });
+
+                      setState(() {
+                        loading = false;
+                        mainFile = null;
+                        targetPath = null;
+                        _controller = null;
+                        _imageFile = null;
+                        progress = 0.0;
+
+                        postController.text = "";
+                        isAward = false;
+                      });
                     });
 
-                    setState(() {
-                      loading = false;
-                      mainFile = null;
-                      targetPath = null;
-                      _controller = null;
-                      _imageFile = null;
-                      progress = 0.0;
-
-                      postController.text = "";
-                      isAward = false;
-                    });
                   });
+
+
+
+
 
                 });
 
