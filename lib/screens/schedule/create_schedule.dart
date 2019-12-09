@@ -272,18 +272,53 @@ class _CreateScheduleState extends State<CreateSchedule> {
                               if (formKey.currentState.validate()) {
                                 if(startTimeController.text == endTimeController.text){
                                   showInSnackBar("Start Time Equals End Time");
-                                } else if((date.month < presentDate.month)|| (date.year < presentDate.year)){
-                                  print(date.day);
-                                  print(presentDate.day);
-                                  print(date.month);
-                                  print(presentDate.month);
-                                  print(date.year);
-                                  print(presentDate.year);
-                                  showInSnackBar("Date is in the past. Please Choose a future date");
+                                } else if((date.month < presentDate.month)){
+                                  if(date.year < presentDate.year)
+                                    {
+                                      print(date.day);
+                                      print(presentDate.day);
+                                      print(date.month);
+                                      print(presentDate.month);
+                                      print(date.year);
+                                      print(presentDate.year);
+                                      showInSnackBar("Date is in the past. Please Choose a future date");
+                                    }else
+                                      {
+                                        print(date.day);
+                                        print(presentDate.day);
+                                        print(date.month);
+                                        print(presentDate.month);
+                                        print(date.year);
+                                        print(presentDate.year);
+                                        print("this is ok");
+                                        saveSchedule();
+                                      }
+
+
                                 } else
                                   {
-                                    print("this is ok");
-                                    saveSchedule();
+
+                                    if(date.year < presentDate.year)
+                                    {
+                                      print(date.day);
+                                      print(presentDate.day);
+                                      print(date.month);
+                                      print(presentDate.month);
+                                      print(date.year);
+                                      print(presentDate.year);
+                                      showInSnackBar("Date is in the past. Please Choose a future date");
+                                    }else
+                                    {
+                                      print(date.day);
+                                      print(presentDate.day);
+                                      print(date.month);
+                                      print(presentDate.month);
+                                      print(date.year);
+                                      print(presentDate.year);
+                                      print("this is ok");
+                                      saveSchedule();
+                                    }
+
                                   }
 
                               }

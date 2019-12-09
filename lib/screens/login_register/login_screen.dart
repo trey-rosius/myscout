@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+
 import 'package:myscout/screens/login_register/forgot_password.dart';
 import 'package:myscout/screens/login_register/sign_up.dart';
 import 'package:myscout/screens/profile/create_profile_athlete.dart';
@@ -20,7 +23,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static final FacebookLogin facebookSignIn = new FacebookLogin();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -55,9 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       loading1 = true;
     });
+final facebookSignIn = FacebookLogin();
 
-    final FacebookLoginResult result =
-    await facebookSignIn.logInWithReadPermissions(['email']);
+    facebookSignIn.loginBehavior = Platform.isIOS
+        ? FacebookLoginBehavior.webViewOnly
+        : FacebookLoginBehavior.nativeWithFallback;
+
+    facebookSignIn.loginBehavior =FacebookLoginBehavior.webViewOnly;
+    final  result =
+    await facebookSignIn.logIn(['email']);
     final FirebaseAuth _auth = FirebaseAuth.instance;
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
@@ -68,7 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
         AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: accesstoken.token);
 
 
-        FirebaseUser user = await _auth.signInWithCredential(credential);
+        FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+       // FirebaseUser user = await _auth.signInWithCredential(credential);
         // .signInWithFacebook(accessToken: accesstoken.token);
         if (user != null) {
           print(user.email);
