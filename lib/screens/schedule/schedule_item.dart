@@ -101,7 +101,7 @@ class ScheduleItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
-                  Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                  Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
                   Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
 
                 ],
