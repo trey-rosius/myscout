@@ -7,6 +7,483 @@ class UpcommingScheduleItem extends StatelessWidget {
   final DocumentSnapshot document;
   final DateTime dateTime;
 
+
+  Widget _buildChild(context){
+  Widget child;
+    if(document[Config.scheduleYear] == dateTime.year)
+      {
+        if(document[Config.scheduleDay] < dateTime.day && document[Config.scheduleMonth] < dateTime.month){
+          child=  Container();
+        }else if(document[Config.scheduleDay] > dateTime.day && document[Config.scheduleMonth] < dateTime.month){
+          child=  Container();
+        } else if(document[Config.scheduleDay] < dateTime.day && document[Config.scheduleMonth] > dateTime.month){
+
+          child=  Container(
+                padding: EdgeInsets.all(10),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                          Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                          Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child:
+
+                      Material(
+                        color: Colors.white,
+                        elevation: 14.0,
+                        borderRadius: BorderRadius.circular(10.0),
+                        shadowColor: Color(0x802196F3),
+                        child:Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                                  TextStyle(fontSize: 16),),
+                                  Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                                ],
+                              ),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.only(top:10.0),
+                                child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                              ),
+                              Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                            ],
+                          ),
+                        ),
+                      ),
+
+
+
+
+
+
+
+                    )
+                  ],
+                ),
+              );
+
+
+        } else if(document[Config.scheduleDay] > dateTime.day && document[Config.scheduleMonth] > dateTime.month){
+          child=  Container(
+            padding: EdgeInsets.all(10),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+
+                  Material(
+                    color: Colors.white,
+                    elevation: 14.0,
+                    borderRadius: BorderRadius.circular(10.0),
+                    shadowColor: Color(0x802196F3),
+                    child:Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                              TextStyle(fontSize: 16),),
+                              Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                            ],
+                          ),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                          ),
+                          Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+
+
+
+
+                )
+              ],
+            ),
+          );
+        } else if(document[Config.scheduleDay]  == dateTime.day && document[Config.scheduleMonth] == dateTime.month){
+          child=   Container(
+            padding: EdgeInsets.all(10),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+
+                  Material(
+                    color: Colors.white,
+                    elevation: 14.0,
+                    borderRadius: BorderRadius.circular(10.0),
+                    shadowColor: Color(0x802196F3),
+                    child:Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                              TextStyle(fontSize: 16),),
+                              Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                            ],
+                          ),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                          ),
+                          Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+
+
+
+
+                )
+              ],
+            ),
+          );
+        }else if(document[Config.scheduleDay] > dateTime.day && document[Config.scheduleMonth] == dateTime.month){
+          child=  Container(
+            padding: EdgeInsets.all(10),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+
+                  Material(
+                    color: Colors.white,
+                    elevation: 14.0,
+                    borderRadius: BorderRadius.circular(10.0),
+                    shadowColor: Color(0x802196F3),
+                    child:Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                              TextStyle(fontSize: 16),),
+                              Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                            ],
+                          ),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                          ),
+                          Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+
+
+
+
+                )
+              ],
+            ),
+          );
+        }else if(document[Config.scheduleDay] ==  dateTime.day && document[Config.scheduleMonth] > dateTime.month){
+          child=  Container(
+            padding: EdgeInsets.all(10),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                      Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+
+                  Material(
+                    color: Colors.white,
+                    elevation: 14.0,
+                    borderRadius: BorderRadius.circular(10.0),
+                    shadowColor: Color(0x802196F3),
+                    child:Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                              TextStyle(fontSize: 16),),
+                              Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                            ],
+                          ),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                          ),
+                          Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+
+
+
+
+                )
+              ],
+            ),
+          );
+        }else if(document[Config.scheduleDay] <  dateTime.day && document[Config.scheduleMonth] == dateTime.month)
+          {
+            child=   Container(
+              padding: EdgeInsets.all(10),
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                        Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                        Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child:
+
+                    Material(
+                      color: Colors.white,
+                      elevation: 14.0,
+                      borderRadius: BorderRadius.circular(10.0),
+                      shadowColor: Color(0x802196F3),
+                      child:Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                                TextStyle(fontSize: 16),),
+                                Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                              ],
+                            ),
+                            Divider(),
+                            Padding(
+                              padding: const EdgeInsets.only(top:10.0),
+                              child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                            ),
+                            Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                          ],
+                        ),
+                      ),
+                    ),
+
+
+
+
+
+
+
+                  )
+                ],
+              ),
+            );
+          } else  if(document[Config.scheduleDay] ==  dateTime.day && document[Config.scheduleMonth] < dateTime.month) {
+          child=  Container();
+        }
+
+
+      } else  if(document[Config.scheduleYear] > dateTime.year)
+    {
+      child=  Container(
+        padding: EdgeInsets.all(10),
+        child:Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
+                  Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                  Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+
+                ],
+              ),
+            ),
+            Expanded(
+              child:
+
+              Material(
+                color: Colors.white,
+                elevation: 14.0,
+                borderRadius: BorderRadius.circular(10.0),
+                shadowColor: Color(0x802196F3),
+                child:Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
+                          TextStyle(fontSize: 16),),
+                          Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
+                        ],
+                      ),
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.only(top:10.0),
+                        child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
+                      ),
+                      Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
+
+                    ],
+                  ),
+                ),
+              ),
+
+
+
+
+
+
+
+            )
+          ],
+        ),
+      );
+
+
+    } else if(document[Config.scheduleYear] < dateTime.year) {
+      child = Container();
+  }
+
+
+return child;
+
+  }
   Future<Null> deleteConfirmation(BuildContext context,String scheduleId) async {
     return showDialog<Null>(
       context: context,
@@ -77,9 +554,9 @@ class UpcommingScheduleItem extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
 
-    return document[Config.scheduleDay] <= dateTime.day && document[Config.scheduleMonth] <= dateTime.month ? Container() : InkWell(
+
+    return InkWell(
       onTap: (){
         if(userId == document[Config.scheduleAdmin])
         {
@@ -90,69 +567,10 @@ class UpcommingScheduleItem extends StatelessWidget {
 
         }
       },
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child:Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(document[Config.scheduleDayName],style: TextStyle(fontSize: 18,color: Theme.of(context).primaryColorLight),),
-                  Text(document[Config.scheduleMonthName],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
-                  Text(document[Config.scheduleDay].toString(),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
-
-                ],
-              ),
-            ),
-            Expanded(
-              child:
-
-              Material(
-                color: Colors.white,
-                elevation: 14.0,
-                borderRadius: BorderRadius.circular(10.0),
-                shadowColor: Color(0x802196F3),
-                child:Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(document[Config.scheduleStartTime] + "-" + document[Config.scheduleEndTime],style:
-                          TextStyle(fontSize: 16),),
-                          Text(document[Config.scheduleStatus],style: TextStyle(color: Theme.of(context).primaryColorLight,fontWeight: FontWeight.bold),)
-                        ],
-                      ),
-                      Divider(),
-                      Padding(
-                        padding: const EdgeInsets.only(top:10.0),
-                        child: Text(document[Config.scheduleTitle],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Theme.of(context).primaryColorLight),),
-                      ),
-                      Text(document[Config.scheduleDescription],style: TextStyle(fontSize: 17,)),
-
-                    ],
-                  ),
-                ),
-              ),
+      child:
 
 
-
-
-
-
-
-            )
-          ],
-        ),
-      ),
+      _buildChild(context),
     );
   }
 }

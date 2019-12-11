@@ -22,16 +22,19 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       userId = sharedPreferences.get(Config.userId);
     });
   }
-
+  DateTime presentDate;
 
   @override
   void initState() {
     // TODO: implement initState
-
+ setState(() {
+ presentDate = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+ });
     getUserId();
     super.initState();
+
   }
-  DateTime presentDate = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,11 @@ class _UpcomingScreenState extends State<UpcomingScreen> {
       body: Container(
 
         child: StreamBuilder(
-          stream: Firestore.instance.collection(Config.schedules).where(Config.scheduleAdmin,isEqualTo: userId).orderBy(Config.scheduleYear,descending: false).orderBy(Config.scheduleMonth,descending: false).orderBy(Config.scheduleDay,descending: false).snapshots(),
+          stream: Firestore.instance.collection(Config.schedules)
+              .where(Config.scheduleAdmin,isEqualTo: userId)
+              .where(Config.scheduleYear,isGreaterThanOrEqualTo: presentDate.year)
+
+              .orderBy(Config.scheduleYear,descending: false).orderBy(Config.scheduleMonth,descending: false).orderBy(Config.scheduleDay,descending: false).snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return LoadingScreen();
